@@ -1,4 +1,4 @@
 package com.mygdx.game.models;
 
-public class Player {
+public class PlayerModel {
 }
