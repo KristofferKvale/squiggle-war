@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.mygdx.game.Game;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class AndroidLauncher extends AndroidApplication {
 	@Override

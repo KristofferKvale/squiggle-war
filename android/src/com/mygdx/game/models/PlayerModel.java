@@ -7,7 +7,7 @@ import java.util.List;
 import  com.mygdx.game.models.Point;
 
 public class PlayerModel {
-    String username;
+   /* String username;
     Color color;
     LineModel line;
     boolean active;
@@ -33,6 +33,6 @@ public class PlayerModel {
     public void setNewPoint(int x, int y){
         Point point = new Point(x,y);
         this.line.addPoint(point);
-    }
+    }*/
 
 }

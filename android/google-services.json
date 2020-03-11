@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "754000941969",
+    "firebase_url": "https://squiggle-war.firebaseio.com",
+    "project_id": "squiggle-war",
+    "storage_bucket": "squiggle-war.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:754000941969:android:388bc8fbad1109c8a2c030",
+        "android_client_info": {
+          "package_name": "com.mygdx.game"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "754000941969-n5gap3lpiv6of24fqs949njard67ru80.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPZwANDOju6OxftsvvvMOpoLXqAHF1rY8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "754000941969-n5gap3lpiv6of24fqs949njard67ru80.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
