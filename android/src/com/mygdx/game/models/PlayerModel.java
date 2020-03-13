@@ -12,15 +12,15 @@ public class PlayerModel {
     LineModel line;
     boolean active;
 
-    PlayerModel(String username, Color color){
+    PlayerModel(String username, Color color, Point start){
         this.username = username;
         this.color = color;
-        this.line = new Line();
+        this.line = new Line(start);
         this.active = true;
     }
 
     public List<Point> getLinePoints(){
-        return this.line.points;
+        return this.line.getPoints();
     }
 
     public void setNotActive(){
