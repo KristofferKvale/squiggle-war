@@ -23,7 +23,7 @@ public class BoardModel {
         this.players = players;
     }
 
-
+/*
     //Function that returns a player if it has collided with a player or a wall
     public PlayerModel WallCollisions(List<PlayerModel> players){
         for (PlayerModel player : players){
@@ -56,6 +56,6 @@ public class BoardModel {
 
 
     }
-
+*/
 }
 
