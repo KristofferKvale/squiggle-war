@@ -1,22 +1,24 @@
 package com.mygdx.game.models;
 
+import com.badlogic.gdx.math.Vector2;
+
 import java.util.List;
 
 public class LineModel implements Line {
 
-    private List<Point> points;
+    private List<Vector2> points;
 
-    LineModel(Point start){
+    LineModel(Vector2 start){
         this.points.add(start);
     }
 
     @Override
-    public void addPoint(Point point) {
+    public void addPoint(Vector2 point) {
         this.points.add(point);
     }
 
     @Override
-    public List<Point> getPoints() {
+    public List<Vector2> getPoints() {
         return this.points;
     }
 
