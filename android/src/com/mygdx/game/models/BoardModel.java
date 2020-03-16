@@ -1,6 +1,7 @@
 package com.mygdx.game.models;
 
 import com.badlogic.gdx.Gdx;
+import  com.mygdx.game.models.Point;
 import  com.mygdx.game.models.PlayerModel;
 
 
