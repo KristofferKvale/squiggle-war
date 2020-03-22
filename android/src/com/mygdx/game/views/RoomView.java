@@ -12,9 +12,9 @@ public class RoomView extends State {
         //createRoom(new RoomModel());
     }
 
-    public void createRoom(RoomModel room) {
-        this.room = room;
-    }
+   // public void createRoom(RoomModel room) {
+  //      this.room = room;
+  //  }
 
     @Override
     protected void handleInput() {
