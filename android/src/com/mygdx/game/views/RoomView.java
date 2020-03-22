@@ -1,7 +1,7 @@
 package com.mygdx.game.views;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
+/*
 public class RoomView extends State {
 
     //private RoomModel room;
@@ -35,4 +35,4 @@ public class RoomView extends State {
     public void dispose() {
 
     }
-}
+}*/

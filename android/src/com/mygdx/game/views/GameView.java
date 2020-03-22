@@ -74,19 +74,17 @@ public class GameView extends State {
 
     @Override
     public void render(SpriteBatch sb) {
-        Gdx.gl.glClearColor(0, 1, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        updateLine();
-
-        sb.draw(lines, 0, 0);
-
+        sb.begin();
+        sb.draw(lines, 500, 500);
+        sb.end();
         lines.dispose();
+
     }
 
     @Override
     public void dispose () {
-
         //background.dispose();
         lines.dispose();
     }
@@ -94,11 +92,11 @@ public class GameView extends State {
     public void updateLine(){
         Pixmap line = new Pixmap(height, width, Pixmap.Format.RGBA8888);
         for(int j = 0; j < players.size(); j++) {
-            List<Vector2> points = players.get(j).getLinePoints();
+            ArrayList<Vector2> points = players.get(j).getLinePoints();
             line.setColor(players.get(j).getColor());
             for(int i = 0; i < points.size()-1; i++){
                 Vector2 point1 = points.get(i);
-                Vector2 point2 = points.get(i);
+                Vector2 point2 = points.get(i+1);
                 line.drawLine((int) point1.x, (int) point1.y, (int) point2.x, (int) point2.y);
             }
 

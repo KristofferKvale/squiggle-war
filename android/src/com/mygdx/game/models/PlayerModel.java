@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import com.mygdx.game.Game;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,10 +22,10 @@ public class PlayerModel {
                 this.color = color;
                 this.line = new LineModel(start);
                 this.active = true;
-				this.angle = 0;
+				this.angle = 1;
             }
 
-            public List<Vector2> getLinePoints(){
+            public ArrayList<Vector2> getLinePoints(){
                 return this.line.getPoints();
             }
 
@@ -54,10 +55,12 @@ public class PlayerModel {
 
 			public void move(){
 				Vector2 coords = this.getPosition();
-				coords.x += Game.SPEED * Math.cos(this.angle);
-				coords.y += Game.SPEED * Math.sin(this.angle);
+				float x = coords.x;
+				float y = coords.y;
+				x += (Game.SPEED * Math.cos(this.angle));
+				y += (Game.SPEED * Math.sin(this.angle));
 
-				setNewPoint((int)coords.x,(int) coords.y);
+				setNewPoint(Math.round(x), Math.round(y));
 			}
 
 
