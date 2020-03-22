@@ -36,9 +36,8 @@ public class PlayerModel {
                 this.active = true;
 			}
 
-			public float getPosition(){
-				Vector2 coords = this.line.getLastPoint();
-				return coords.x, coords.y;
+			public Vector2 getPosition(){
+				return this.line.getLastPoint();
 			}
 
 			public Color getColor() {
@@ -54,11 +53,11 @@ public class PlayerModel {
 			}
 
 			public void move(){
-				float x, y = this.getPosition();
-				x += Game.SPEED * Math.cos(this.angle);
-				y += Game.SPEED * Math.sin(this.angle);
+				Vector2 coords = this.getPosition();
+				coords.x += Game.SPEED * Math.cos(this.angle);
+				coords.y += Game.SPEED * Math.sin(this.angle);
 
-				setNewPoint(x, y);
+				setNewPoint((int)coords.x,(int) coords.y);
 			}
 
 
