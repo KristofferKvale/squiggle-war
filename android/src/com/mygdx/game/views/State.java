@@ -16,8 +16,14 @@ public abstract class State {
 
     }
 
+    // handleInput takes the input, if a controller is involved just send it to the controller
     protected abstract void handleInput();
+
+    // update changes the models by using the models update function(s)
     public abstract void update(float dt);
+
     public abstract void render(SpriteBatch sb);
+
+    // dispose is used to dispose music, textures etc. that has been used in the view
     public abstract void dispose();
 }
