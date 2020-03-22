@@ -8,5 +8,6 @@ public interface Line {
 
     void addPoint(Vector2 point);
     List<Vector2> getPoints();
+    Vector2 getLastPoint();
 
 }

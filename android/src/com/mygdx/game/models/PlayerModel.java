@@ -36,6 +36,11 @@ public class PlayerModel {
                 this.active = true;
 			}
 
+			public float getPosition(){
+				coords = this.line.getLastPoint()
+				return coords.x, coords.y
+			}
+
 			public void turnLeft(){
 				this.angle += Game.ROTATION_SPEED;
 			}
@@ -44,6 +49,13 @@ public class PlayerModel {
 				this.angle -= Game.ROTATION_SPEED;
 			}
 
+			public void move(){
+				float x, y = this.getPosition()
+				x += Game.SPEED * cos(this.angle)
+				y += Game.SPEED * sin(this.angle)
+
+				setNewPoint(x, y)
+			}
 
 
     public void setNewPoint(int x, int y){
