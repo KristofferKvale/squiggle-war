@@ -22,5 +22,10 @@ public class LineModel implements Line {
         return this.points;
     }
 
+    @Override
+    public Vector2 getLastPoint() {
+        return this.points.get(-1);
+    }
+
 
 }
