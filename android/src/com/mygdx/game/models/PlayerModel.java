@@ -16,7 +16,7 @@ public class PlayerModel {
             boolean active;
 			float angle;
 
-            PlayerModel(String username, Color color, Vector2 start){
+            public PlayerModel(String username, Color color, Vector2 start){
                 this.username = username;
                 this.color = color;
                 this.line = new LineModel(start);
@@ -37,9 +37,13 @@ public class PlayerModel {
 			}
 
 			public float getPosition(){
-				coords = this.line.getLastPoint()
-				return coords.x, coords.y
+				Vector2 coords = this.line.getLastPoint();
+				return coords.x, coords.y;
 			}
+
+			public Color getColor() {
+                return this.color;
+            }
 
 			public void turnLeft(){
 				this.angle += Game.ROTATION_SPEED;
@@ -50,11 +54,11 @@ public class PlayerModel {
 			}
 
 			public void move(){
-				float x, y = this.getPosition()
-				x += Game.SPEED * cos(this.angle)
-				y += Game.SPEED * sin(this.angle)
+				float x, y = this.getPosition();
+				x += Game.SPEED * Math.cos(this.angle);
+				y += Game.SPEED * Math.sin(this.angle);
 
-				setNewPoint(x, y)
+				setNewPoint(x, y);
 			}
 
 
