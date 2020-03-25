@@ -17,7 +17,7 @@ public class Game extends ApplicationAdapter {
 	public static final int WIDTH = 1980;
 	public static final int HEIGHT = 1080;
 	public static final int SPEED = 2;
-	public static final int ROTATION_SPEED = 0.03;
+	public static final double ROTATION_SPEED = 0.03;
 
 	public static final String TITLE = "Squiggle War";
 
@@ -31,7 +31,7 @@ public class Game extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		gsm = new GameStateManager();
 		Gdx.gl.glClearColor(1, 0, 0, 1);
-		gsm.push(new UsernameView(gsm, config));
+		gsm.push(new GameView(gsm));
 	}
 
 	@Override

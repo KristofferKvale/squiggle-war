@@ -25,6 +25,7 @@ public class GameView extends State {
     private ArrayList<PlayerModel> players;
     Texture lines;
     Texture texture;
+    private Texture background;
 
 
     public GameView(GameStateManager gsm) {
@@ -35,11 +36,12 @@ public class GameView extends State {
 
 
 
+
     }
 
     public ArrayList<PlayerModel> getPlayers() {
         //Skal egentlig hente fra BoardModel
-        return new ArrayList<PlayerModel>(Arrays.asList(new PlayerModel("Per", Color.BLUE, new Vector2(0,0))));
+        return new ArrayList<PlayerModel>(Arrays.asList(new PlayerModel("Per", Color.RED, new Vector2(500,500))));
     }
 
     @Override
@@ -48,13 +50,13 @@ public class GameView extends State {
             if (Gdx.input.isTouched(i)) {
                 if (Gdx.input.getX(i)<= width / 2) {
                     for(int j = 0; j < players.size(); j++) {
-                        players.get(j).turnLeft();
+                        players.get(j).turnRight();
                     }
                 }
 
                 if (Gdx.input.getX(i) > width / 2) {
                     for(int j = 0; j < players.size(); j++) {
-                        players.get(j).turnRight();
+                        players.get(j).turnLeft();
                     }
                 }
 
@@ -77,7 +79,8 @@ public class GameView extends State {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         sb.begin();
-        sb.draw(lines, 500, 500);
+        //sb.draw(background, 0, 0, width, height);
+        sb.draw(lines, 0, 0, width, height);
         sb.end();
         lines.dispose();
 
@@ -90,7 +93,7 @@ public class GameView extends State {
     }
 
     public void updateLine(){
-        Pixmap line = new Pixmap(height, width, Pixmap.Format.RGBA8888);
+        Pixmap line = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         for(int j = 0; j < players.size(); j++) {
             ArrayList<Vector2> points = players.get(j).getLinePoints();
             line.setColor(players.get(j).getColor());
@@ -98,6 +101,8 @@ public class GameView extends State {
                 Vector2 point1 = points.get(i);
                 Vector2 point2 = points.get(i+1);
                 line.drawLine((int) point1.x, (int) point1.y, (int) point2.x, (int) point2.y);
+                line.drawLine((int) point1.x-1, (int) point1.y -1, (int) point2.x - 1, (int) point2.y - 1);
+                line.drawLine((int) point1.x + 1, (int) point1.y + 1, (int) point2.x + 1, (int) point2.y + 1);
             }
 
         }
