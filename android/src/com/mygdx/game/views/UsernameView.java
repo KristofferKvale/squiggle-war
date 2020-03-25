@@ -3,6 +3,7 @@ package com.mygdx.game.views;
 import androidx.annotation.NonNull;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,17 +16,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.game.Game;
+import com.mygdx.game.models.Config;
 
 public class UsernameView extends State {
 
     private Stage stage;
     private TextField usernameField;
     private Texture t;
+    private Config config;
+    private GameStateManager g;
 
-    public UsernameView(GameStateManager gsm) {
+    public UsernameView(GameStateManager gsm, final Config config) {
 
         super(gsm);
-        cam.setToOrtho(false, Game.WIDTH / 2, Game.HEIGHT / 2);
+        g = gsm;
+/*        cam.setToOrtho(false, Game.WIDTH / 2f, Game.HEIGHT / 2f);
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
       //  Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
@@ -36,7 +41,22 @@ public class UsernameView extends State {
         usernameField.setPosition(cam.position.x,cam.position.y);
         usernameField.setSize(300,40);
         stage.addActor(this.usernameField);
-        this.t = new Texture("badlogic.jpg");
+        this.t = new Texture("badlogic.jpg");*/
+
+        Gdx.input.getTextInput(new Input.TextInputListener() {
+
+            @Override
+            public void input(String text) {
+                config.username = text;
+                g.push(new LobbySelectView(g));
+
+            }
+
+            @Override
+            public void canceled() {
+                System.out.println("ups");
+            }
+        },"Username","","");
       /*  TextButton  submitButton = new TextButton("Submit", skin);
         submitButton.setPosition(100, 100);
         submitButton.setSize(300,60);
@@ -49,14 +69,31 @@ public class UsernameView extends State {
         stage.addActor(submitButton);*/
     }
 
+
+
     @Override
     protected void handleInput() {
+        if(Gdx.input.justTouched()){
+            Gdx.input.getTextInput(new Input.TextInputListener() {
+                @Override
+                public void input(String text) {
+                    config.username = text;
 
+                    gsm.push(new LobbySelectView(gsm));
+
+                }
+
+                @Override
+                public void canceled() {
+                    System.out.println("ups");
+                }
+            },"Username","","");
+        }
     }
 
     @Override
     public void update(float dt) {
-
+        handleInput();
 
     }
 
@@ -64,10 +101,9 @@ public class UsernameView extends State {
     public void render(SpriteBatch sb) {
 
         sb.begin();
-        sb.draw(this.t,cam.position.x,cam.position.y);
-        stage.draw();
+        //sb.draw(this.t,cam.position.x,cam.position.y);
         sb.end();
-        stage.draw();
+
 
     }
 

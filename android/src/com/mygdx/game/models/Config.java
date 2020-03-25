@@ -3,7 +3,8 @@ package com.mygdx.game.models;
 public class Config {
 
     private static Config instance = new Config();
-    String username = "";
+    public String username;
+
 
     private Config(){}
 
