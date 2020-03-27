@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Game;
+import com.mygdx.game.models.BoardModel;
 import com.mygdx.game.models.PlayerModel;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,38 +27,30 @@ public class GameView extends State {
     Texture lines;
     Texture texture;
     private Texture background;
+    private BoardModel board;
 
 
-    public GameView(GameStateManager gsm) {
+    public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
         width = Gdx.app.getGraphics().getWidth();
         height = Gdx.app.getGraphics().getHeight();
-        players = getPlayers();
-
-
-
+        background = new Texture("badlogic.jpg");
+        this.board = board;
 
     }
 
-    public ArrayList<PlayerModel> getPlayers() {
-        //Skal egentlig hente fra BoardModel
-        return new ArrayList<PlayerModel>(Arrays.asList(new PlayerModel("Per", Color.RED, new Vector2(500,500))));
-    }
+
 
     @Override
     public void handleInput() {
         for (int i = 0; i < 2; i++) { // 20 is max number of touch points
             if (Gdx.input.isTouched(i)) {
                 if (Gdx.input.getX(i)<= width / 2) {
-                    for(int j = 0; j < players.size(); j++) {
-                        players.get(j).turnRight();
-                    }
+                    board.getPlayer().turnRight();
                 }
 
                 if (Gdx.input.getX(i) > width / 2) {
-                    for(int j = 0; j < players.size(); j++) {
-                        players.get(j).turnLeft();
-                    }
+                    board.getPlayer().turnLeft();
                 }
 
             }
@@ -67,9 +60,7 @@ public class GameView extends State {
     @Override
     public void update(float dt) {
         this.handleInput();
-        for(int j = 0; j < players.size(); j++) {
-            players.get(j).move();
-        }
+        this.board.update(dt);
         this.updateLine();
 
     }
@@ -79,7 +70,6 @@ public class GameView extends State {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         sb.begin();
-        //sb.draw(background, 0, 0, width, height);
         sb.draw(lines, 0, 0, width, height);
         sb.end();
         lines.dispose();
@@ -93,7 +83,9 @@ public class GameView extends State {
     }
 
     public void updateLine(){
+
         Pixmap line = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        ArrayList<PlayerModel> players = board.getPlayers();
         for(int j = 0; j < players.size(); j++) {
             ArrayList<Vector2> points = players.get(j).getLinePoints();
             line.setColor(players.get(j).getColor());
@@ -101,8 +93,14 @@ public class GameView extends State {
                 Vector2 point1 = points.get(i);
                 Vector2 point2 = points.get(i+1);
                 line.drawLine((int) point1.x, (int) point1.y, (int) point2.x, (int) point2.y);
-                line.drawLine((int) point1.x-1, (int) point1.y -1, (int) point2.x - 1, (int) point2.y - 1);
-                line.drawLine((int) point1.x + 1, (int) point1.y + 1, (int) point2.x + 1, (int) point2.y + 1);
+                line.drawPixel((int) point2.x, (int) point2.y + 1);
+                line.drawPixel((int) point2.x + 1, (int) point2.y + 1);
+                line.drawPixel((int) point2.x + 1, (int) point2.y);
+                line.drawPixel((int) point2.x + 1, (int) point2.y - 1);
+                line.drawPixel((int) point2.x, (int) point2.y - 1);
+                line.drawPixel((int) point2.x - 1, (int) point2.y - 1);
+                line.drawPixel((int) point2.x - 1, (int) point2.y);
+                line.drawPixel((int) point2.x - 1, (int) point2.y + 1);
             }
 
         }
