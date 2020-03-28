@@ -4,6 +4,8 @@ package com.mygdx.game.models;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mygdx.game.Game;
 
 import java.util.ArrayList;
@@ -16,13 +18,22 @@ public class PlayerModel {
             LineModel line;
             boolean active;
 			float angle;
+            private DatabaseReference mDatabase;
+            String playerID;
+            String gameID;
 
-            public PlayerModel(String username, Color color, Vector2 start){
+
+    public PlayerModel(String username, Color color, Vector2 start){
                 this.username = username;
                 this.color = color;
-                this.line = new LineModel(start);
                 this.active = true;
 				this.angle = 1;
+                mDatabase = FirebaseDatabase.getInstance().getReference().child("players");
+                String key = mDatabase.push().getKey();
+                this.playerID = key;
+                mDatabase.child(key).setValue(username);
+                this.line = new LineModel(start, key);
+
             }
 
             public ArrayList<Vector2> getLinePoints(){
@@ -68,6 +79,7 @@ public class PlayerModel {
 
     public void setNewPoint(int x, int y){
         Vector2 point = new Vector2(x,y);
+
         this.line.addPoint(point);
     }
 
