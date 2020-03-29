@@ -3,6 +3,7 @@ package com.mygdx.game.views;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Game;
 
 public abstract class State {
     protected OrthographicCamera cam;
@@ -11,7 +12,8 @@ public abstract class State {
 
     protected State(GameStateManager gsm){
         this.gsm = gsm;
-        cam = new OrthographicCamera();
+        cam = new OrthographicCamera(Game.WIDTH, Game.HEIGHT);
+        cam.setToOrtho(false);
         mouse = new Vector3();
 
     }

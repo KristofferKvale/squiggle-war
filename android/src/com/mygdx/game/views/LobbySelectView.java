@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Random;
 
 public class LobbySelectView extends State {
-    private static final int LOBBY_TOP = (int) (Gdx.graphics.getHeight() * 0.9);
-    private static final int LOBBY_LEFT = (int) (Gdx.graphics.getWidth() * 0.1);
+    private static final int LOBBY_TOP = (int) (Game.HEIGHT * 0.9);
+    private static final int LOBBY_LEFT = (int) (Game.WIDTH * 0.1);
     private static final int LOBBY_WIDTH = 1000;
     private static final int LOBBY_HEIGHT = 100;
     private static final int LOBBY_DISTANCE = 50;
@@ -31,10 +31,13 @@ public class LobbySelectView extends State {
 
     public LobbySelectView(GameStateManager gsm) {
         super(gsm);
+
         this.font = new BitmapFont();
 
         this.buttons = new ArrayList<>();
-        this.settings = new NormalButton(new Texture("settings.png"), Gdx.graphics.getWidth()-150, Gdx.graphics.getHeight()-150, 150, 150, new SettingsView(gsm));
+        this.settings = new NormalButton(new Texture("settings.png"),
+                Game.WIDTH - 200, Game.HEIGHT - 200, 150, 150,
+                new SettingsView(gsm));
         this.buttons.add(this.settings);
 
         // TODO: Check for actual lobbies
@@ -58,7 +61,7 @@ public class LobbySelectView extends State {
     protected void handleInput() {
         if (Gdx.input.justTouched()) {
             int x = Gdx.input.getX();
-            int y = Gdx.graphics.getHeight() - Gdx.input.getY();
+            int y = Game.HEIGHT - Gdx.input.getY();
 
             for (Button btn : this.buttons){
                 if (btn.checkHit(x, y)) {
@@ -80,6 +83,8 @@ public class LobbySelectView extends State {
         // show things on the screen
         Gdx.gl.glClearColor(0, 0, 255, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        sb.setProjectionMatrix(this.cam.combined);
 
         this.settings.draw(sb);
 
@@ -172,7 +177,6 @@ public class LobbySelectView extends State {
         private String name;
         private int players;
         private int margin;
-        private int gap;
 
         Lobby(int x, int y, int width, int height, String name, int players, RoomView gameView) {
             super(x, y, width, height, gameView);
@@ -181,7 +185,6 @@ public class LobbySelectView extends State {
             this.shapes = new ShapeRenderer();
             this.font = new BitmapFont();
             this.margin = 20;
-            this.gap = 700;
         }
 
         public void draw(SpriteBatch sb){
@@ -191,8 +194,10 @@ public class LobbySelectView extends State {
             sb.begin();
             font.setColor(Color.MAGENTA);
             font.getData().setScale(5f);
-            font.draw(sb, this.name, this.x + this.margin, this.y - this.margin + this.height);
-            font.draw(sb, this.players + "/5", this.x + gap, this.y - this.margin + this.height);
+            font.draw(sb, this.name,
+                    this.x + this.margin, this.y + this.height - this.margin);
+            font.draw(sb, this.players + "/5",
+                    Game.WIDTH/2, this.y + this.height - this.margin);
             sb.end();
         }
     }

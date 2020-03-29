@@ -67,6 +67,9 @@ public class GameView extends State {
     public void render(SpriteBatch sb) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        sb.setProjectionMatrix(this.cam.combined);
+
         sb.begin();
         sb.draw(lines, 0, 0, width, height);
         sb.end();

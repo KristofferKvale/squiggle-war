@@ -28,6 +28,8 @@ public class SettingsView extends State {
         Gdx.gl.glClearColor(0, 0, 255, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        sb.setProjectionMatrix(this.cam.combined);
+
         sb.begin();
         sb.draw(this.texture, 0, 0);
         sb.end();
