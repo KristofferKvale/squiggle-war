@@ -1,8 +1,10 @@
 package com.mygdx.game.models;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.badlogic.gdx.math.Vector2;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,7 +22,7 @@ public class LineModel implements Line {
     private DatabaseReference mDatabase;
 
 
-    LineModel(Vector2 start, String playerID){
+    LineModel(Vector2 start, String playerID) {
         this.playerID = playerID;
         points.add(start);
         float x = start.x;
@@ -28,13 +30,42 @@ public class LineModel implements Line {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("players").child(playerID).child("points");
         String key = mDatabase.push().getKey();
         mDatabase.child(key).setValue(start);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("players").child(playerID).child("points");
+        mDatabase.addChildEventListener(new ChildEventListener() {
+
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Vector2 point = dataSnapshot.getValue(Vector2.class);
+                points.add(point);
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
     }
 
     @Override
     public void addPoint(Vector2 point) {
-        this.points.add(point);
+
         mDatabase = FirebaseDatabase.getInstance().getReference().child("players").child(playerID).child("points");
         String key = mDatabase.push().getKey();
         mDatabase.child(key).setValue(point);
@@ -43,24 +74,7 @@ public class LineModel implements Line {
 
     @Override
     public ArrayList<Vector2> getPoints() {
-/*         final ArrayList<Vector2> points = new ArrayList<>();
 
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players").child(playerID).child("points");
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-                    Vector2 point = singleSnapshot.getValue(Vector2.class);
-                    points.add(point);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        this.points = points;*/
         return points;
     }
 
@@ -68,6 +82,5 @@ public class LineModel implements Line {
     public Vector2 getLastPoint() {
         return this.points.get(points.size() - 1);
     }
-
 
 }
