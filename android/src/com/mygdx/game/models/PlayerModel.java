@@ -40,6 +40,8 @@ public class PlayerModel {
                 return this.line.getPoints();
             }
 
+            public String getUsername() { return this.username; }
+
             public void setNotActive(){
                 this.active = false;
             }
