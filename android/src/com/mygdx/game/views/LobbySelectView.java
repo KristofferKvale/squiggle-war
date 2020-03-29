@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.game.Game;
+import com.mygdx.game.models.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,8 @@ public class LobbySelectView extends State {
     private static final int LOBBY_HEIGHT = 100;
     private static final int LOBBY_DISTANCE = 50;
 
+    private BitmapFont font;
+
     private List<Lobby> lobbies;
 
     private Button settings;
@@ -27,6 +31,8 @@ public class LobbySelectView extends State {
 
     public LobbySelectView(GameStateManager gsm) {
         super(gsm);
+        this.font = new BitmapFont();
+
         this.buttons = new ArrayList<>();
         this.settings = new NormalButton(new Texture("settings.png"), Gdx.graphics.getWidth()-150, Gdx.graphics.getHeight()-150, 150, 150, new SettingsView(gsm));
         this.buttons.add(this.settings);
@@ -80,6 +86,12 @@ public class LobbySelectView extends State {
         for (Lobby l : this.lobbies){
             l.draw(sb);
         }
+
+        sb.begin();
+        this.font.getData().setScale(5f);
+        this.font.draw(sb, Config.getInstance().username, 50, Game.HEIGHT - 50);
+        sb.end();
+
 
         /*//working shitty code
         this.shapes.begin(ShapeRenderer.ShapeType.Filled);
