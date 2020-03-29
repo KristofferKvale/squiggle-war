@@ -14,8 +14,8 @@ import com.mygdx.game.views.UsernameView;
 
 public class Game extends ApplicationAdapter {
 
-    public static final int WIDTH = Gdx.app.getGraphics().getWidth();
-    public static final int HEIGHT = Gdx.app.getGraphics().getHeight();
+    public static int WIDTH;
+    public static int HEIGHT;
     public static final int SPEED = 2;
     public static final double ROTATION_SPEED = 0.03;
 
@@ -27,11 +27,14 @@ public class Game extends ApplicationAdapter {
 
     @Override
     public void create() {
+        WIDTH = Gdx.app.getGraphics().getWidth();
+        HEIGHT = Gdx.app.getGraphics().getHeight();
+
         config = Config.getInstance();
         batch = new SpriteBatch();
         gsm = new GameStateManager();
         Gdx.gl.glClearColor(1, 0, 0, 1);
-        gsm.push(new GameView(gsm));
+        gsm.push(new UsernameView(gsm, Config.getInstance()));
     }
 
     @Override
