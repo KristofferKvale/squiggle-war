@@ -21,8 +21,8 @@ import java.util.List;
 
 public class GameView extends State {
 
-    private int width = 1920;
-    private int height = 1080;
+    private int width = Game.WIDTH;
+    private int height = Game.HEIGHT;
     private ArrayList<PlayerModel> players;
     Texture lines;
     Texture texture;
@@ -32,8 +32,6 @@ public class GameView extends State {
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
-        width = Gdx.app.getGraphics().getWidth();
-        height = Gdx.app.getGraphics().getHeight();
         background = new Texture("badlogic.jpg");
         this.board = board;
 

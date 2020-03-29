@@ -14,8 +14,8 @@ import com.mygdx.game.views.UsernameView;
 
 public class Game extends ApplicationAdapter {
 
-	public static final int WIDTH = 1980;
-	public static final int HEIGHT = 1080;
+	public static final int WIDTH = Gdx.app.getGraphics().getWidth();
+	public static final int HEIGHT = Gdx.app.getGraphics().getHeight();
 	public static final int SPEED = 2;
 	public static final double ROTATION_SPEED = 0.03;
 
