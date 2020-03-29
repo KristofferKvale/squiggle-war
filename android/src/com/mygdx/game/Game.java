@@ -50,7 +50,7 @@ public class Game extends ApplicationAdapter {
         batch.dispose();
     }
 
-    public Vector2 randomPosition() {
+    public static Vector2 randomPosition() {
         int x = (int) (Math.random() * (WIDTH - 200)) + 100;
         int y = (int) (Math.random() * (HEIGHT - 200)) + 100;
         return new Vector2(x, y);
