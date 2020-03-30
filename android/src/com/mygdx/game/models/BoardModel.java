@@ -79,7 +79,7 @@ public class BoardModel {
             ArrayList<Vector2> opponentPoints = opponent.getLinePoints();
             for (Vector2 pos : getSurroundingPoints()){
                 if(opponentPoints.contains(pos)) {
-                    return opponent;
+                    return collidedWith = opponent;
                 }
             }
         }
