@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -28,12 +29,16 @@ public class GameView extends State {
     Texture texture;
     private Texture background;
     private BoardModel board;
-
+    BitmapFont font;
+    String number = "3";
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
         background = new Texture("badlogic.jpg");
         this.board = board;
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
+        font.getData().setScale(5f);
 
     }
 
@@ -60,8 +65,18 @@ public class GameView extends State {
         this.handleInput();
         this.board.update(dt);
         this.updateLine();
-
-    }
+        if(this.board.timeseconds < 4.1f) {
+            if (this.board.timeseconds > 2f && this.board.timeseconds < 3f) {
+                number = "1";
+            }
+            if (this.board.timeseconds < 2f && this.board.timeseconds > 1f) {
+                number = "2";
+            }
+            if (this.board.timeseconds > 4) {
+                number = "";
+            }
+        }
+        }
 
     @Override
     public void render(SpriteBatch sb) {
@@ -71,6 +86,7 @@ public class GameView extends State {
         sb.setProjectionMatrix(this.cam.combined);
 
         sb.begin();
+        font.draw(sb,number,width/2,height/2);
         sb.draw(lines, 0, 0, width, height);
         sb.end();
         lines.dispose();

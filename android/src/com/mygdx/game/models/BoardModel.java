@@ -22,8 +22,8 @@ public class BoardModel {
     ArrayList<PlayerModel> opponents;
     private PlayerModel player;
     public PlayerModel collidedWith = null;
-    float timeseconds= 0f;
-    float period = 3f;
+    public float timeseconds= 0f;
+    float period = 4f;
 
     public BoardModel(ArrayList<PlayerModel> opponents, PlayerModel player){
         this.opponents = opponents;
