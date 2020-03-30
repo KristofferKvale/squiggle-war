@@ -77,10 +77,15 @@ public class PlayerModel {
     }
 
 
-    public void setNewPoint(int x, int y) {
-        Vector2 point = new Vector2(x, y);
+    public void setNewPoint(int x, int y){
+        Vector2 point = new Vector2(x,y);
 
-        this.line.addPoint(point);
+        if (point.x == this.line.getLastPoint().x && point.y == this.line.getLastPoint().y){
+
+        }
+        else {
+            this.line.addPoint(point);
+        }
     }
 
 }
