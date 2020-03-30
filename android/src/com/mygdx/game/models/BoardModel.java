@@ -22,6 +22,8 @@ public class BoardModel {
     ArrayList<PlayerModel> opponents;
     private PlayerModel player;
     public PlayerModel collidedWith = null;
+    float timeseconds= 0f;
+    float period = 3f;
 
     public BoardModel(ArrayList<PlayerModel> opponents, PlayerModel player){
         this.opponents = opponents;
@@ -101,17 +103,20 @@ public class BoardModel {
     }
 
     public void update(float dt) {
-        this.Collision();
-        if (collidedWith == null) {
-            player.move();
-            //Kun for testing
-            for(PlayerModel opp:opponents) {
-                opp.move();
+        timeseconds += dt;
+        if (timeseconds > period) {
+            this.Collision();
+            if (collidedWith == null) {
+                player.move();
+                //Kun for testing
+                for (PlayerModel opp : opponents) {
+                    opp.move();
+                }
+            } else {
+                //Push crashed boolean to player and firebase
             }
-        }else{
-            //Push crashed boolean to player and firebase
+            this.playersCrashed();
         }
-        this.playersCrashed();
     }
 
     public void playersCrashed(){
