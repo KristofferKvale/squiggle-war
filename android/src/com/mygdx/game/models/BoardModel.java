@@ -3,6 +3,7 @@ package com.mygdx.game.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import  com.mygdx.game.models.PlayerModel;
+import com.mygdx.game.views.GameView;
 
 
 import java.lang.reflect.Array;
@@ -21,7 +22,6 @@ public class BoardModel {
     private int height = Gdx.graphics.getHeight();
     ArrayList<PlayerModel> opponents;
     private PlayerModel player;
-    public PlayerModel collidedWith = null;
     public float timeseconds= 0f;
     float period = 4f;
 
@@ -31,17 +31,18 @@ public class BoardModel {
     }
 
     //Function that returns a player if it has collided with a player or a wall
-    public PlayerModel Collision() {
-        if (collidedWith != null) {
-            return collidedWith;
+    public void Collision() {
+        if (!player.isCrashed()) {
+            if (CollisionWalls()) {
+                player.setCrashed(true);
+            }
+            if (CollisionPlayer()) {
+                player.setCrashed(true);
+            }
+            if (CollisionOpponent()) {
+                player.setCrashed(true);
+            }
         }
-        if (CollisionWalls()) {
-            return collidedWith = player;
-        }
-        if (CollisionPlayer()) {
-            return collidedWith = player;
-        }
-        return CollisionOpponent();
     }
 
     //Help function that checks if one player is outside the board
@@ -59,18 +60,18 @@ public class BoardModel {
 
     //Help function that checks if a players position has been visited
 
-    private PlayerModel CollisionOpponent(){
+    private boolean CollisionOpponent(){
 
         for(PlayerModel opponent : this.opponents){
             Vector2 lastPlayerPos = this.player.getPosition();
             for (Vector2 pos : opponent.getLinePoints()){
                 if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12) {
-                    return collidedWith = opponent;
+                    return true;
                 }
             }
         }
 
-        return null;
+        return false;
     }
 
     private boolean CollisionPlayer() {
@@ -92,14 +93,12 @@ public class BoardModel {
         timeseconds += dt;
         if (timeseconds > period) {
             this.Collision();
-            if (collidedWith == null) {
+            if (!player.isCrashed()) {
                 player.move();
                 //Kun for testing
                 for (PlayerModel opp : opponents) {
                     opp.move();
                 }
-            } else {
-                //Push crashed boolean to player and firebase
             }
             this.playersCrashed();
         }
@@ -107,17 +106,17 @@ public class BoardModel {
 
     public void playersCrashed(){
         //Get status from opponents
-        int crashed = 0;
-        //if (player.crashed){crashed++};
+        int numPlayerCrash = 0;
+        if (player.isCrashed()){numPlayerCrash++;}
         for(PlayerModel opponent : opponents) {
-            /*if(opponent.crashed) {
-            crashed++;
-            }*/
+            if(opponent.isCrashed()) {
+            numPlayerCrash++;
+            }
         }
-        if(crashed >= opponents.size()) {
-            //End round
-            //Reset lines
-            //Start new round
+        if(numPlayerCrash >= opponents.size()) {
+            if (!player.isCrashed()){player.incScore();}
+            player.nextGame();
+            timeseconds= 0f;
         }
     }
 
@@ -135,5 +134,6 @@ public class BoardModel {
     public PlayerModel getPlayer() {
         return player;
     }
+
 }
 

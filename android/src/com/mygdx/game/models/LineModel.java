@@ -27,10 +27,10 @@ public class LineModel implements Line {
         points.add(start);
         float x = start.x;
         float y = start.y;
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players").child(playerID).child("points");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("points");
         String key = mDatabase.push().getKey();
         mDatabase.child(key).setValue(start);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players").child(playerID).child("points");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("points");
         mDatabase.addChildEventListener(new ChildEventListener() {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -66,7 +66,7 @@ public class LineModel implements Line {
     @Override
     public void addPoint(Vector2 point) {
 
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players").child(playerID).child("points");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("points");
         String key = mDatabase.push().getKey();
         mDatabase.child(key).setValue(point);
 
@@ -81,6 +81,11 @@ public class LineModel implements Line {
     @Override
     public Vector2 getLastPoint() {
         return this.points.get(points.size() - 1);
+    }
+
+    public void delete() {
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("points");
+        mDatabase.removeValue();
     }
 
 }

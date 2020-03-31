@@ -1,6 +1,5 @@
 package com.mygdx.game.views;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -8,16 +7,13 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Game;
 import com.mygdx.game.models.BoardModel;
 import com.mygdx.game.models.PlayerModel;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.ListIterator;
 
 
 public class GameView extends State {
@@ -26,28 +22,35 @@ public class GameView extends State {
     private int height = Game.HEIGHT;
     private ArrayList<PlayerModel> players;
     Texture lines;
-    Texture texture;
-    private Texture background;
     private BoardModel board;
     BitmapFont font;
     String number = "3";
     public Pixmap line;
+    ArrayList<BitmapFont> scores;
+    float time = 0f;
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
-        background = new Texture("badlogic.jpg");
         this.board = board;
         font = new BitmapFont();
         font.setColor(Color.WHITE);
         font.getData().setScale(5f);
         line = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        scores = new ArrayList<BitmapFont>();
+        for(PlayerModel opp : board.getPlayers()) {
+            BitmapFont oppScore = new BitmapFont();
+            oppScore.setColor(opp.getColor());
+            oppScore.getData().setScale(5f);
+            scores.add(oppScore);
+        }
+        this.updateLine();
     }
 
 
 
     @Override
     public void handleInput() {
-        for (int i = 0; i < 2; i++) { // 20 is max number of touch points
+        for (int i = 0; i < 10; i++) { // 20 is max number of touch points
             if (Gdx.input.isTouched(i)) {
                 if (Gdx.input.getX(i)<= width / 2) {
                     board.getPlayer().turnRight();
@@ -63,6 +66,7 @@ public class GameView extends State {
 
     @Override
     public void update(float dt) {
+        time += dt;
         this.handleInput();
         this.board.update(dt);
         this.updateLine();
@@ -73,11 +77,14 @@ public class GameView extends State {
             if (this.board.timeseconds < 2f && this.board.timeseconds > 1f) {
                 number = "2";
             }
+            if (this.board.timeseconds < 1f && this.board.timeseconds >= 0f) {
+                number = "3";
+            }
             if (this.board.timeseconds > 4) {
                 number = "";
             }
         }
-        }
+    }
 
     @Override
     public void render(SpriteBatch sb) {
@@ -88,6 +95,11 @@ public class GameView extends State {
 
         sb.begin();
         font.draw(sb,number,width/2,height/2);
+        ListIterator<BitmapFont> scoresIt = scores.listIterator();
+        while (scoresIt.hasNext()) {
+            int score = board.getPlayers().get(scoresIt.nextIndex()).getScore();
+            scoresIt.next().draw(sb, Integer.toString(score), (width/2) + 200 + scoresIt.nextIndex()*100, (height)-50);
+        }
         sb.draw(lines, 0, 0, width, height);
         sb.end();
         lines.dispose();
@@ -96,7 +108,6 @@ public class GameView extends State {
 
     @Override
     public void dispose () {
-        //background.dispose();
         line.dispose();
         lines.dispose();
     }
