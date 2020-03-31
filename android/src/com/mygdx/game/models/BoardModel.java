@@ -57,28 +57,14 @@ public class BoardModel {
         }
     }
 
-
-    private ArrayList<Vector2> getSurroundingPoints(){
-        ArrayList<Vector2> lastPlayerPosSurrounding = new ArrayList<Vector2>();
-        Vector2 lastPlayerPos = this.player.getPosition();
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x, lastPlayerPos.y));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x, lastPlayerPos.y + 1));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x + 1, lastPlayerPos.y + 1));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x + 1, lastPlayerPos.y));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x + 1, lastPlayerPos.y - 1));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x, lastPlayerPos.y - 1));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x - 1, lastPlayerPos.y - 1));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x - 1, lastPlayerPos.y));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x - 1, lastPlayerPos.y + 1));
-        return lastPlayerPosSurrounding;
-    }
     //Help function that checks if a players position has been visited
+
     private PlayerModel CollisionOpponent(){
 
         for(PlayerModel opponent : this.opponents){
-            ArrayList<Vector2> opponentPoints = opponent.getLinePoints();
-            for (Vector2 pos : getSurroundingPoints()){
-                if(opponentPoints.contains(pos)) {
+            Vector2 lastPlayerPos = this.player.getPosition();
+            for (Vector2 pos : opponent.getLinePoints()){
+                if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12) {
                     return collidedWith = opponent;
                 }
             }
@@ -91,10 +77,10 @@ public class BoardModel {
         ArrayList<Vector2> playerPoints = new ArrayList<>();
         playerPoints.addAll(player.getLinePoints());
         Vector2 lastPlayerPos = this.player.getPosition();
-        if(playerPoints.size()>5) {
-            playerPoints.subList(playerPoints.size()-5,playerPoints.size()).clear();
-            for (Vector2 pos : getSurroundingPoints()) {
-                if(playerPoints.contains(pos)){
+        if(playerPoints.size()>50) {
+            playerPoints.subList(playerPoints.size()-50,playerPoints.size()).clear();
+            for (Vector2 pos : playerPoints) {
+                if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12){
                     return true;
                 }
             }

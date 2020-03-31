@@ -31,6 +31,7 @@ public class GameView extends State {
     private BoardModel board;
     BitmapFont font;
     String number = "3";
+    public Pixmap line;
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
@@ -39,7 +40,7 @@ public class GameView extends State {
         font = new BitmapFont();
         font.setColor(Color.WHITE);
         font.getData().setScale(5f);
-
+        line = new Pixmap(width, height, Pixmap.Format.RGBA8888);
     }
 
 
@@ -96,33 +97,19 @@ public class GameView extends State {
     @Override
     public void dispose () {
         //background.dispose();
+        line.dispose();
         lines.dispose();
     }
 
-    public void updateLine(){
+    public void updateLine() {
 
-        Pixmap line = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         ArrayList<PlayerModel> players = board.getPlayers();
         for(int j = 0; j < players.size(); j++) {
-            ArrayList<Vector2> points = players.get(j).getLinePoints();
+            Vector2 point = players.get(j).getPosition();
             line.setColor(players.get(j).getColor());
-            for(int i = 0; i < points.size()-1; i++){
-                Vector2 point1 = points.get(i);
-                Vector2 point2 = points.get(i+1);
-                line.drawLine((int) point1.x, (int) point1.y, (int) point2.x, (int) point2.y);
-                line.drawPixel((int) point2.x, (int) point2.y + 1);
-                line.drawPixel((int) point2.x + 1, (int) point2.y + 1);
-                line.drawPixel((int) point2.x + 1, (int) point2.y);
-                line.drawPixel((int) point2.x + 1, (int) point2.y - 1);
-                line.drawPixel((int) point2.x, (int) point2.y - 1);
-                line.drawPixel((int) point2.x - 1, (int) point2.y - 1);
-                line.drawPixel((int) point2.x - 1, (int) point2.y);
-                line.drawPixel((int) point2.x - 1, (int) point2.y + 1);
-            }
-
+            line.fillCircle((int)point.x, (int)point.y, 8);
         }
         lines = new Texture(line, Format.RGBA8888, false);
-        line.dispose();
     }
 }
 
