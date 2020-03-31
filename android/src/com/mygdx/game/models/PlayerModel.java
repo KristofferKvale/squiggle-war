@@ -20,6 +20,8 @@ public class PlayerModel {
     String gameID;
     private DatabaseReference mDatabase;
 
+    //RoomModel trenger en tom constructor for å lese fra db (??)
+    public PlayerModel(){}
 
     public PlayerModel(String username, Color color) {
         this.username = username;
