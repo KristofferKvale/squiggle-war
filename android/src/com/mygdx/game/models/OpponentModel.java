@@ -190,6 +190,10 @@ public class OpponentModel {
     }
 
     public Vector2 getPosition() {
-        return this.points.get(points.size() - 1);
+        if(points.size() >= 1) {
+            return this.points.get(points.size() - 1);
+        }else{
+            return new Vector2(-100,-100);
+        }
     }
 }

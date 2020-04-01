@@ -130,8 +130,10 @@ public class GameView extends State {
         ArrayList<OpponentModel> players = board.getOpponents();
         for(int j = 0; j < players.size(); j++) {
             Vector2 point = players.get(j).getPosition();
-            line.setColor(players.get(j).getColor());
-            line.fillCircle((int)point.x, (int)point.y, 8);
+            if (point.x != -100) {
+                line.setColor(players.get(j).getColor());
+                line.fillCircle((int)point.x, (int)point.y, 8);
+            }
         }
         lines = new Texture(line, Format.RGBA8888, false);
     }
