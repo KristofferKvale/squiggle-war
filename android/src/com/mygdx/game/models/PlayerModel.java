@@ -154,7 +154,7 @@ public class PlayerModel {
     }
 
     public void incScore() {
-        this.score++;
+        this.score += 1;
         Log.d("MSG", "Score incremented" + score);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
         mDatabase.setValue(score);

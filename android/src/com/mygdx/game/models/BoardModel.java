@@ -18,6 +18,7 @@ public class BoardModel {
     ArrayList<OpponentModel> opponents;
     private PlayerModel player;
     public float timeseconds= 0f;
+    public float postCrash = 0f;
     float period = 4f;
 
     public BoardModel(ArrayList<OpponentModel> opponents, PlayerModel player){
@@ -95,11 +96,11 @@ public class BoardModel {
             if (!player.isCrashed()) {
                 player.move();
             }
-            this.playersCrashed();
+            this.playersCrashed(dt);
         }
     }
 
-    public void playersCrashed(){
+    public void playersCrashed(float dt){
         //Get status from opponents
         int numPlayerCrash = 0; // Skal være 0
         if (player.isCrashed()){numPlayerCrash++;}
@@ -110,11 +111,17 @@ public class BoardModel {
         }
         if(numPlayerCrash >= opponents.size()) {
             if (!player.isCrashed()){player.incScore();} //Skal være !player.isCrashed
-            for(OpponentModel opp : opponents) {
-                opp.nextGame();
+            if(postCrash < 3f) {
+                postCrash += dt;
+            } else{
+                for(OpponentModel opp : opponents) {
+                    opp.nextGame();
+                }
+                player.nextGame();
+                postCrash = 0f;
+                timeseconds= 0f;
             }
-            player.nextGame();
-            timeseconds= 0f;
+
         }
     }
 
