@@ -34,9 +34,12 @@ public class BoardModel {
             if (CollisionPlayer()) {
                 player.setCrashed(true);
             }
-            if (CollisionOpponent()) {
-                player.setCrashed(true);
-            }
+            try {
+                if (CollisionOpponent()) {
+                    player.setCrashed(true);
+                }
+            }catch (Exception e) {}
+
         }
     }
 
@@ -58,7 +61,8 @@ public class BoardModel {
     private boolean CollisionOpponent(){
         for(OpponentModel opponent : this.opponents){
             Vector2 lastPlayerPos = this.player.getPosition();
-            ArrayList<Vector2> oppPoints = opponent.getPoints();
+            ArrayList<Vector2> oppPoints;
+            oppPoints = opponent.getPoints();
             for (Vector2 pos : oppPoints){
                 if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12) {
                     return true;
