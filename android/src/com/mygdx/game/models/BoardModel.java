@@ -106,12 +106,12 @@ public class BoardModel {
         if (player.isCrashed()){numPlayerCrash++;}
         for(OpponentModel opponent : opponents) {
             if(opponent.isCrashed()) {
-            numPlayerCrash++;
+                numPlayerCrash++;
             }
         }
         if(numPlayerCrash >= opponents.size()) {
             if (!player.isCrashed()){player.incScore();} //Skal være !player.isCrashed
-            if(postCrash < 3f) {
+            if(postCrash < 6.1f) {
                 postCrash += dt;
             } else{
                 for(OpponentModel opp : opponents) {

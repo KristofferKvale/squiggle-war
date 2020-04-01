@@ -26,9 +26,9 @@ public class OpponentModel {
     private ArrayList<Vector2> points = new ArrayList<>();
 
 
-    public OpponentModel(String playerID, String roomID) {
-        this.playerID = playerID;
-        this.roomID = roomID;
+    public OpponentModel(String playerId, String roomId) {
+        this.playerID = playerId;
+        this.roomID = roomId;
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
         mDatabase.addChildEventListener(new ChildEventListener() {
