@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mygdx.game.Game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +35,13 @@ public class LineModel implements Line {
         mDatabase.addChildEventListener(new ChildEventListener() {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                try{
                 Vector2 point = dataSnapshot.getValue(Vector2.class);
                 points.add(point);
+
+                }catch (Exception e) {
+
+                }
 
             }
 
@@ -86,6 +92,8 @@ public class LineModel implements Line {
     public void delete() {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("points");
         mDatabase.removeValue();
+        this.points = new ArrayList<>();
+        points.add(Game.randomPosition());
     }
 
 }

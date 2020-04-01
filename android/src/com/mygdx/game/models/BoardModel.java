@@ -114,7 +114,7 @@ public class BoardModel {
             }
         }
         if(numPlayerCrash >= opponents.size()) {
-            if (!player.isCrashed()){player.incScore();}
+            if (player.isCrashed()){player.incScore();}
             player.nextGame();
             timeseconds= 0f;
         }

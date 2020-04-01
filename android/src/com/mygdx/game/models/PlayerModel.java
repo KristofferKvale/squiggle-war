@@ -1,6 +1,8 @@
 package com.mygdx.game.models;
 
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -32,7 +34,7 @@ public class PlayerModel {
     //RoomModel trenger en tom constructor for å lese fra db (??)
     public PlayerModel(){}
 
-    public PlayerModel(String username, Color color) {
+    public PlayerModel(final String username, Color color) {
         this.username = username;
         this.active = true;
         this.color = color;
@@ -45,7 +47,7 @@ public class PlayerModel {
         mDatabase.child(key).child("score").setValue(score);
         mDatabase.child(key).child("crashed").setValue(crashed);
         this.line = new LineModel(Game.randomPosition(), key);
-        mDatabase.child(playerID);
+        mDatabase.child(key);
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -54,8 +56,18 @@ public class PlayerModel {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                boolean err = false;
+                try{
                     score = dataSnapshot.child("score").getValue(Integer.class);
                     crashed = dataSnapshot.child("crashed").getValue(Boolean.class);
+
+                }catch (Exception e){
+                    err = true;
+                    Log.e("ERR", e.toString());
+                }
+                if(!err) {
+                    Log.d("MSG", username + ": " + score);
+                }
             }
 
             @Override
@@ -157,7 +169,6 @@ public class PlayerModel {
     public void nextGame() {
         this.line.delete();
         this.setCrashed(false);
-        this.line.addPoint(Game.randomPosition());
 
     }
 

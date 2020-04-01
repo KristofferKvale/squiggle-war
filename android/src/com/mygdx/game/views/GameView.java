@@ -27,7 +27,6 @@ public class GameView extends State {
     String number = "3";
     public Pixmap line;
     ArrayList<BitmapFont> scores;
-    float time = 0f;
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
@@ -37,7 +36,8 @@ public class GameView extends State {
         font.getData().setScale(5f);
         line = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         scores = new ArrayList<BitmapFont>();
-        for(PlayerModel opp : board.getPlayers()) {
+        players = board.getPlayers();
+        for(PlayerModel opp : players) {
             BitmapFont oppScore = new BitmapFont();
             oppScore.setColor(opp.getColor());
             oppScore.getData().setScale(5f);
@@ -66,7 +66,6 @@ public class GameView extends State {
 
     @Override
     public void update(float dt) {
-        time += dt;
         this.handleInput();
         this.board.update(dt);
         this.updateLine();
@@ -78,6 +77,8 @@ public class GameView extends State {
                 number = "2";
             }
             if (this.board.timeseconds < 1f && this.board.timeseconds >= 0f) {
+                line.dispose();
+                line = new Pixmap(width, height, Pixmap.Format.RGBA8888);
                 number = "3";
             }
             if (this.board.timeseconds > 4) {
@@ -97,7 +98,7 @@ public class GameView extends State {
         font.draw(sb,number,width/2,height/2);
         ListIterator<BitmapFont> scoresIt = scores.listIterator();
         while (scoresIt.hasNext()) {
-            int score = board.getPlayers().get(scoresIt.nextIndex()).getScore();
+            int score = players.get(scoresIt.nextIndex()).getScore();
             scoresIt.next().draw(sb, Integer.toString(score), (width/2) + 200 + scoresIt.nextIndex()*100, (height)-50);
         }
         sb.draw(lines, 0, 0, width, height);
