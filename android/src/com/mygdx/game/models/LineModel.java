@@ -18,20 +18,21 @@ import java.util.List;
 public class LineModel implements Line {
 
     private ArrayList<Vector2> points = new ArrayList<>();
-    String gameID;
+    String roomID;
     String playerID;
     private DatabaseReference mDatabase;
 
 
-    LineModel(Vector2 start, String playerID) {
+    LineModel(Vector2 start, String playerID, String roomID) {
         this.playerID = playerID;
+        this.roomID = roomID;
         points.add(start);
         float x = start.x;
         float y = start.y;
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("points");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("points");
         String key = mDatabase.push().getKey();
         mDatabase.child(key).setValue(start);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("points");
+        /*mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("points");
         mDatabase.addChildEventListener(new ChildEventListener() {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -64,15 +65,15 @@ public class LineModel implements Line {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
 
     }
 
     @Override
     public void addPoint(Vector2 point) {
-
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("points");
+        points.add(point);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("points");
         String key = mDatabase.push().getKey();
         mDatabase.child(key).setValue(point);
 
@@ -90,7 +91,7 @@ public class LineModel implements Line {
     }
 
     public void delete() {
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("points");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("points");
         mDatabase.removeValue();
         this.points = new ArrayList<>();
         points.add(Game.randomPosition());

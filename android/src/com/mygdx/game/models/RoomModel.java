@@ -22,10 +22,10 @@ import com.mygdx.game.views.GameView;
 
 public class RoomModel {
     //Links up with firebase and creates game and player models
-    private ArrayList<String> opponents;
+    private ArrayList<OpponentModel> opponents;
     private ArrayList<String> players = new ArrayList<>();
 
-    private PlayerModel player;
+    private PlayerModel player = null;
     private BoardModel board;
     private String username;
     private Color color;
@@ -37,12 +37,17 @@ public class RoomModel {
     private boolean gameStarted;
 
 
-    public RoomModel() {
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms");
-        String key = mDatabase.push().getKey();
-        this.roomID = key;
+    public RoomModel(String roomId) {
+        opponents = new ArrayList<>();
         gameStarted = false;
-        mDatabase.child(roomID).child("started").setValue(gameStarted);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms");
+        if (roomId == "1") {
+            String key = mDatabase.push().getKey();
+            this.roomID = key;
+            mDatabase.child(roomID).child("started").setValue(gameStarted);
+        } else {
+            this.roomID = roomId;
+        }
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players");
         //mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID);
 
@@ -50,10 +55,20 @@ public class RoomModel {
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                PlayerModel player = dataSnapshot.getValue(PlayerModel.class);
-                if (player.username != null){
-                    players.add(player.username); //Henter bare ut username, skal hente ut PlayerModels
-                }
+                try{
+                    String playerID = dataSnapshot.getKey();
+                    if (player != null){
+                        if(player.playerID != playerID){
+                            players.add(playerID);
+                            opponents.add(new OpponentModel(playerID, roomID)); //Henter bare ut username, skal hente ut PlayerModels
+                        }
+
+                    }else {
+                        players.add(playerID);
+                        opponents.add(new OpponentModel(playerID, roomID)); //Henter bare ut username, skal hente ut PlayerModels
+                    }
+                }catch (Exception e){}
+
             }
 
             @Override
@@ -81,36 +96,35 @@ public class RoomModel {
 
 
     public void createPlayer(String u) {
-        player = new PlayerModel(u, Color.RED);
-        //mDatabase.child(roomID).child("players").child(player.playerID).setValue(player); //PlayerID?
-        mDatabase.child(player.playerID).setValue(player); //PlayerID?
-        //Må kanskje endres^
+        player = new PlayerModel(u, Color.RED, roomID);
+        opponents.remove(opponents.size()-1);
     }
 
     //public void changeColor(){
     //}
 
     //Skal ta inn currentPlayer
-    public ArrayList<String> getOpponents(String username) {
-        opponents = new ArrayList<>();
+    public ArrayList<OpponentModel> getOpponents() {
+       /* opponents = new ArrayList<>();
         for (String playername : players) {
             //Log.d("TEST!", playername);
             if (playername != username) {
                 opponents.add(playername);
             }
         }
-        Log.d("TEST!", String.valueOf(opponents));
+        Log.d("TEST!", String.valueOf(opponents));*/
         return opponents;
     }
 
 
     public void startGame() {
         gameStarted = true;
-        mDatabase.child(roomID).child("started").setValue(gameStarted);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("started");
+        mDatabase.setValue(gameStarted);
 
     }
 
-    /*public BoardModel getBoard(){
+    public BoardModel getBoard(){
         return new BoardModel(getOpponents(), player);
     }
 
@@ -122,7 +136,6 @@ public class RoomModel {
     public void playerStart(GameStateManager gsm) {
         createGameView(gsm);
     }
-*/
 
 }
 

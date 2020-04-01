@@ -1,5 +1,10 @@
 package com.mygdx.game.views;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -7,11 +12,18 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mygdx.game.Game;
 import com.mygdx.game.models.Config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Random;
 
 public class LobbySelectView extends State {
@@ -21,35 +33,85 @@ public class LobbySelectView extends State {
     private static final int LOBBY_HEIGHT = 100;
     private static final int LOBBY_DISTANCE = 50;
 
+    private DatabaseReference mDatabase;
+
+
     private BitmapFont font;
 
     private List<Lobby> lobbies;
-
+    private Random rand;
     private Button settings;
-
+    private ArrayList<String> roomIDs = new ArrayList<>();
+    int oldListLength = 0;
+    int listLength = 0;
     private List<Button> buttons;
 
     public LobbySelectView(GameStateManager gsm) {
         super(gsm);
-
         this.font = new BitmapFont();
-
         this.buttons = new ArrayList<>();
+        this.lobbies = new ArrayList<>();
+        rand = new Random();
         this.settings = new NormalButton(new Texture("settings.png"),
                 Game.WIDTH - 200, Game.HEIGHT - 200, 150, 150,
                 new SettingsView(gsm));
         this.buttons.add(this.settings);
 
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms");
+        mDatabase.addChildEventListener(new ChildEventListener() {
+
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                try{
+                    String roomID = dataSnapshot.getKey();
+                    roomIDs.add(roomID);
+                }catch (Exception e) {
+                    Log.e("Err", e.toString());
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        makeLobbies();
+        // Lager én lobby
         // TODO: Check for actual lobbies
-        Random rand = new Random();
+
+
+    }
+
+    public void makeLobbies(){
+        //roomIDs.add("1");
+        this.buttons = new ArrayList<>();
         this.lobbies = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        ListIterator<String> roomIt = roomIDs.listIterator();
+        while (roomIt.hasNext()) {
+            int i = roomIt.nextIndex();
             int height = LOBBY_HEIGHT;
             int y = LOBBY_TOP - height - LOBBY_DISTANCE - i * (height + LOBBY_DISTANCE);
             String name = "Lobby " + i;
             int players = rand.nextInt(5);
 
             RoomView rv = new RoomView(gsm);
+            rv.createRoom(roomIt.next());
             Lobby lby = new Lobby(LOBBY_LEFT, y, LOBBY_WIDTH, height, name, players, rv);
 
             this.lobbies.add(lby);
@@ -76,6 +138,12 @@ public class LobbySelectView extends State {
     public void update(float dt) {
         // check for new room information and update it
         this.handleInput();
+        listLength = roomIDs.size();
+        if (listLength != oldListLength){
+            makeLobbies();
+        }
+        oldListLength = listLength;
+
     }
 
     @Override
@@ -147,8 +215,10 @@ public class LobbySelectView extends State {
             }
             return (x_good && y_good);
         }
+        void create() {}
 
         void click(){
+            create();
             gsm.push(this.state);
         }
 
@@ -177,14 +247,21 @@ public class LobbySelectView extends State {
         private String name;
         private int players;
         private int margin;
+        private RoomView roomView;
 
         Lobby(int x, int y, int width, int height, String name, int players, RoomView gameView) {
             super(x, y, width, height, gameView);
             this.name = name;
+            this.roomView = gameView;
             this.players = players;
             this.shapes = new ShapeRenderer();
             this.font = new BitmapFont();
             this.margin = 20;
+        }
+
+        @Override
+        void create() {
+            this.roomView.createPlayer();
         }
 
         public void draw(SpriteBatch sb){

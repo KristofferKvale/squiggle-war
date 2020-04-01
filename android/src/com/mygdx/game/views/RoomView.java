@@ -1,5 +1,7 @@
 package com.mygdx.game.views;
 
+import android.util.Log;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,12 +18,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.game.models.Config;
 import com.mygdx.game.models.PlayerModel;
 import com.mygdx.game.models.RoomModel;
 
 public class RoomView extends State {
 
-    private RoomModel room;
+    private RoomModel room = null;
 
     private Stage stage;
     private SpriteBatch batch;
@@ -30,6 +33,7 @@ public class RoomView extends State {
     private BitmapFont font;
 
     private Skin uiskin;
+    private float timeToStart;
 
     private PlayerModel[] players;
 
@@ -41,6 +45,8 @@ public class RoomView extends State {
         batch = new SpriteBatch();
 
         stage = new Stage(new ScreenViewport());
+
+        timeToStart = 0f;
 
         uiskin = new Skin(Gdx.files.internal("uiskin.json"));
 
@@ -57,9 +63,14 @@ public class RoomView extends State {
 
     }
 
-    // public void createRoom(RoomModel room) {
-    //      this.room = room;
-    // }
+     public void createRoom(String roomID) {
+        this.room = new RoomModel(roomID);
+
+    }
+
+    public void createPlayer() {
+        room.createPlayer("DummyName");
+    }
 
     @Override
     protected void handleInput() {
@@ -68,7 +79,16 @@ public class RoomView extends State {
 
     @Override
     public void update(float dt) {
+        if(room != null) {
+            if(room.getOpponents().size() >= 1) {
+                timeToStart += dt;
+            }
+            if(timeToStart > 4.1f) {
+                room.playerStart(gsm);
+            }
+        }
 
+        Log.d("MSG", Float.toString(timeToStart) + " Antall mot: " + (room.getOpponents().size()));
     }
 
     @Override

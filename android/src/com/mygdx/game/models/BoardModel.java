@@ -2,14 +2,9 @@ package com.mygdx.game.models;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import  com.mygdx.game.models.PlayerModel;
-import com.mygdx.game.views.GameView;
 
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 public class BoardModel {
@@ -20,12 +15,12 @@ public class BoardModel {
 
     private int width = Gdx.graphics.getWidth();
     private int height = Gdx.graphics.getHeight();
-    ArrayList<PlayerModel> opponents;
+    ArrayList<OpponentModel> opponents;
     private PlayerModel player;
     public float timeseconds= 0f;
     float period = 4f;
 
-    public BoardModel(ArrayList<PlayerModel> opponents, PlayerModel player){
+    public BoardModel(ArrayList<OpponentModel> opponents, PlayerModel player){
         this.opponents = opponents;
         this.player = player;
     }
@@ -62,9 +57,9 @@ public class BoardModel {
 
     private boolean CollisionOpponent(){
 
-        for(PlayerModel opponent : this.opponents){
+        for(OpponentModel opponent : this.opponents){
             Vector2 lastPlayerPos = this.player.getPosition();
-            for (Vector2 pos : opponent.getLinePoints()){
+            for (Vector2 pos : opponent.getPoints()){
                 if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12) {
                     return true;
                 }
@@ -95,10 +90,6 @@ public class BoardModel {
             this.Collision();
             if (!player.isCrashed()) {
                 player.move();
-                //Kun for testing
-                for (PlayerModel opp : opponents) {
-                    opp.move();
-                }
             }
             this.playersCrashed();
         }
@@ -108,26 +99,23 @@ public class BoardModel {
         //Get status from opponents
         int numPlayerCrash = 0; // Skal være 0
         if (player.isCrashed()){numPlayerCrash++;}
-        for(PlayerModel opponent : opponents) {
+        for(OpponentModel opponent : opponents) {
             if(opponent.isCrashed()) {
             numPlayerCrash++;
             }
         }
         if(numPlayerCrash >= opponents.size()) {
             if (!player.isCrashed()){player.incScore();} //Skal være !player.isCrashed
+            for(OpponentModel opp : opponents) {
+                opp.nextGame();
+            }
             player.nextGame();
             timeseconds= 0f;
         }
     }
 
-    public ArrayList<PlayerModel> getPlayers() {
-        ArrayList<PlayerModel> players = new ArrayList<>();
-        players.add(player);
-        players.addAll(opponents);
-        return players;
-    }
 
-    public ArrayList<PlayerModel> getOpponents() {
+    public ArrayList<OpponentModel> getOpponents() {
         return opponents;
     }
 

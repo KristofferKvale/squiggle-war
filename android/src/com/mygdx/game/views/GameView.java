@@ -12,6 +12,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Game;
 import com.mygdx.game.models.BoardModel;
 import com.mygdx.game.models.PlayerModel;
+import com.mygdx.game.models.OpponentModel;
+
 import java.util.ArrayList;
 import java.util.ListIterator;
 
@@ -20,10 +22,12 @@ public class GameView extends State {
 
     private int width = Game.WIDTH;
     private int height = Game.HEIGHT;
-    private ArrayList<PlayerModel> players;
+    private ArrayList<OpponentModel> opponents;
+    private PlayerModel player;
     Texture lines;
     private BoardModel board;
     BitmapFont font;
+    BitmapFont playerScore;
     String number = "3";
     public Pixmap line;
     ArrayList<BitmapFont> scores;
@@ -36,8 +40,12 @@ public class GameView extends State {
         font.getData().setScale(5f);
         line = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         scores = new ArrayList<BitmapFont>();
-        players = board.getPlayers();
-        for(PlayerModel opp : players) {
+        opponents = board.getOpponents();
+        player = board.getPlayer();
+        playerScore = new BitmapFont();
+        playerScore.setColor(player.getColor());
+        playerScore.getData().setScale(5f);
+        for(OpponentModel opp : opponents) {
             BitmapFont oppScore = new BitmapFont();
             oppScore.setColor(opp.getColor());
             oppScore.getData().setScale(5f);
@@ -96,10 +104,11 @@ public class GameView extends State {
 
         sb.begin();
         font.draw(sb,number,width/2,height/2);
+        playerScore.draw(sb, Integer.toString(player.getScore()),(width/2) + 200, (height)-50);
         ListIterator<BitmapFont> scoresIt = scores.listIterator();
         while (scoresIt.hasNext()) {
-            int score = players.get(scoresIt.nextIndex()).getScore();
-            scoresIt.next().draw(sb, Integer.toString(score), (width/2) + 200 + scoresIt.nextIndex()*100, (height)-50);
+            int score = opponents.get(scoresIt.nextIndex()).getScore();
+            scoresIt.next().draw(sb, Integer.toString(score), (width/2) + 300 + scoresIt.nextIndex()*100, (height)-50);
         }
         sb.draw(lines, 0, 0, width, height);
         sb.end();
@@ -114,8 +123,11 @@ public class GameView extends State {
     }
 
     public void updateLine() {
+        line.setColor(player.getColor());
+        Vector2 pos = player.getPosition();
+        line.fillCircle((int)pos.x, (int)pos.y, 8);
 
-        ArrayList<PlayerModel> players = board.getPlayers();
+        ArrayList<OpponentModel> players = board.getOpponents();
         for(int j = 0; j < players.size(); j++) {
             Vector2 point = players.get(j).getPosition();
             line.setColor(players.get(j).getColor());

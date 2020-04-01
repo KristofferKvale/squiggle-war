@@ -29,25 +29,27 @@ public class PlayerModel {
     private DatabaseReference mDatabase;
     private int score;
     private boolean crashed = false;
+    private String roomID;
 
 
     //RoomModel trenger en tom constructor for å lese fra db (??)
     public PlayerModel(){}
 
-    public PlayerModel(final String username, Color color) {
+    public PlayerModel(final String username, Color color, String roomID) {
         this.username = username;
         this.active = true;
         this.color = color;
+        this.roomID = roomID;
         this.score = 0;
         this.angle = (float) (Math.random() * 2 * Math.PI);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2");
-        String key = mDatabase.push().getKey();
-        this.playerID = key;
-        mDatabase.child(key).child("username").setValue(username);
-        mDatabase.child(key).child("score").setValue(score);
-        mDatabase.child(key).child("crashed").setValue(crashed);
-        this.line = new LineModel(Game.randomPosition(), key);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("score");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players");
+        playerID = mDatabase.push().getKey();
+        mDatabase.child(playerID).child("username").setValue(username);
+        mDatabase.child(playerID).child("score").setValue(score);
+        mDatabase.child(playerID).child("crashed").setValue(crashed);
+        mDatabase.child(playerID).child("color").setValue(color);
+        this.line = new LineModel(Game.randomPosition(), playerID, roomID);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -57,7 +59,6 @@ public class PlayerModel {
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try{
                     score = dataSnapshot.getValue(Integer.class);
-                    //crashed = dataSnapshot.child("crashed").getValue(Boolean.class);
 
                 }catch (Exception e){
                     Log.e("ERR", "Err: " + e.toString());
@@ -80,7 +81,7 @@ public class PlayerModel {
             }
         });
 
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("crashed");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("crashed");
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -90,7 +91,6 @@ public class PlayerModel {
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try{
                     crashed = dataSnapshot.getValue(Boolean.class);
-                    //crashed = dataSnapshot.child("crashed").getValue(Boolean.class);
 
                 }catch (Exception e){
                     Log.e("ERR", "Err: " + e.toString());
@@ -123,6 +123,10 @@ public class PlayerModel {
         return this.username;
     }
 
+    public String getRoomID() {
+        return roomID;
+    }
+
     public void setNotActive() {
         this.active = false;
     }
@@ -145,14 +149,14 @@ public class PlayerModel {
 
     public void setScore(int score) {
         this.score = score;
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("score");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
         mDatabase.setValue(score);
     }
 
     public void incScore() {
         this.score++;
         Log.d("MSG", "Score incremented" + score);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("score");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
         mDatabase.setValue(score);
 
 
@@ -164,7 +168,7 @@ public class PlayerModel {
 
     public void setCrashed(boolean crashed) {
         this.crashed = crashed;
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("crashed");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("crashed");
         mDatabase.setValue(crashed);
     }
 
@@ -190,7 +194,7 @@ public class PlayerModel {
     public void setNewPoint(int x, int y){
         Vector2 point = new Vector2(x,y);
 
-        if (point.x == this.line.getLastPoint().x && point.y == this.line.getLastPoint().y){
+        if ((int) point.x == (int) this.line.getLastPoint().x && (int) point.y == (int) this.line.getLastPoint().y){
 
         }
         else {
