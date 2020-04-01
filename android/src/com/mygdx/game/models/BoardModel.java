@@ -56,10 +56,10 @@ public class BoardModel {
     //Help function that checks if a players position has been visited
 
     private boolean CollisionOpponent(){
-
         for(OpponentModel opponent : this.opponents){
             Vector2 lastPlayerPos = this.player.getPosition();
-            for (Vector2 pos : opponent.getPoints()){
+            ArrayList<Vector2> oppPoints = opponent.getPoints();
+            for (Vector2 pos : oppPoints){
                 if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12) {
                     return true;
                 }
