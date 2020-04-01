@@ -47,26 +47,53 @@ public class PlayerModel {
         mDatabase.child(key).child("score").setValue(score);
         mDatabase.child(key).child("crashed").setValue(crashed);
         this.line = new LineModel(Game.randomPosition(), key);
-        mDatabase.child(key);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("score");
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                boolean err = false;
                 try{
-                    score = dataSnapshot.child("score").getValue(Integer.class);
-                    crashed = dataSnapshot.child("crashed").getValue(Boolean.class);
+                    score = dataSnapshot.getValue(Integer.class);
+                    //crashed = dataSnapshot.child("crashed").getValue(Boolean.class);
 
                 }catch (Exception e){
-                    err = true;
-                    Log.e("ERR", e.toString());
+                    Log.e("ERR", "Err: " + e.toString());
                 }
-                if(!err) {
-                    Log.d("MSG", username + ": " + score);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("crashed");
+        mDatabase.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                try{
+                    crashed = dataSnapshot.getValue(Boolean.class);
+                    //crashed = dataSnapshot.child("crashed").getValue(Boolean.class);
+
+                }catch (Exception e){
+                    Log.e("ERR", "Err: " + e.toString());
                 }
             }
 
@@ -117,13 +144,17 @@ public class PlayerModel {
     }
 
     public void setScore(int score) {
-        mDatabase.child(playerID).child("score").setValue(score);
         this.score = score;
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("score");
+        mDatabase.setValue(score);
     }
 
     public void incScore() {
         this.score++;
-        mDatabase.child(playerID).child("score").setValue(score);
+        Log.d("MSG", "Score incremented" + score);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("score");
+        mDatabase.setValue(score);
+
 
     }
 
@@ -132,8 +163,9 @@ public class PlayerModel {
     }
 
     public void setCrashed(boolean crashed) {
-        mDatabase.child(playerID).child("crashed").setValue(crashed);
         this.crashed = crashed;
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("players2").child(playerID).child("crashed");
+        mDatabase.setValue(crashed);
     }
 
     public void turnLeft() {

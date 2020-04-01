@@ -106,7 +106,7 @@ public class BoardModel {
 
     public void playersCrashed(){
         //Get status from opponents
-        int numPlayerCrash = 0;
+        int numPlayerCrash = 0; // Skal være 0
         if (player.isCrashed()){numPlayerCrash++;}
         for(PlayerModel opponent : opponents) {
             if(opponent.isCrashed()) {
@@ -114,7 +114,7 @@ public class BoardModel {
             }
         }
         if(numPlayerCrash >= opponents.size()) {
-            if (player.isCrashed()){player.incScore();}
+            if (!player.isCrashed()){player.incScore();} //Skal være !player.isCrashed
             player.nextGame();
             timeseconds= 0f;
         }

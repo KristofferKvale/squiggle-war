@@ -36,8 +36,8 @@ public class LineModel implements Line {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try{
-                Vector2 point = dataSnapshot.getValue(Vector2.class);
-                points.add(point);
+                    Vector2 point = dataSnapshot.getValue(Vector2.class);
+                    points.add(point);
 
                 }catch (Exception e) {
 
