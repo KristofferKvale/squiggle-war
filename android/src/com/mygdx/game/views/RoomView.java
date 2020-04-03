@@ -3,19 +3,19 @@ package com.mygdx.game.views;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.game.Game;
 import com.mygdx.game.models.PlayerModel;
 import com.mygdx.game.models.RoomModel;
 
@@ -44,9 +44,6 @@ public class RoomView extends State {
 
         uiskin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        //Stage should control input:
-        Gdx.input.setInputProcessor(stage);
-
         //Create Tables
         Table colorTable = colorTable();
         Table playerTable = playerTable();
@@ -55,11 +52,10 @@ public class RoomView extends State {
         stage.addActor(colorTable);
         stage.addActor(playerTable);
 
-    }
+        //Stage should control input:
+        Gdx.input.setInputProcessor(stage);
 
-    // public void createRoom(RoomModel room) {
-    //      this.room = room;
-    // }
+    }
 
     @Override
     protected void handleInput() {
@@ -75,12 +71,12 @@ public class RoomView extends State {
     public void render(SpriteBatch sb) {
         Gdx.gl.glClearColor(.1f, .12f, .16f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        sb.setProjectionMatrix(this.cam.combined);
         sb.begin();
 
             stage.draw();
 
         sb.end();
-
     }
 
     @Override
@@ -92,8 +88,6 @@ public class RoomView extends State {
 
         //Create Table
         Table mainTable = new Table();
-        mainTable.setX(2000);
-        mainTable.setY(900);
 
         Label colorLabel = new Label("Pick a color:", uiskin);
         colorLabel.setFontScale(3);
@@ -101,8 +95,16 @@ public class RoomView extends State {
         float size = 150;
         float padSize = 50;
 
-        Button redBtn = new Button(uiskin);
+        final Button redBtn = new Button(uiskin);
         redBtn.setColor(Color.RED);
+
+        redBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                redBtn.setColor(Color.CLEAR);
+            }
+        });
+
         Button greenBtn = new Button(uiskin);
         greenBtn.setColor(Color.GREEN);
         Button blueBtn = new Button(uiskin);
@@ -115,6 +117,10 @@ public class RoomView extends State {
         mainTable.add(greenBtn).width(size).height(size).padRight(padSize);
         mainTable.add(blueBtn).width(size).height(size);
 
+        mainTable.pack();
+
+        mainTable.setX(Game.WIDTH - mainTable.getWidth() - 200);
+        mainTable.setY((Game.HEIGHT - mainTable.getHeight()) / 2);
         return mainTable;
     }
 
@@ -124,8 +130,6 @@ public class RoomView extends State {
 
         //Create Table
         Table mainTable = new Table();
-        mainTable.setX(500);
-        mainTable.setY(900);
 
         Label topLabel = new Label("Players:", uiskin);
         topLabel.setFontScale(4);
@@ -148,6 +152,10 @@ public class RoomView extends State {
         }
         */
 
+        mainTable.pack();
+
+        mainTable.setX(300);
+        mainTable.setY((Game.HEIGHT - mainTable.getHeight()) / 2);
 
         return mainTable;
     }
