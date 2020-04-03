@@ -24,6 +24,7 @@ public class Game extends ApplicationAdapter {
     public static int HEIGHT;
     public static final int SPEED = 2;
     public static final double ROTATION_SPEED = 0.03;
+    public static final String[] AVAILABLE_POWERUPS = new String[]{"Speed_boost", "Ghost"};
 
     public static final String TITLE = "Squiggle War";
 

@@ -34,6 +34,7 @@ public class PlayerModel {
     float angle;
     String playerID;
     String gameID;
+    ArrayList<PowerUpModel> powerups;
     private DatabaseReference mDatabase;
     private int score;
     private boolean crashed = false;
@@ -200,10 +201,15 @@ public class PlayerModel {
 
     public void move() {
         Vector2 coords = this.getPosition();
+        int speed = Game.SPEED;
         float x = coords.x;
         float y = coords.y;
-        x += (Game.SPEED * Math.cos(this.angle));
-        y += (Game.SPEED * Math.sin(this.angle));
+        if (hasSpeedBoost()){
+            speed *= 2;
+        }
+
+        x += (speed * Math.cos(this.angle));
+        y += (speed * Math.sin(this.angle));
 
         this.updateTimer();
 
@@ -229,6 +235,20 @@ public class PlayerModel {
         this.line.delete();
         this.setCrashed(false);
 
+    }
+
+    private boolean hasSpeedBoost(){
+        for (PowerUpModel powerup:powerups){
+            return powerup.name.equals("Speed_boost") && powerup.checkStatus();
+        }
+        return false;
+    }
+
+    private boolean isGhost(){
+        for (PowerUpModel powerup:powerups){
+            return powerup.name.equals("Ghost") && powerup.checkStatus();
+        }
+        return false;
     }
 
     private void updateTimer(){
