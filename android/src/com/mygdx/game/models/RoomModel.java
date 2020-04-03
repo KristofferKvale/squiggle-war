@@ -137,6 +137,8 @@ public class RoomModel {
         createGameView(gsm);
     }
 
+    public PlayerModel getPlayer() { return this.player; }
+
 }
 
 
