@@ -94,7 +94,7 @@ public class LineModel implements Line {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("points");
         mDatabase.removeValue();
         this.points = new ArrayList<>();
-        points.add(Game.randomPosition());
+        points.add(Game.randomPosition(100));
     }
 
 }

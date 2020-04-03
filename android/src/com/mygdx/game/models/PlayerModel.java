@@ -48,7 +48,7 @@ public class PlayerModel {
         mDatabase.child(playerID).child("score").setValue(score);
         mDatabase.child(playerID).child("crashed").setValue(crashed);
         mDatabase.child(playerID).child("color").setValue(color);
-        this.line = new LineModel(Game.randomPosition(), playerID, roomID);
+        this.line = new LineModel(Game.randomPosition(100), playerID, roomID);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
