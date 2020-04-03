@@ -2,13 +2,9 @@ package com.mygdx.game.models;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import  com.mygdx.game.models.PlayerModel;
 
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 public class BoardModel {
@@ -19,27 +15,33 @@ public class BoardModel {
 
     private int width = Gdx.graphics.getWidth();
     private int height = Gdx.graphics.getHeight();
-    ArrayList<PlayerModel> opponents;
+    ArrayList<OpponentModel> opponents;
     private PlayerModel player;
-    public PlayerModel collidedWith = null;
+    public float timeseconds= 0f;
+    public float postCrash = 0f;
+    float period = 4f;
 
-    public BoardModel(ArrayList<PlayerModel> opponents, PlayerModel player){
+    public BoardModel(ArrayList<OpponentModel> opponents, PlayerModel player){
         this.opponents = opponents;
         this.player = player;
     }
 
     //Function that returns a player if it has collided with a player or a wall
-    public PlayerModel Collision() {
-        if (collidedWith != null) {
-            return collidedWith;
+    public void Collision() {
+        if (!player.isCrashed()) {
+            if (CollisionWalls()) {
+                player.setCrashed(true);
+            }
+            if (CollisionPlayer()) {
+                player.setCrashed(true);
+            }
+            try {
+                if (CollisionOpponent()) {
+                    player.setCrashed(true);
+                }
+            }catch (Exception e) {}
+
         }
-        if (CollisionWalls()) {
-            return collidedWith = player;
-        }
-        if (CollisionPlayer()) {
-            return collidedWith = player;
-        }
-        return CollisionOpponent();
     }
 
     //Help function that checks if one player is outside the board
@@ -55,44 +57,31 @@ public class BoardModel {
         }
     }
 
-
-    private ArrayList<Vector2> getSurroundingPoints(){
-        ArrayList<Vector2> lastPlayerPosSurrounding = new ArrayList<Vector2>();
-        Vector2 lastPlayerPos = this.player.getPosition();
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x, lastPlayerPos.y));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x, lastPlayerPos.y + 1));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x + 1, lastPlayerPos.y + 1));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x + 1, lastPlayerPos.y));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x + 1, lastPlayerPos.y - 1));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x, lastPlayerPos.y - 1));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x - 1, lastPlayerPos.y - 1));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x - 1, lastPlayerPos.y));
-        lastPlayerPosSurrounding.add(new Vector2(lastPlayerPos.x - 1, lastPlayerPos.y + 1));
-        return lastPlayerPosSurrounding;
-    }
     //Help function that checks if a players position has been visited
-    private PlayerModel CollisionOpponent(){
 
-        for(PlayerModel opponent : this.opponents){
-            ArrayList<Vector2> opponentPoints = opponent.getLinePoints();
-            for (Vector2 pos : getSurroundingPoints()){
-                if(opponentPoints.contains(pos)) {
-                    return opponent;
+    private boolean CollisionOpponent(){
+        for(OpponentModel opponent : this.opponents){
+            Vector2 lastPlayerPos = this.player.getPosition();
+            ArrayList<Vector2> oppPoints;
+            oppPoints = opponent.getPoints();
+            for (Vector2 pos : oppPoints){
+                if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12) {
+                    return true;
                 }
             }
         }
 
-        return null;
+        return false;
     }
 
     private boolean CollisionPlayer() {
         ArrayList<Vector2> playerPoints = new ArrayList<>();
         playerPoints.addAll(player.getLinePoints());
         Vector2 lastPlayerPos = this.player.getPosition();
-        if(playerPoints.size()>5) {
-            playerPoints.subList(playerPoints.size()-5,playerPoints.size()).clear();
-            for (Vector2 pos : getSurroundingPoints()) {
-                if(playerPoints.contains(pos)){
+        if(playerPoints.size()>50) {
+            playerPoints.subList(playerPoints.size()-50,playerPoints.size()).clear();
+            for (Vector2 pos : playerPoints) {
+                if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12){
                     return true;
                 }
             }
@@ -101,48 +90,49 @@ public class BoardModel {
     }
 
     public void update(float dt) {
-        this.Collision();
-        if (collidedWith == null) {
-            player.move();
-            //Kun for testing
-            for(PlayerModel opp:opponents) {
-                opp.move();
+        timeseconds += dt;
+        if (timeseconds > period) {
+            this.Collision();
+            if (!player.isCrashed()) {
+                player.move();
             }
-        }else{
-            //Push crashed boolean to player and firebase
+            this.playersCrashed(dt);
         }
-        this.playersCrashed();
     }
 
-    public void playersCrashed(){
+    public void playersCrashed(float dt){
         //Get status from opponents
-        int crashed = 0;
-        //if (player.crashed){crashed++};
-        for(PlayerModel opponent : opponents) {
-            /*if(opponent.crashed) {
-            crashed++;
-            }*/
+        int numPlayerCrash = 0; // Skal være 0
+        if (player.isCrashed()){numPlayerCrash++;}
+        for(OpponentModel opponent : opponents) {
+            if(opponent.isCrashed()) {
+                numPlayerCrash++;
+            }
         }
-        if(crashed >= opponents.size()) {
-            //End round
-            //Reset lines
-            //Start new round
+        if(numPlayerCrash >= opponents.size()) {
+            if (!player.isCrashed()){player.incScore();} //Skal være !player.isCrashed
+            if(postCrash < 6.1f) {
+                postCrash += dt;
+            } else{
+                for(OpponentModel opp : opponents) {
+                    opp.nextGame();
+                }
+                player.nextGame();
+                postCrash = 0f;
+                timeseconds= 0f;
+            }
+
         }
     }
 
-    public ArrayList<PlayerModel> getPlayers() {
-        ArrayList<PlayerModel> players = new ArrayList<>();
-        players.add(player);
-        players.addAll(opponents);
-        return players;
-    }
 
-    public ArrayList<PlayerModel> getOpponents() {
+    public ArrayList<OpponentModel> getOpponents() {
         return opponents;
     }
 
     public PlayerModel getPlayer() {
         return player;
     }
+
 }
 

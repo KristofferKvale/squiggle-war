@@ -1,5 +1,7 @@
 package com.mygdx.game.views;
 
+import android.util.Log;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -21,7 +23,7 @@ import com.mygdx.game.models.RoomModel;
 
 public class RoomView extends State {
 
-    private RoomModel room;
+    private RoomModel room = null;
 
     private Stage stage;
     private SpriteBatch batch;
@@ -30,6 +32,7 @@ public class RoomView extends State {
     private BitmapFont font;
 
     private Skin uiskin;
+    private float timeToStart;
 
     private PlayerModel[] players;
 
@@ -41,6 +44,8 @@ public class RoomView extends State {
         batch = new SpriteBatch();
 
         stage = new Stage(new ScreenViewport());
+
+        timeToStart = 0f;
 
         uiskin = new Skin(Gdx.files.internal("uiskin.json"));
 
@@ -54,7 +59,14 @@ public class RoomView extends State {
 
         //Stage should control input:
         Gdx.input.setInputProcessor(stage);
+    }
 
+    public void createRoom(String roomID) {
+        this.room = new RoomModel(roomID);
+    }
+
+    public void createPlayer() {
+        room.createPlayer("DummyName");
     }
 
     @Override
@@ -64,7 +76,16 @@ public class RoomView extends State {
 
     @Override
     public void update(float dt) {
+        if(room != null) {
+            if(room.getOpponents().size() >= 1) {
+                timeToStart += dt;
+            }
+            if(timeToStart > 4.1f) {
+                room.playerStart(gsm);
+            }
+        }
 
+        Log.d("MSG", Float.toString(timeToStart) + " Antall mot: " + (room.getOpponents().size()));
     }
 
     @Override
@@ -118,9 +139,9 @@ public class RoomView extends State {
         mainTable.add(blueBtn).width(size).height(size);
 
         mainTable.pack();
-
         mainTable.setX(Game.WIDTH - mainTable.getWidth() - 200);
         mainTable.setY((Game.HEIGHT - mainTable.getHeight()) / 2);
+
         return mainTable;
     }
 
@@ -153,7 +174,6 @@ public class RoomView extends State {
         */
 
         mainTable.pack();
-
         mainTable.setX(300);
         mainTable.setY((Game.HEIGHT - mainTable.getHeight()) / 2);
 

@@ -2,15 +2,21 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.google.firebase.database.FirebaseDatabase;
+import com.mygdx.game.models.BoardModel;
 import com.mygdx.game.models.Config;
+import com.mygdx.game.models.PlayerModel;
 import com.mygdx.game.views.GameStateManager;
 import com.mygdx.game.views.GameView;
 import com.mygdx.game.views.UsernameView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Game extends ApplicationAdapter {
 
@@ -50,9 +56,9 @@ public class Game extends ApplicationAdapter {
         batch.dispose();
     }
 
-    public static Vector2 randomPosition() {
-        int x = (int) (Math.random() * (WIDTH - 200)) + 100;
-        int y = (int) (Math.random() * (HEIGHT - 200)) + 100;
+    public static Vector2 randomPosition(int distance) {
+        int x = (int) (Math.random() * (WIDTH - 2 * distance)) + distance;
+        int y = (int) (Math.random() * (HEIGHT - 2 * distance)) + distance;
         return new Vector2(x, y);
     }
 }
