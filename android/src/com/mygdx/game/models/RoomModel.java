@@ -35,6 +35,7 @@ public class RoomModel {
     private String roomID;
     //String playerID;
     private boolean gameStarted;
+    public String AdminID;
 
 
     public RoomModel(String roomId) {
@@ -98,6 +99,13 @@ public class RoomModel {
     public void createPlayer(String u) {
         player = new PlayerModel(u, Color.RED, roomID);
         opponents.remove(opponents.size()-1);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("admin");
+        if (opponents.size() == 0){
+            mDatabase.setValue(player.playerID);
+            this.AdminID = player.playerID;
+            board.AdminID = player.playerID;
+
+        }
     }
 
     //public void changeColor(){
