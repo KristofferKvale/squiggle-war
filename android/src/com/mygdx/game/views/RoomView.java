@@ -92,7 +92,9 @@ public class RoomView extends State {
     public void render(SpriteBatch sb) {
         Gdx.gl.glClearColor(.1f, .12f, .16f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         sb.setProjectionMatrix(this.cam.combined);
+
         sb.begin();
 
             stage.draw();
@@ -109,6 +111,8 @@ public class RoomView extends State {
 
         //Create Table
         Table mainTable = new Table();
+        mainTable.setX(2000);
+        mainTable.setY(900);
 
         Label colorLabel = new Label("Pick a color:", uiskin);
         colorLabel.setFontScale(3);
@@ -116,7 +120,7 @@ public class RoomView extends State {
         float size = 150;
         float padSize = 50;
 
-        final Button redBtn = new Button(uiskin);
+        Button redBtn = new Button(uiskin);
         redBtn.setColor(Color.RED);
 
         redBtn.addListener(new ChangeListener() {
@@ -151,6 +155,8 @@ public class RoomView extends State {
 
         //Create Table
         Table mainTable = new Table();
+        mainTable.setX(500);
+        mainTable.setY(900);
 
         Label topLabel = new Label("Players:", uiskin);
         topLabel.setFontScale(4);

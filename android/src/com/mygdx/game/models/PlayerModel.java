@@ -16,9 +16,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.mygdx.game.Game;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class PlayerModel {
+    //Gap timer values
+    private static final int MIN_GAP_TIME = 20;
+    private static final int MAX_GAP_TIME = 50;
+
+    private static final int MIN_LINE_TIME = 150;
+    private static final int MAX_LINE_TIME = 500;
+
     String username;
     Color color;
     LineModel line;
@@ -31,12 +39,18 @@ public class PlayerModel {
     private boolean crashed = false;
     private String roomID;
 
+    boolean line_on;
+    private int line_gap_timer;
+
+    private Vector2 position;
+
 
     //RoomModel trenger en tom constructor for å lese fra db (??)
     public PlayerModel(){}
 
     public PlayerModel(final String username, Color color, String roomID) {
         this.username = username;
+        this.color = color;
         this.active = true;
         this.color = color;
         this.roomID = roomID;
@@ -113,6 +127,9 @@ public class PlayerModel {
             }
         });
 
+        this.line_on = true;
+        this.line_gap_timer = randomLineTime();
+        this.position = this.line.getLastPoint();
     }
 
     public ArrayList<Vector2> getLinePoints() {
@@ -136,7 +153,8 @@ public class PlayerModel {
     }
 
     public Vector2 getPosition() {
-        return this.line.getLastPoint();
+        //return this.line.getLastPoint();
+        return this.position;
     }
 
     public Color getColor() {
@@ -187,6 +205,8 @@ public class PlayerModel {
         x += (Game.SPEED * Math.cos(this.angle));
         y += (Game.SPEED * Math.sin(this.angle));
 
+        this.updateTimer();
+
         setNewPoint(Math.round(x), Math.round(y));
     }
 
@@ -198,7 +218,10 @@ public class PlayerModel {
 
         }
         else {
-            this.line.addPoint(point);
+            this.position = point;
+            if (this.line_on) {
+                this.line.addPoint(point);
+            }
         }
     }
 
@@ -208,4 +231,30 @@ public class PlayerModel {
 
     }
 
+    private void updateTimer(){
+        this.line_gap_timer -= 1;
+
+        if (this.line_gap_timer == 0) {
+            this.line_on = !this.line_on;
+            if (this.line_on){
+                //TODO: get this players board and add the line to old lines
+                //TODO: add new line on this.position for this player
+                this.line_gap_timer = randomLineTime();
+            } else {
+                this.line_gap_timer = randomGapTime();
+            }
+        }
+
+
+    }
+
+    private static int randomGapTime() {
+        Random rand = new Random();
+        return rand.nextInt(MAX_GAP_TIME-MIN_GAP_TIME) + MIN_GAP_TIME;
+    }
+
+    private static int randomLineTime() {
+        Random rand = new Random();
+        return rand.nextInt(MAX_LINE_TIME-MIN_LINE_TIME) + MIN_LINE_TIME;
+    }
 }

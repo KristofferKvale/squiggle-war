@@ -19,6 +19,7 @@ import java.util.ListIterator;
 
 
 public class GameView extends State {
+    //TODO: get and draw old lines
 
     private int width = Game.WIDTH;
     private int height = Game.HEIGHT;
