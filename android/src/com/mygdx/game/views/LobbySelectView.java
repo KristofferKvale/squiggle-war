@@ -18,6 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mygdx.game.Game;
 import com.mygdx.game.models.Config;
 
@@ -62,8 +63,21 @@ public class LobbySelectView extends State {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try{
-                    String roomID = dataSnapshot.getKey();
-                    roomIDs.add(roomID);
+                    final String roomID = dataSnapshot.getKey();
+                    final Boolean[] started = new Boolean[1];
+                    mDatabase.child(roomID).child("started").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(! dataSnapshot.getValue(Boolean.class)){
+                            roomIDs.add(roomID);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }catch (Exception e) {
                     Log.e("Err", e.toString());
                 }
@@ -91,7 +105,7 @@ public class LobbySelectView extends State {
             }
         });
 
-        makeLobbies();
+
         // Lager én lobby
         // TODO: Check for actual lobbies
 
@@ -102,12 +116,24 @@ public class LobbySelectView extends State {
         //roomIDs.add("1");
         this.buttons = new ArrayList<>();
         this.lobbies = new ArrayList<>();
+
+
+        if (roomIDs.size() < 5){
+            for (int x=0; x<(5-roomIDs.size()); x++){
+                mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms");
+                String key = mDatabase.push().getKey();
+                mDatabase.child(key).child("started").setValue(false);
+
+            }
+        }
+
         ListIterator<String> roomIt = roomIDs.listIterator();
         while (roomIt.hasNext()) {
             int i = roomIt.nextIndex();
             int height = LOBBY_HEIGHT;
             int y = LOBBY_TOP - height - LOBBY_DISTANCE - i * (height + LOBBY_DISTANCE);
-            String name = "Lobby " + i;
+            int t = i+1;
+            String name = "Lobby " + t;
             int players = rand.nextInt(5);
 
             RoomView rv = new RoomView(gsm);

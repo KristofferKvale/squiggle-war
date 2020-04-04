@@ -103,7 +103,7 @@ public class RoomModel {
         if (opponents.size() == 0){
             mDatabase.setValue(player.playerID);
             this.AdminID = player.playerID;
-            board.AdminID = player.playerID;
+            //board.AdminID = player.playerID;
 
         }
     }
