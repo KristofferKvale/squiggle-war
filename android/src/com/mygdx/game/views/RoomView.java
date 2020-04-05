@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.Game;
+import com.mygdx.game.controllers.RoomController;
 import com.mygdx.game.models.Config;
 import com.mygdx.game.models.OpponentModel;
 import com.mygdx.game.models.PlayerModel;
@@ -40,6 +41,7 @@ public class RoomView extends State {
 
     private PlayerModel player;
     private ArrayList<OpponentModel> opponents;
+    private RoomController roomController;
 
     Table playerTable;
 
@@ -54,6 +56,7 @@ public class RoomView extends State {
         timeToStart = 0f;
 
         uiskin = new Skin(Gdx.files.internal("uiskin.json"));
+
 
         //Create Tables
         Table colorTable = colorTable();
@@ -72,6 +75,7 @@ public class RoomView extends State {
 
     public void createPlayer() {
         room.createPlayer(Config.getInstance().username);
+        roomController = new RoomController(this, room, gsm);
     }
 
     @Override
