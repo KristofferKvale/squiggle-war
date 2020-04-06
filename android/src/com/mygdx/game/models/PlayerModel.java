@@ -57,6 +57,7 @@ public class PlayerModel {
         this.roomID = roomID;
         this.score = 0;
         this.angle = (float) (Math.random() * 2 * Math.PI);
+        this.powerups = new ArrayList<>();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players");
         playerID = mDatabase.push().getKey();
         mDatabase.child(playerID).child("username").setValue(username);
@@ -204,7 +205,7 @@ public class PlayerModel {
         int speed = Game.SPEED;
         float x = coords.x;
         float y = coords.y;
-        if (hasSpeedBoost()){
+        if (this.hasSpeedBoost()){
             speed *= 2;
         }
 
@@ -238,14 +239,14 @@ public class PlayerModel {
     }
 
     private boolean hasSpeedBoost(){
-        for (PowerUpModel powerup:powerups){
+        for (PowerUpModel powerup:this.powerups){
             return powerup.name.equals("Speed_boost") && powerup.checkStatus();
         }
         return false;
     }
 
     private boolean isGhost(){
-        for (PowerUpModel powerup:powerups){
+        for (PowerUpModel powerup:this.powerups){
             return powerup.name.equals("Ghost") && powerup.checkStatus();
         }
         return false;
