@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mygdx.game.Game;
 import com.mygdx.game.controllers.RoomController;
 import com.mygdx.game.models.Config;
@@ -29,6 +31,7 @@ import java.util.ArrayList;
 public class RoomView extends State {
 
     private RoomModel room = null;
+    private String roomID;
 
     private Stage stage;
     private SpriteBatch batch;
@@ -71,6 +74,7 @@ public class RoomView extends State {
 
     public void createRoom(String roomID) {
         this.room = new RoomModel(roomID);
+        this.roomID = roomID;
     }
 
     public void createPlayer() {
@@ -91,6 +95,8 @@ public class RoomView extends State {
             }
             if(timeToStart > 4.1f) {
                 room.playerStart(gsm);
+                DatabaseReference roomState = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.roomID).child("started");
+                roomState.setValue(true);
             }
         }
         this.playerTable = playerTable();
