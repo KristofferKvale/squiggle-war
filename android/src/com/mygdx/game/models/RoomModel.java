@@ -35,6 +35,8 @@ public class RoomModel {
     private String roomID;
     //String playerID;
     private boolean gameStarted;
+    public String AdminID;
+
 
 
     public RoomModel(String roomId) {
@@ -60,12 +62,12 @@ public class RoomModel {
                     if (player != null){
                         if(player.playerID != playerID){
                             players.add(playerID);
-                            opponents.add(new OpponentModel(playerID, roomID)); //Henter bare ut username, skal hente ut PlayerModels
+                            opponents.add(new OpponentModel(playerID, roomID));
                         }
 
                     }else {
                         players.add(playerID);
-                        opponents.add(new OpponentModel(playerID, roomID)); //Henter bare ut username, skal hente ut PlayerModels
+                        opponents.add(new OpponentModel(playerID, roomID));
                     }
                 }catch (Exception e){}
 
@@ -78,7 +80,10 @@ public class RoomModel {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
+                try{
+                    String playerID = dataSnapshot.getKey();
+                    opponents.remove(playerID);
+                }catch(Exception e){}
             }
 
             @Override
@@ -97,7 +102,30 @@ public class RoomModel {
 
     public void createPlayer(String u) {
         player = new PlayerModel(u, Color.RED, roomID);
-        opponents.remove(opponents.size()-1);
+        if (opponents.size() > 0) {
+            if(opponents.get(opponents.size()-1).getPlayerID() == player.playerID) {
+                opponents.remove(opponents.size()-1);
+            }
+        }
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("admin");
+        if (opponents.size() == 0){
+            mDatabase.setValue(player.playerID);
+            this.AdminID = player.playerID;
+            //board.AdminID = player.playerID;
+
+        }
+
+    }
+
+    public void back() {
+        if (AdminID != null) {
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("admin");
+            mDatabase.removeValue();
+        }
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(player.playerID);
+        mDatabase.removeValue();
+
+
     }
 
     //public void changeColor(){
@@ -136,6 +164,8 @@ public class RoomModel {
     public void playerStart(GameStateManager gsm) {
         createGameView(gsm);
     }
+
+    public PlayerModel getPlayer() { return this.player; }
 
 }
 

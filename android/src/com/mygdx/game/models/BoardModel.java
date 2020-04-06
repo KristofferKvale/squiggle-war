@@ -15,6 +15,7 @@ public class BoardModel {
 
     private int width = Gdx.graphics.getWidth();
     private int height = Gdx.graphics.getHeight();
+    public String AdminID;
     ArrayList<OpponentModel> opponents;
     private PlayerModel player;
     public float timeseconds= 0f;

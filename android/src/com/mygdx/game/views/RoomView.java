@@ -17,13 +17,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mygdx.game.Game;
+import com.mygdx.game.controllers.RoomController;
+import com.mygdx.game.models.Config;
+import com.mygdx.game.models.OpponentModel;
 import com.mygdx.game.models.PlayerModel;
 import com.mygdx.game.models.RoomModel;
+
+import java.util.ArrayList;
 
 public class RoomView extends State {
 
     private RoomModel room = null;
+    private String roomID;
 
     private Stage stage;
     private SpriteBatch batch;
@@ -34,8 +42,11 @@ public class RoomView extends State {
     private Skin uiskin;
     private float timeToStart;
 
-    private PlayerModel[] players;
+    private PlayerModel player;
+    private ArrayList<OpponentModel> opponents;
+    private RoomController roomController;
 
+    Table playerTable;
 
 
     public RoomView(GameStateManager gsm) {
@@ -49,13 +60,13 @@ public class RoomView extends State {
 
         uiskin = new Skin(Gdx.files.internal("uiskin.json"));
 
+
         //Create Tables
         Table colorTable = colorTable();
-        Table playerTable = playerTable();
+        this.playerTable = playerTable();
 
         //Add tables to stage
         stage.addActor(colorTable);
-        stage.addActor(playerTable);
 
         //Stage should control input:
         Gdx.input.setInputProcessor(stage);
@@ -63,10 +74,12 @@ public class RoomView extends State {
 
     public void createRoom(String roomID) {
         this.room = new RoomModel(roomID);
+        this.roomID = roomID;
     }
 
     public void createPlayer() {
-        room.createPlayer("DummyName");
+        room.createPlayer(Config.getInstance().username);
+        roomController = new RoomController(this, room, gsm);
     }
 
     @Override
@@ -82,8 +95,12 @@ public class RoomView extends State {
             }
             if(timeToStart > 4.1f) {
                 room.playerStart(gsm);
+                DatabaseReference roomState = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.roomID).child("started");
+                roomState.setValue(true);
             }
         }
+        this.playerTable = playerTable();
+        stage.addActor(playerTable);
 
         Log.d("MSG", Float.toString(timeToStart) + " Antall mot: " + (room.getOpponents().size()));
     }
@@ -151,7 +168,12 @@ public class RoomView extends State {
 
     private Table playerTable() {
 
-        String[] testNames = {"Adrian", "er", "veldig", "sexy!"};
+        try {
+            this.player = this.room.getPlayer();
+            this.opponents = this.room.getOpponents();
+        } catch (Exception e) {
+
+        }
 
         //Create Table
         Table mainTable = new Table();
@@ -162,22 +184,23 @@ public class RoomView extends State {
         topLabel.setFontScale(4);
         mainTable.add(topLabel).row();
 
-        // TEST LOOP
-        for (String player : testNames) {
-            Label playerLabel = new Label(player, uiskin);
-            playerLabel.setFontScale(3);
-            playerLabel.setAlignment(Align.left);
-            mainTable.add(playerLabel).left().row();
-        }
+        // Creating labels
+        try {
+        Label playerLabel = new Label(player.getUsername(), uiskin);
+        playerLabel.setFontScale(3);
+        playerLabel.setAlignment(Align.left);
+        mainTable.add(playerLabel).left().row();
 
 
-        /*
-        for (PlayerModel player : this.players) {
-            Label playerLabel = new Label(player.getUsername(), uiskin);
-            playerLabel.setFontScale(3);
-            mainTable.add(playerLabel).left().row();
+        for (OpponentModel opponent : this.opponents) {
+            Label opponentLabel = new Label(opponent.getUsername(), uiskin);
+            opponentLabel.setFontScale(3);
+            mainTable.add(opponentLabel).left().row();
         }
-        */
+
+        } catch (Exception e) {
+
+        }
 
         mainTable.pack();
         mainTable.setX(300);

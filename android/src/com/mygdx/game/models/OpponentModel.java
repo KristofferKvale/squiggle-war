@@ -196,4 +196,8 @@ public class OpponentModel {
             return new Vector2(-100,-100);
         }
     }
+
+    public String getPlayerID() {
+        return playerID;
+    }
 }
