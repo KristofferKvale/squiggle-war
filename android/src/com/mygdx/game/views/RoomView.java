@@ -2,6 +2,8 @@ package com.mygdx.game.views;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -23,8 +25,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mygdx.game.Game;
 import com.mygdx.game.controllers.RoomController;
 import com.mygdx.game.models.Config;
@@ -52,6 +57,8 @@ public class RoomView extends State {
     private PlayerModel player;
     private ArrayList<OpponentModel> opponents;
     private RoomController roomController;
+
+    private DatabaseReference mDatabase;
 
     private boolean ready = false;
 
@@ -83,6 +90,7 @@ public class RoomView extends State {
         readyTable = createReadyBtn();
         mainStage.addActor(readyTable);
 
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms");
     }
 
     public void createRoom(String roomID) {
@@ -103,8 +111,10 @@ public class RoomView extends State {
     @Override
     public void update(float dt) {
         if(room != null) {
-            if(room.getOpponents().size() >= 1) {
+            if(room.getOpponents().size() >= 1 && this.room.getPlayer().getReadyState()) {
                 timeToStart += dt;
+            } else {
+                timeToStart = 0;
             }
             if(timeToStart > 4.1f) {
                 room.playerStart(gsm);
@@ -234,7 +244,11 @@ public class RoomView extends State {
                 checkMark.setVisible(ready);
 
                 if (ready) {
-
+                    mDatabase.child(roomID).child("players").child(room.getPlayer().getPlayerID()).child("ready").setValue(true);
+                    room.getPlayer().setReadyState(true);
+                } else {
+                    mDatabase.child(roomID).child("players").child(room.getPlayer().getPlayerID()).child("ready").setValue(false);
+                    room.getPlayer().setReadyState(false);
                 }
             }
         });
