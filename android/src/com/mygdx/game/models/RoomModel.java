@@ -15,6 +15,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.mygdx.game.Game;
 import com.mygdx.game.models.Config;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.views.GameStateManager;
@@ -36,6 +37,7 @@ public class RoomModel {
     //String playerID;
     private boolean gameStarted;
     public String AdminID;
+    private ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.MAGENTA, Color.CHARTREUSE, Color.WHITE));
 
 
 
@@ -101,7 +103,7 @@ public class RoomModel {
 
 
     public void createPlayer(String u) {
-        player = new PlayerModel(u, Color.RED, roomID);
+        player = new PlayerModel(u, setColor(), roomID);
         if (opponents.size() > 0) {
             if(opponents.get(opponents.size()-1).getPlayerID() == player.playerID) {
                 opponents.remove(opponents.size()-1);
@@ -131,18 +133,24 @@ public class RoomModel {
     //public void changeColor(){
     //}
 
-    //Skal ta inn currentPlayer
-    public ArrayList<OpponentModel> getOpponents() {
-       /* opponents = new ArrayList<>();
-        for (String playername : players) {
-            //Log.d("TEST!", playername);
-            if (playername != username) {
-                opponents.add(playername);
+
+    private Color randomColor(Integer min, Integer max){
+        Integer i = (int)(Math.random() * (max - min + 1) + min);
+        return colors.get(i);
+    }
+
+    private Color setColor() {
+        Color color = randomColor(0, colors.size());
+        for (OpponentModel opponent : opponents) {
+            if (opponent.getColor() == color) {
+                colors.remove(color);
+                setColor();
             }
         }
-        Log.d("TEST!", String.valueOf(opponents));*/
-        return opponents;
+        return color;
     }
+
+    public ArrayList<OpponentModel> getOpponents() { return opponents; }
 
 
     public void startGame() {

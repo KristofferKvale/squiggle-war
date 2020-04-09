@@ -112,11 +112,12 @@ public class LobbySelectView extends State {
 
     }
 
-    public void makeLobbies(){
+    public void makeButtons(){
         //roomIDs.add("1");
         this.buttons = new ArrayList<>();
         this.lobbies = new ArrayList<>();
 
+        this.buttons.add(this.settings);
 
         if (roomIDs.size() < 5){
             for (int x=0; x<(5-roomIDs.size()); x++){
@@ -128,21 +129,23 @@ public class LobbySelectView extends State {
         }
 
         ListIterator<String> roomIt = roomIDs.listIterator();
-        while (roomIt.hasNext()) {
-            int i = roomIt.nextIndex();
-            int height = LOBBY_HEIGHT;
-            int y = LOBBY_TOP - height - LOBBY_DISTANCE - i * (height + LOBBY_DISTANCE);
-            int t = i+1;
-            String name = "Lobby " + t;
-            int players = rand.nextInt(5);
+        try {
+            while (roomIt.hasNext()) {
+                int i = roomIt.nextIndex();
+                int height = LOBBY_HEIGHT;
+                int y = LOBBY_TOP - height - LOBBY_DISTANCE - i * (height + LOBBY_DISTANCE);
+                int t = i + 1;
+                String name = "Lobby " + t;
+                int players = rand.nextInt(5);
 
-            RoomView rv = new RoomView(gsm);
-            rv.createRoom(roomIt.next());
-            Lobby lby = new Lobby(LOBBY_LEFT, y, LOBBY_WIDTH, height, name, players, rv);
+                RoomView rv = new RoomView(gsm);
+                rv.createRoom(roomIt.next());
+                Lobby lby = new Lobby(LOBBY_LEFT, y, LOBBY_WIDTH, height, name, players, rv);
 
-            this.lobbies.add(lby);
-            this.buttons.add(lby);
-        }
+                this.lobbies.add(lby);
+                this.buttons.add(lby);
+            }
+        }catch (Exception e){}
     }
 
     @Override
@@ -166,7 +169,7 @@ public class LobbySelectView extends State {
         this.handleInput();
         listLength = roomIDs.size();
         if (listLength != oldListLength){
-            makeLobbies();
+            makeButtons();
         }
         oldListLength = listLength;
 
