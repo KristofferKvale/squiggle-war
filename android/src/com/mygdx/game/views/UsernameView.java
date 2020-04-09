@@ -42,7 +42,7 @@ public class UsernameView extends State {
         usernameField.setSize(300,40);
         stage.addActor(this.usernameField);
         this.t = new Texture("badlogic.jpg");*/
-
+        this.config= config;
         Gdx.input.getTextInput(new Input.TextInputListener() {
 
             @Override
@@ -73,13 +73,14 @@ public class UsernameView extends State {
 
     @Override
     protected void handleInput() {
+        g = gsm;
         if(Gdx.input.justTouched()){
+            g = gsm;
             Gdx.input.getTextInput(new Input.TextInputListener() {
                 @Override
                 public void input(String text) {
                     config.username = text;
 
-                    gsm.push(new LobbySelectView(gsm));
 
                 }
 
@@ -94,6 +95,9 @@ public class UsernameView extends State {
     @Override
     public void update(float dt) {
         handleInput();
+        if (this.config.username != null){
+            gsm.push(new LobbySelectView(gsm));
+        }
     }
 
     @Override
