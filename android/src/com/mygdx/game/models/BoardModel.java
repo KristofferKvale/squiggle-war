@@ -2,9 +2,11 @@ package com.mygdx.game.models;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.Game;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class BoardModel {
@@ -17,6 +19,7 @@ public class BoardModel {
     private int height = Gdx.graphics.getHeight();
     public String AdminID;
     ArrayList<OpponentModel> opponents;
+    public List<PowerUpModel> powerups  = new ArrayList<>();
     private PlayerModel player;
     public float timeseconds= 0f;
     public float postCrash = 0f;
@@ -33,6 +36,7 @@ public class BoardModel {
     //Function that returns a player if it has collided with a player or a wall
     public void Collision() {
         if (!player.isCrashed()) {
+            CollisionPowerup();
             if (CollisionWalls()) {
                 player.setCrashed(true);
             }
@@ -43,8 +47,7 @@ public class BoardModel {
                 if (CollisionOpponent() && player.line_on) {
                     player.setCrashed(true);
                 }
-            }catch (Exception e) {}
-
+            }catch (Exception ignored) {}
         }
     }
 
@@ -93,6 +96,26 @@ public class BoardModel {
         return false;
     }
 
+    private void CollisionPowerup(){
+        Vector2 point = this.player.getPosition();
+        int x = (int) point.x;
+        int y = (int) point.y;
+        try {
+            for (PowerUpModel powerup : this.powerups) {
+                int powerUpX = (int) powerup.position.x;
+                int powerUpY = Game.HEIGHT - (int) powerup.position.y;
+                if (powerUpX <= x && x <= powerUpX + 30) {
+                    if (powerUpY - 30 <= y && y <= powerUpY) {
+                        powerup.activate();
+                        this.player.powerups.add(powerup);
+                        this.powerups.remove(powerup);
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
     public void update(float dt) {
         timeseconds += dt;
         if (timeseconds > period) {
@@ -127,6 +150,19 @@ public class BoardModel {
             }
 
         }
+    }
+
+    public void addRandomPowerUp(){
+        int rnd = (int)(Math.random()* Game.AVAILABLE_POWERUPS.length);
+        this.powerups.add(new PowerUpModel(Game.AVAILABLE_POWERUPS[rnd]));
+    }
+
+    public void addSpeedBoost(){
+        this.powerups.add(new PowerUpModel("Speed_boost"));
+    }
+
+    public void addGhost(){
+        this.powerups.add(new PowerUpModel("Ghost"));
     }
 
 
