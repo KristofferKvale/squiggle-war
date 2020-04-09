@@ -5,16 +5,22 @@ import android.util.Log;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.google.firebase.database.DatabaseReference;
@@ -33,7 +39,8 @@ public class RoomView extends State {
     private RoomModel room = null;
     private String roomID;
 
-    private Stage stage;
+    private Stage mainStage;
+    private Stage playerStage;
     private SpriteBatch batch;
 
     private TextButton.TextButtonStyle style;
@@ -46,7 +53,12 @@ public class RoomView extends State {
     private ArrayList<OpponentModel> opponents;
     private RoomController roomController;
 
+    private boolean ready = false;
+
     Table playerTable;
+    Table readyTable;
+
+    Image checkMark;
 
 
     public RoomView(GameStateManager gsm) {
@@ -54,7 +66,8 @@ public class RoomView extends State {
 
         batch = new SpriteBatch();
 
-        stage = new Stage(new ScreenViewport());
+        mainStage = new Stage(new ScreenViewport());
+        playerStage = new Stage(new ScreenViewport());
 
         timeToStart = 0f;
 
@@ -66,10 +79,10 @@ public class RoomView extends State {
         this.playerTable = playerTable();
 
         //Add tables to stage
-        stage.addActor(colorTable);
+        mainStage.addActor(colorTable);
+        readyTable = createReadyBtn();
+        mainStage.addActor(readyTable);
 
-        //Stage should control input:
-        Gdx.input.setInputProcessor(stage);
     }
 
     public void createRoom(String roomID) {
@@ -100,8 +113,10 @@ public class RoomView extends State {
                 roomState.setValue(true);
             }
         }
+
         this.playerTable = playerTable();
-        stage.addActor(playerTable);
+        playerStage.clear();
+        playerStage.addActor(playerTable);
 
         Log.d("MSG", Float.toString(timeToStart) + " Antall mot: " + (room.getOpponents().size()));
     }
@@ -111,9 +126,13 @@ public class RoomView extends State {
         Gdx.gl.glClearColor(.1f, .12f, .16f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         sb.setProjectionMatrix(this.cam.combined);
+
+        Gdx.input.setInputProcessor(mainStage);
+
         sb.begin();
 
-        stage.draw();
+        mainStage.draw();
+        playerStage.draw();
 
         sb.end();
     }
@@ -136,13 +155,6 @@ public class RoomView extends State {
 
         final Button redBtn = new Button(uiskin);
         redBtn.setColor(Color.RED);
-
-        redBtn.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                redBtn.setColor(Color.CLEAR);
-            }
-        });
 
         Button greenBtn = new Button(uiskin);
         greenBtn.setColor(Color.GREEN);
@@ -202,5 +214,45 @@ public class RoomView extends State {
         mainTable.setY((Game.HEIGHT - mainTable.getHeight()) / 2);
 
         return mainTable;
+    }
+
+    private Table createReadyBtn() {
+        Table t = new Table();
+        t.setTouchable(Touchable.enabled);
+
+        TextButton readyBtn = new TextButton("Ready", uiskin);
+
+        readyBtn.setTouchable(Touchable.enabled);
+
+        readyBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                Log.d("READY?", "TRIED!!!");
+
+                ready = !ready;
+                checkMark.setVisible(ready);
+
+                if (ready) {
+
+                }
+            }
+        });
+
+        t.add(readyBtn);
+
+        readyBtn.sizeBy(200);
+        readyBtn.getLabel().setFontScale(3);
+
+        checkMark = new Image(new TextureRegion(new Texture("checkmark.png")));
+        checkMark.setVisible(ready);
+
+        t.add(checkMark).width(50).height(50).padLeft(50);
+
+        t.pack();
+        t.setX((Game.WIDTH - t.getWidth()) / 2 );
+        t.setY(200);
+
+        return t;
     }
 }
