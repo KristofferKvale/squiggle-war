@@ -37,14 +37,18 @@ public class BoardModel {
             if (CollisionWalls()) {
                 player.setCrashed(true);
             }
-            if (CollisionPlayer() && player.line_on) {
-                player.setCrashed(true);
-            }
-            try {
-                if (CollisionOpponent() && player.line_on) {
+
+            if (!player.isGhost()) {
+                if (CollisionPlayer() && player.line_on) {
                     player.setCrashed(true);
                 }
-            }catch (Exception ignored) {}
+                try {
+                    if (CollisionOpponent() && player.line_on) {
+                        player.setCrashed(true);
+                    }
+                } catch (Exception ignored) {
+                }
+            }
         }
     }
 

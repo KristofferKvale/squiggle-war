@@ -12,6 +12,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -31,29 +32,12 @@ public class OpponentModel {
         this.roomID = roomId;
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
-        mDatabase.addChildEventListener(new ChildEventListener() {
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try{
-                    score = dataSnapshot.getValue(Integer.class);
-
-                }catch (Exception e){
-                    Log.e("ERR", "Err: " + e.toString());
-                }
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                    score = dataSnapshot.getValue(int.class);
+                }catch(Exception e){}
             }
 
             @Override
@@ -63,29 +47,13 @@ public class OpponentModel {
         });
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("crashed");
-        mDatabase.addChildEventListener(new ChildEventListener() {
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try{
                     crashed = dataSnapshot.getValue(Boolean.class);
-
-                }catch (Exception e){
-                    Log.e("ERR", "Err: " + e.toString());
-                }
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                    Log.d("CRASHED", Boolean.toString(crashed));
+                }catch(Exception e){}
             }
 
             @Override
@@ -99,8 +67,7 @@ public class OpponentModel {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try{
-                    Vector2 point = dataSnapshot.getValue(Vector2.class);
-                    points.add(point);
+                    points.add(dataSnapshot.getValue(Vector2.class));
 
                 }catch (Exception e) {
 
