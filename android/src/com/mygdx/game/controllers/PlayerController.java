@@ -3,7 +3,7 @@ package com.mygdx.game.controllers;
 import com.mygdx.game.models.PlayerModel;
 
 public class PlayerController extends Controller {
-    PlayerController(PlayerModel player) {
+    public PlayerController(PlayerModel player) {
         super(player);
     }
 
