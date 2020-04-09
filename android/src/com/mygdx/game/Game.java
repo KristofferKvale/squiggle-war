@@ -15,8 +15,8 @@ public class Game extends ApplicationAdapter {
     public static int WIDTH;
     public static int HEIGHT;
     public static final int DEFAULT_SIZE = 8;
-    public static final int SMALL_SIZE = 4;
-    public static final int BIG_SIZE = 12;
+    public static final int SMALL_SIZE = 2;
+    public static final int BIG_SIZE = 24;
     public static final int SPEED = 2;
     public static final double ROTATION_SPEED = 0.03;
     public static final String[] AVAILABLE_POWERUPS = new String[]{"Speed_boost", "Ghost"};

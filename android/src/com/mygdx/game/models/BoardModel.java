@@ -125,7 +125,7 @@ public class BoardModel {
                 int powerUpX = (int) powerup.position.x;
                 int powerUpY = Game.HEIGHT - (int) powerup.position.y;
                 if (x - z <= powerUpX + 40 && x + z >= powerUpX) {
-                    if (y - z <= powerUpY + 40 && y + z >= powerUpY) {
+                    if (y - z <= powerUpY && y + z >= powerUpY - 40) {
                         powerup.activate();
                         this.player.powerups.add(powerup);
                         this.powerups.remove(powerup);
