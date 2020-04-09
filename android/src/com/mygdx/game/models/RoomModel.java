@@ -71,8 +71,7 @@ public class RoomModel {
                         players.add(playerID);
                         opponents.add(new OpponentModel(playerID, roomID));
                     }
-                }catch (Exception e){}
-
+                }catch (Exception ignored){}
             }
 
             @Override

@@ -41,7 +41,8 @@ public class PlayerModel {
     private String roomID;
 
     boolean line_on;
-    private int line_gap_timer;
+    private int line_timer = 0;
+    private int line_gap_timer = 0;
 
     private Vector2 position;
 
@@ -129,8 +130,6 @@ public class PlayerModel {
             }
         });
 
-        this.line_on = true;
-        this.line_gap_timer = randomLineTime();
         this.position = this.line.getLastPoint();
         this.powerups = new ArrayList<>();
     }
@@ -253,7 +252,7 @@ public class PlayerModel {
         return x == 1;
     }
 
-    private boolean isGhost(){
+    public boolean isGhost(){
         int x = 0;
         for (PowerUpModel powerup:this.powerups){
             if (powerup.name.equals("Ghost") && powerup.checkStatus()){
@@ -264,18 +263,29 @@ public class PlayerModel {
     }
 
     private void updateTimer(){
-        this.line_gap_timer -= 1;
-
-        if (this.line_gap_timer == 0) {
-            this.line_on = !this.line_on;
-            if (this.line_on){
-                this.line_gap_timer = randomLineTime();
+        if (this.isGhost()) {
+            this.line_on = false;
+            this.line_timer = 0;
+            this.line_gap_timer = 0;
+        } else {
+            if (this.line_timer == 0 && this.line_gap_timer == 0){
+                this.line_on = true;
+                this.line_timer = randomLineTime();
+            }
+            if (this.line_timer > this.line_gap_timer){
+                this.line_timer -= 1;
+                if (this.line_timer == 0) {
+                    this.line_on = false;
+                    this.line_gap_timer = randomGapTime();
+                }
             } else {
-                this.line_gap_timer = randomGapTime();
+                this.line_gap_timer -= 1;
+                if (this.line_gap_timer == 0) {
+                    this.line_on = true;
+                    this.line_timer = randomLineTime();
+                }
             }
         }
-
-
     }
 
     private static int randomGapTime() {
