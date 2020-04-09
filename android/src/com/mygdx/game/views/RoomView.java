@@ -111,6 +111,7 @@ public class RoomView extends State {
     @Override
     public void update(float dt) {
         if(room != null) {
+            room.removeSelf();
             if(room.getOpponents().size() >= 1 && this.room.getPlayer().getReadyState()) {
                 timeToStart += dt;
             } else {

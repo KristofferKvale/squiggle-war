@@ -172,6 +172,14 @@ public class RoomModel {
 
     public PlayerModel getPlayer() { return this.player; }
 
+    public void removeSelf(){
+        for (OpponentModel opp : opponents) {
+            if (opp.getPlayerID() == player.playerID){
+                opponents.remove(opp);
+            }
+        }
+    }
+
 }
 
 
