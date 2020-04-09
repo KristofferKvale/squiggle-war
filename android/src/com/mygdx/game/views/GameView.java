@@ -41,6 +41,8 @@ public class GameView extends State {
         this.board = board;
         this.board.addSpeedBoost();
         this.board.addGhost();
+        this.board.addGrow();
+        this.board.addShrink();
         font = new BitmapFont();
         font.setColor(Color.WHITE);
         font.getData().setScale(5f);
@@ -119,7 +121,7 @@ public class GameView extends State {
         sb.draw(lines, 0, 0, width, height);
         sb.draw(this.playerTexture, this.player.getPosition().x - 20, Game.HEIGHT - this.player.getPosition().y - 20, 40, 40);
         for (PowerUpModel powerup:this.board.powerups){
-            sb.draw(powerup.texture, powerup.position.x, powerup.position.y, 20, 20);
+            sb.draw(powerup.texture, powerup.position.x, powerup.position.y, 40, 40);
         }
         sb.end();
         lines.dispose();

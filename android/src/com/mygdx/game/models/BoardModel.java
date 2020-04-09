@@ -105,8 +105,8 @@ public class BoardModel {
             for (PowerUpModel powerup : this.powerups) {
                 int powerUpX = (int) powerup.position.x;
                 int powerUpY = Game.HEIGHT - (int) powerup.position.y;
-                if (powerUpX <= x && x <= powerUpX + 30) {
-                    if (powerUpY - 30 <= y && y <= powerUpY) {
+                if (powerUpX <= x && x <= powerUpX + 40) {
+                    if (powerUpY - 40 <= y && y <= powerUpY) {
                         powerup.activate();
                         this.player.powerups.add(powerup);
                         this.powerups.remove(powerup);
@@ -164,6 +164,14 @@ public class BoardModel {
 
     public void addGhost(){
         this.powerups.add(new PowerUpModel("Ghost"));
+    }
+
+    public void addGrow(){
+        this.powerups.add(new PowerUpModel("Grow"));
+    }
+
+    public void addShrink(){
+        this.powerups.add(new PowerUpModel("Shrink"));
     }
 
 
