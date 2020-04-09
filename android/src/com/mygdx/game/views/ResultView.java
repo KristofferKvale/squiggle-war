@@ -184,7 +184,6 @@ public class ResultView extends State {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 Log.d("Clicked", "Back button clicked!");
-                Config.getInstance().username = "TempName";
                 gsm.push(new LobbySelectView(gsm));
             }
         });
