@@ -13,6 +13,7 @@ import com.mygdx.game.Game;
 import com.mygdx.game.models.BoardModel;
 import com.mygdx.game.models.PlayerModel;
 import com.mygdx.game.models.OpponentModel;
+import com.mygdx.game.models.PowerUpModel;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -35,6 +36,8 @@ public class GameView extends State {
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
         this.board = board;
+        this.board.addSpeedBoost();
+        this.board.addGhost();
         font = new BitmapFont();
         font.setColor(Color.WHITE);
         font.getData().setScale(5f);
@@ -111,6 +114,9 @@ public class GameView extends State {
             scoresIt.next().draw(sb, Integer.toString(score), (width/2) + 300 + scoresIt.nextIndex()*100, (height)-50);
         }
         sb.draw(lines, 0, 0, width, height);
+        for (PowerUpModel powerup:this.board.powerups){
+            sb.draw(powerup.texture, powerup.position.x, powerup.position.y, 20, 20);
+        }
         sb.end();
         lines.dispose();
 

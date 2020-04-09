@@ -216,17 +216,23 @@ public class PlayerModel {
     }
 
     private boolean hasSpeedBoost(){
+        int x = 0;
         for (PowerUpModel powerup:this.powerups){
-            return powerup.name.equals("Speed_boost") && powerup.checkStatus();
+            if (powerup.name.equals("Speed_boost") && powerup.checkStatus()){
+                x = 1;
+            }
         }
-        return false;
+        return x == 1;
     }
 
     private boolean isGhost(){
+        int x = 0;
         for (PowerUpModel powerup:this.powerups){
-            return powerup.name.equals("Ghost") && powerup.checkStatus();
+            if (powerup.name.equals("Ghost") && powerup.checkStatus()){
+                x = 1;
+            }
         }
-        return false;
+        return x == 1;
     }
 
 }
