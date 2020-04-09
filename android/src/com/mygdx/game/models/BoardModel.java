@@ -58,7 +58,8 @@ public class BoardModel {
         Vector3 point = points.get(points.size() -1);
         int x = (int) point.x;
         int y = (int) point.y;
-        if (x > this.width || x < 0 || y > this.height || y < 0){
+        int z = (int) point.z;
+        if (x + z > this.width || x - z < 0 || y + z > this.height || y - z < 0){
             return true;
         } else {
             return false;
@@ -69,12 +70,21 @@ public class BoardModel {
 
     private boolean CollisionOpponent(){
         for(OpponentModel opponent : this.opponents){
-            Vector3 lastPlayerPos = this.player.getPosition();
+            Vector3 point = this.player.getPosition();
+            int x = (int) point.x;
+            int y = (int) point.y;
+            int z = (int) point.z;
             ArrayList<Vector3> oppPoints;
             oppPoints = opponent.getPoints();
             for (Vector3 pos : oppPoints){
-                if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12) {
-                    return true;
+                int posX = (int) pos.x;
+                int posY = (int) pos.y;
+                int posZ = (int) pos.z;
+
+                if (x - z <= posX + posZ && x + z >= posX - posZ) {
+                    if (y - z <= posY + posZ && y + z >= posY - posZ) {
+                        return true;
+                    }
                 }
             }
         }
@@ -83,14 +93,22 @@ public class BoardModel {
     }
 
     private boolean CollisionPlayer() {
-        ArrayList<Vector3> playerPoints = new ArrayList<>();
-        playerPoints.addAll(player.getLinePoints());
-        Vector3 lastPlayerPos = this.player.getPosition();
+        ArrayList<Vector3> playerPoints = new ArrayList<>(player.getLinePoints());
+        Vector3 point = this.player.getPosition();
+        int x = (int) point.x;
+        int y = (int) point.y;
+        int z = (int) point.z;
         if(playerPoints.size()>50) {
             playerPoints.subList(playerPoints.size()-50,playerPoints.size()).clear();
             for (Vector3 pos : playerPoints) {
-                if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12){
-                    return true;
+                int posX = (int) pos.x;
+                int posY = (int) pos.y;
+                int posZ = (int) pos.z;
+
+                if (x - z <= posX + posZ && x + z >= posX - posZ) {
+                    if (y - z <= posY + posZ && y + z >= posY - posZ) {
+                        return true;
+                    }
                 }
             }
         }
@@ -101,12 +119,13 @@ public class BoardModel {
         Vector3 point = this.player.getPosition();
         int x = (int) point.x;
         int y = (int) point.y;
+        int z = (int) point.z;
         try {
             for (PowerUpModel powerup : this.powerups) {
                 int powerUpX = (int) powerup.position.x;
                 int powerUpY = Game.HEIGHT - (int) powerup.position.y;
-                if (powerUpX <= x && x <= powerUpX + 40) {
-                    if (powerUpY - 40 <= y && y <= powerUpY) {
+                if (x - z <= powerUpX + 40 && x + z >= powerUpX) {
+                    if (y - z <= powerUpY + 40 && y + z >= powerUpY) {
                         powerup.activate();
                         this.player.powerups.add(powerup);
                         this.powerups.remove(powerup);
