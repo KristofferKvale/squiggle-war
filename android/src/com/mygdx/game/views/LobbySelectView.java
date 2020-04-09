@@ -28,7 +28,7 @@ import java.util.ListIterator;
 import java.util.Random;
 
 public class LobbySelectView extends State {
-    private static final int LOBBY_TOP = (int) (Game.HEIGHT * 0.9);
+    private static final int LOBBY_TOP = (int) (Game.HEIGHT * 0.7);
     private static final int LOBBY_LEFT = (int) (Game.WIDTH * 0.1);
     private static final int LOBBY_WIDTH = 1000;
     private static final int LOBBY_HEIGHT = 100;
@@ -132,15 +132,14 @@ public class LobbySelectView extends State {
         try {
             while (roomIt.hasNext()) {
                 int i = roomIt.nextIndex();
-                int height = LOBBY_HEIGHT;
-                int y = LOBBY_TOP - height - LOBBY_DISTANCE - i * (height + LOBBY_DISTANCE);
+                int y = LOBBY_TOP - i * (LOBBY_HEIGHT + LOBBY_DISTANCE);
                 int t = i + 1;
                 String name = "Lobby " + t;
-                int players = rand.nextInt(5);
+                int players = rand.nextInt(5); //TODO: get number of players from lobby
 
                 RoomView rv = new RoomView(gsm);
                 rv.createRoom(roomIt.next());
-                Lobby lby = new Lobby(LOBBY_LEFT, y, LOBBY_WIDTH, height, name, players, rv);
+                Lobby lby = new Lobby(LOBBY_LEFT, y, LOBBY_WIDTH, LOBBY_HEIGHT, name, players, rv);
 
                 this.lobbies.add(lby);
                 this.buttons.add(lby);
@@ -247,7 +246,6 @@ public class LobbySelectView extends State {
         void create() {}
 
         void click(){
-            create();
             gsm.push(this.state);
         }
 
@@ -289,6 +287,12 @@ public class LobbySelectView extends State {
         }
 
         @Override
+        void click(){
+            create();
+            super.click();
+        }
+
+        @Override
         void create() {
             this.roomView.createPlayer();
         }
@@ -301,9 +305,9 @@ public class LobbySelectView extends State {
             font.setColor(Color.MAGENTA);
             font.getData().setScale(5f);
             font.draw(sb, this.name,
-                    this.x + this.margin, this.y + this.height - this.margin);
+                    this.x + this.margin, this.height + this.y - this.margin);
             font.draw(sb, this.players + "/5",
-                    Game.WIDTH/2, this.y + this.height - this.margin);
+                    Game.WIDTH/2, this.height + this.y - this.margin);
             sb.end();
         }
     }

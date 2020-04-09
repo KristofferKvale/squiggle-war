@@ -13,18 +13,21 @@ import com.mygdx.game.Game;
 import com.mygdx.game.models.BoardModel;
 import com.mygdx.game.models.PlayerModel;
 import com.mygdx.game.models.OpponentModel;
+import com.mygdx.game.models.PowerUpModel;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
 
 
 public class GameView extends State {
+    //TODO: get and draw old lines
 
     private int width = Game.WIDTH;
     private int height = Game.HEIGHT;
     private ArrayList<OpponentModel> opponents;
     private PlayerModel player;
     Texture lines;
+    Texture playerTexture;
     private BoardModel board;
     BitmapFont font;
     BitmapFont playerScore;
@@ -34,7 +37,10 @@ public class GameView extends State {
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
+        this.playerTexture = new Texture("redDot.png");
         this.board = board;
+        this.board.addSpeedBoost();
+        this.board.addGhost();
         font = new BitmapFont();
         font.setColor(Color.WHITE);
         font.getData().setScale(5f);
@@ -111,6 +117,10 @@ public class GameView extends State {
             scoresIt.next().draw(sb, Integer.toString(score), (width/2) + 300 + scoresIt.nextIndex()*100, (height)-50);
         }
         sb.draw(lines, 0, 0, width, height);
+        sb.draw(this.playerTexture, this.player.getPosition().x - 20, Game.HEIGHT - this.player.getPosition().y - 20, 40, 40);
+        for (PowerUpModel powerup:this.board.powerups){
+            sb.draw(powerup.texture, powerup.position.x, powerup.position.y, 20, 20);
+        }
         sb.end();
         lines.dispose();
 
@@ -124,7 +134,7 @@ public class GameView extends State {
 
     public void updateLine() {
         line.setColor(player.getColor());
-        Vector2 pos = player.getPosition();
+        Vector2 pos = player.getLastLinePosition();
         line.fillCircle((int)pos.x, (int)pos.y, 8);
 
         ArrayList<OpponentModel> players = board.getOpponents();

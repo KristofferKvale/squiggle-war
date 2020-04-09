@@ -16,9 +16,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.mygdx.game.Game;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class PlayerModel {
+    //Gap timer values
+    private static final int MIN_GAP_TIME = 20;
+    private static final int MAX_GAP_TIME = 50;
+
+    private static final int MIN_LINE_TIME = 200;
+    private static final int MAX_LINE_TIME = 250;
+
     String username;
     Color color;
     LineModel line;
@@ -32,12 +40,18 @@ public class PlayerModel {
     private boolean crashed = false;
     private String roomID;
 
+    boolean line_on;
+    private int line_gap_timer;
+
+    private Vector2 position;
+
 
     //RoomModel trenger en tom constructor for å lese fra db (??)
     public PlayerModel(){}
 
     public PlayerModel(final String username, Color color, String roomID) {
         this.username = username;
+        this.color = color;
         this.active = true;
         this.color = color;
         this.roomID = roomID;
@@ -115,6 +129,10 @@ public class PlayerModel {
             }
         });
 
+        this.line_on = true;
+        this.line_gap_timer = randomLineTime();
+        this.position = this.line.getLastPoint();
+        this.powerups = new ArrayList<>();
     }
 
     public ArrayList<Vector2> getLinePoints() {
@@ -138,6 +156,11 @@ public class PlayerModel {
     }
 
     public Vector2 getPosition() {
+        //return this.line.getLastPoint();
+        return this.position;
+    }
+
+    public Vector2 getLastLinePosition() {
         return this.line.getLastPoint();
     }
 
@@ -194,6 +217,8 @@ public class PlayerModel {
         x += (speed * Math.cos(this.angle));
         y += (speed * Math.sin(this.angle));
 
+        this.updateTimer();
+
         setNewPoint(Math.round(x), Math.round(y));
     }
 
@@ -205,7 +230,10 @@ public class PlayerModel {
 
         }
         else {
-            this.line.addPoint(point);
+            this.position = point;
+            if (this.line_on) {
+                this.line.addPoint(point);
+            }
         }
     }
 
@@ -216,17 +244,47 @@ public class PlayerModel {
     }
 
     private boolean hasSpeedBoost(){
+        int x = 0;
         for (PowerUpModel powerup:this.powerups){
-            return powerup.name.equals("Speed_boost") && powerup.checkStatus();
+            if (powerup.name.equals("Speed_boost") && powerup.checkStatus()){
+                x = 1;
+            }
         }
-        return false;
+        return x == 1;
     }
 
     private boolean isGhost(){
+        int x = 0;
         for (PowerUpModel powerup:this.powerups){
-            return powerup.name.equals("Ghost") && powerup.checkStatus();
+            if (powerup.name.equals("Ghost") && powerup.checkStatus()){
+                x = 1;
+            }
         }
-        return false;
+        return x == 1;
     }
 
+    private void updateTimer(){
+        this.line_gap_timer -= 1;
+
+        if (this.line_gap_timer == 0) {
+            this.line_on = !this.line_on;
+            if (this.line_on){
+                this.line_gap_timer = randomLineTime();
+            } else {
+                this.line_gap_timer = randomGapTime();
+            }
+        }
+
+
+    }
+
+    private static int randomGapTime() {
+        Random rand = new Random();
+        return rand.nextInt(MAX_GAP_TIME-MIN_GAP_TIME) + MIN_GAP_TIME;
+    }
+
+    private static int randomLineTime() {
+        Random rand = new Random();
+        return rand.nextInt(MAX_LINE_TIME-MIN_LINE_TIME) + MIN_LINE_TIME;
+    }
 }

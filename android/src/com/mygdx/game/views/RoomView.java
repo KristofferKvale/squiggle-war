@@ -113,7 +113,7 @@ public class RoomView extends State {
         sb.setProjectionMatrix(this.cam.combined);
         sb.begin();
 
-            stage.draw();
+        stage.draw();
 
         sb.end();
     }

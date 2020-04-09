@@ -135,20 +135,18 @@ public class RoomModel {
 
 
     private Color randomColor(Integer min, Integer max){
-        Integer i = (int)(Math.random() * (max - min + 1) + min);
+        Integer i = (int)(Math.random() * (max - min) + min);
         return colors.get(i);
     }
 
     private Color setColor() {
-        Color color = randomColor(0, colors.size());
         for (OpponentModel opponent : opponents) {
-            if (opponent.getColor() == color) {
-                colors.remove(color);
-                setColor();
-            }
+            colors.remove(opponent.getColor());
         }
-        return color;
+        return randomColor(0, colors.size());
     }
+
+
 
     public ArrayList<OpponentModel> getOpponents() { return opponents; }
 
