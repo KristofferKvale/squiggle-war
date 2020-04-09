@@ -304,9 +304,9 @@ public class PlayerModel {
                 }
             }
             if (bigDelta >= smallDelta){
-                size = Game.BIG_SIZE;
-            } else {
                 size = Game.SMALL_SIZE;
+            } else {
+                size = Game.BIG_SIZE;
             }
         } else if (this.isSmall()){
             size = Game.SMALL_SIZE;
