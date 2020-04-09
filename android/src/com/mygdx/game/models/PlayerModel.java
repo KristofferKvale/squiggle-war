@@ -38,6 +38,7 @@ public class PlayerModel {
     private DatabaseReference mDatabase;
     private int score;
     private boolean crashed = false;
+    private boolean ready = false;
     private String roomID;
 
     boolean line_on;
@@ -65,6 +66,7 @@ public class PlayerModel {
         mDatabase.child(playerID).child("score").setValue(score);
         mDatabase.child(playerID).child("crashed").setValue(crashed);
         mDatabase.child(playerID).child("color").setValue(color);
+        mDatabase.child(playerID).child("ready").setValue(ready);
         this.line = new LineModel(Game.randomPosition(100), playerID, roomID);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
         mDatabase.addChildEventListener(new ChildEventListener() {
@@ -150,6 +152,10 @@ public class PlayerModel {
         this.active = false;
     }
 
+    public void setReadyState(boolean ready) { this.ready = ready; }
+
+    public boolean getReadyState() { return this.ready; }
+
     public void setActive() {
         this.active = true;
     }
@@ -170,6 +176,8 @@ public class PlayerModel {
     public int getScore() {
         return score;
     }
+
+    public String getPlayerID() { return playerID; }
 
     public void setScore(int score) {
         this.score = score;
