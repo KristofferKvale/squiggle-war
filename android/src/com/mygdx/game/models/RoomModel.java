@@ -140,15 +140,13 @@ public class RoomModel {
     }
 
     private Color setColor() {
-        Color color = randomColor(0, colors.size());
         for (OpponentModel opponent : opponents) {
-            if (opponent.getColor() == color) {
-                colors.remove(color);
-                setColor();
-            }
+            colors.remove(opponent.getColor());
         }
-        return color;
+        return randomColor(0, colors.size());
     }
+
+
 
     public ArrayList<OpponentModel> getOpponents() { return opponents; }
 
