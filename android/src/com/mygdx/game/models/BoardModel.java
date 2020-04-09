@@ -1,7 +1,7 @@
 package com.mygdx.game.models;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Game;
 
 
@@ -54,8 +54,8 @@ public class BoardModel {
 
     //Help function that checks if one player is outside the board
     private boolean CollisionWalls(){
-        ArrayList<Vector2> points = this.player.getLinePoints();
-        Vector2 point = points.get(points.size() -1);
+        ArrayList<Vector3> points = this.player.getLinePoints();
+        Vector3 point = points.get(points.size() -1);
         int x = (int) point.x;
         int y = (int) point.y;
         if (x > this.width || x < 0 || y > this.height || y < 0){
@@ -69,10 +69,10 @@ public class BoardModel {
 
     private boolean CollisionOpponent(){
         for(OpponentModel opponent : this.opponents){
-            Vector2 lastPlayerPos = this.player.getPosition();
-            ArrayList<Vector2> oppPoints;
+            Vector3 lastPlayerPos = this.player.getPosition();
+            ArrayList<Vector3> oppPoints;
             oppPoints = opponent.getPoints();
-            for (Vector2 pos : oppPoints){
+            for (Vector3 pos : oppPoints){
                 if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12) {
                     return true;
                 }
@@ -83,12 +83,12 @@ public class BoardModel {
     }
 
     private boolean CollisionPlayer() {
-        ArrayList<Vector2> playerPoints = new ArrayList<>();
+        ArrayList<Vector3> playerPoints = new ArrayList<>();
         playerPoints.addAll(player.getLinePoints());
-        Vector2 lastPlayerPos = this.player.getPosition();
+        Vector3 lastPlayerPos = this.player.getPosition();
         if(playerPoints.size()>50) {
             playerPoints.subList(playerPoints.size()-50,playerPoints.size()).clear();
-            for (Vector2 pos : playerPoints) {
+            for (Vector3 pos : playerPoints) {
                 if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12){
                     return true;
                 }
@@ -98,7 +98,7 @@ public class BoardModel {
     }
 
     private void CollisionPowerup(){
-        Vector2 point = this.player.getPosition();
+        Vector3 point = this.player.getPosition();
         int x = (int) point.x;
         int y = (int) point.y;
         try {

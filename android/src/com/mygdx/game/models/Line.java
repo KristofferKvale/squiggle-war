@@ -1,13 +1,13 @@
 package com.mygdx.game.models;
 
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 import java.util.List;
 
 public interface Line {
 
-    void addPoint(Vector2 point);
-    List<Vector2> getPoints();
-    Vector2 getLastPoint();
+    void addPoint(Vector3 point);
+    List<Vector3> getPoints();
+    Vector3 getLastPoint();
 
 }

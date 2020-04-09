@@ -11,8 +11,8 @@ public class PowerUpModel {
     public String name;
     public Texture texture;
     public Vector2 position = Game.randomPosition(150);
-    public Timestamp activated = null;
-    public Boolean active = true;
+    private Timestamp activated = null;
+    private Boolean active = true;
     private int duration = 10;
 
     public PowerUpModel(String name) {
@@ -44,12 +44,14 @@ public class PowerUpModel {
     }
 
     public boolean checkStatus() {
-        Timestamp now = new Timestamp(new Date().getTime());
-        long delta = now.getTime() - this.activated.getTime();
+        long delta = this.getTimeDelta();
         if (delta >= this.duration * 1000) {
             this.active = false;
         }
-        System.out.println("Now: " + now.getTime() + ", activated: " + this.activated.getTime() + ", delta: " + delta + "duration: " + this.duration * 1000);
         return this.active;
+    }
+
+    public long getTimeDelta(){
+        return new Timestamp(new Date().getTime()).getTime() - this.activated.getTime();
     }
 }

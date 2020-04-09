@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,7 +45,7 @@ public class PlayerModel {
     private int line_timer = 0;
     private int line_gap_timer = 0;
 
-    private Vector2 position;
+    private Vector3 position;
 
 
     //RoomModel trenger en tom constructor for å lese fra db (??)
@@ -67,7 +67,7 @@ public class PlayerModel {
         mDatabase.child(playerID).child("crashed").setValue(crashed);
         mDatabase.child(playerID).child("color").setValue(color);
         mDatabase.child(playerID).child("ready").setValue(ready);
-        this.line = new LineModel(Game.randomPosition(100), playerID, roomID);
+        this.line = new LineModel(Game.randomPlayerPosition(100), playerID, roomID);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
@@ -136,7 +136,7 @@ public class PlayerModel {
         this.powerups = new ArrayList<>();
     }
 
-    public ArrayList<Vector2> getLinePoints() {
+    public ArrayList<Vector3> getLinePoints() {
         return this.line.getPoints();
     }
 
@@ -160,12 +160,12 @@ public class PlayerModel {
         this.active = true;
     }
 
-    public Vector2 getPosition() {
+    public Vector3 getPosition() {
         //return this.line.getLastPoint();
         return this.position;
     }
 
-    public Vector2 getLastLinePosition() {
+    public Vector3 getLastLinePosition() {
         return this.line.getLastPoint();
     }
 
@@ -213,7 +213,7 @@ public class PlayerModel {
     }
 
     public void move() {
-        Vector2 coords = this.getPosition();
+        Vector3 coords = this.getPosition();
         int speed = Game.SPEED;
         float x = coords.x;
         float y = coords.y;
@@ -231,7 +231,7 @@ public class PlayerModel {
 
 
     public void setNewPoint(int x, int y){
-        Vector2 point = new Vector2(x,y);
+        Vector3 point = new Vector3(x,y, getSize());
 
         if ((int) point.x == (int) this.line.getLastPoint().x && (int) point.y == (int) this.line.getLastPoint().y){
 
@@ -269,6 +269,53 @@ public class PlayerModel {
         }
         return x == 1;
     }
+
+    public boolean isBig(){
+        int x = 0;
+        for (PowerUpModel powerup:this.powerups){
+            if (powerup.name.equals("Grow") && powerup.checkStatus()){
+                x = 1;
+            }
+        }
+        return x == 1;
+    }
+
+    public boolean isSmall(){
+        int x = 0;
+        for (PowerUpModel powerup:this.powerups){
+            if (powerup.name.equals("Shrink") && powerup.checkStatus()){
+                x = 1;
+            }
+        }
+        return x == 1;
+    }
+
+
+    public int getSize(){
+        int size = Game.DEFAULT_SIZE;
+        if (this.isBig() && this.isSmall()){
+            long bigDelta = 0;
+            long smallDelta = 0;
+            for (PowerUpModel powerup:this.powerups){
+                if (powerup.name.equals("Grow")){
+                    bigDelta = powerup.getTimeDelta();
+                } else if (powerup.name.equals("Shrink")){
+                    smallDelta = powerup.getTimeDelta();
+                }
+            }
+            if (bigDelta >= smallDelta){
+                size = Game.BIG_SIZE;
+            } else {
+                size = Game.SMALL_SIZE;
+            }
+        } else if (this.isSmall()){
+            size = Game.SMALL_SIZE;
+        } else if (this.isBig()){
+            size = Game.BIG_SIZE;
+        }
+        return size;
+    }
+
 
     private void updateTimer(){
         if (this.isGhost()) {

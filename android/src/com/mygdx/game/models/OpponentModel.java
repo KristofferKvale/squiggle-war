@@ -6,13 +6,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mygdx.game.Game;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ public class OpponentModel {
     private boolean crashed = false;
     private Color color = Color.BLUE;
     private DatabaseReference mDatabase;
-    private ArrayList<Vector2> points = new ArrayList<>();
+    private ArrayList<Vector3> points = new ArrayList<>();
 
 
     public OpponentModel(String playerId, String roomId) {
@@ -82,7 +83,7 @@ public class OpponentModel {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try{
-                    points.add(dataSnapshot.getValue(Vector2.class));
+                    points.add(dataSnapshot.getValue(Vector3.class));
 
                 }catch (Exception e) {
 
@@ -159,7 +160,7 @@ public class OpponentModel {
         return crashed;
     }
 
-    public ArrayList<Vector2> getPoints() {
+    public ArrayList<Vector3> getPoints() {
         return points;
     }
 
@@ -171,11 +172,11 @@ public class OpponentModel {
         points = new ArrayList<>();
     }
 
-    public Vector2 getPosition() {
+    public Vector3 getPosition() {
         if(points.size() >= 1) {
             return this.points.get(points.size() - 1);
         }else{
-            return new Vector2(-100,-100);
+            return new Vector3(-100,-100, Game.DEFAULT_SIZE);
         }
     }
 
