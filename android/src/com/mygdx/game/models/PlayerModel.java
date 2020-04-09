@@ -24,8 +24,8 @@ public class PlayerModel {
     private static final int MIN_GAP_TIME = 20;
     private static final int MAX_GAP_TIME = 50;
 
-    private static final int MIN_LINE_TIME = 150;
-    private static final int MAX_LINE_TIME = 500;
+    private static final int MIN_LINE_TIME = 200;
+    private static final int MAX_LINE_TIME = 250;
 
     String username;
     Color color;
@@ -132,6 +132,7 @@ public class PlayerModel {
         this.line_on = true;
         this.line_gap_timer = randomLineTime();
         this.position = this.line.getLastPoint();
+        this.powerups = new ArrayList<>();
     }
 
     public ArrayList<Vector2> getLinePoints() {
@@ -157,6 +158,10 @@ public class PlayerModel {
     public Vector2 getPosition() {
         //return this.line.getLastPoint();
         return this.position;
+    }
+
+    public Vector2 getLastLinePosition() {
+        return this.line.getLastPoint();
     }
 
     public Color getColor() {
@@ -264,8 +269,6 @@ public class PlayerModel {
         if (this.line_gap_timer == 0) {
             this.line_on = !this.line_on;
             if (this.line_on){
-                //TODO: get this players board and add the line to old lines
-                //TODO: add new line on this.position for this player
                 this.line_gap_timer = randomLineTime();
             } else {
                 this.line_gap_timer = randomGapTime();

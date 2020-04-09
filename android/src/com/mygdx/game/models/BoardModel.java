@@ -25,9 +25,6 @@ public class BoardModel {
     public float postCrash = 0f;
     float period = 4f;
 
-    public ArrayList<Line> old_lines;
-    //TODO: Add crash with old lines
-
     public BoardModel(ArrayList<OpponentModel> opponents, PlayerModel player){
         this.opponents = opponents;
         this.player = player;
@@ -172,14 +169,6 @@ public class BoardModel {
 
     public PlayerModel getPlayer() {
         return player;
-    }
-
-    public ArrayList<Line> getOldLines() {
-        return old_lines;
-    }
-
-    public void addOldLine(Line line) {
-        this.old_lines.add(line);
     }
 }
 

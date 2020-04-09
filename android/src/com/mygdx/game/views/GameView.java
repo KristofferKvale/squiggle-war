@@ -27,6 +27,7 @@ public class GameView extends State {
     private ArrayList<OpponentModel> opponents;
     private PlayerModel player;
     Texture lines;
+    Texture playerTexture;
     private BoardModel board;
     BitmapFont font;
     BitmapFont playerScore;
@@ -36,6 +37,7 @@ public class GameView extends State {
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
+        this.playerTexture = new Texture("redDot.png");
         this.board = board;
         this.board.addSpeedBoost();
         this.board.addGhost();
@@ -115,6 +117,7 @@ public class GameView extends State {
             scoresIt.next().draw(sb, Integer.toString(score), (width/2) + 300 + scoresIt.nextIndex()*100, (height)-50);
         }
         sb.draw(lines, 0, 0, width, height);
+        sb.draw(this.playerTexture, this.player.getPosition().x - 20, Game.HEIGHT - this.player.getPosition().y - 20, 40, 40);
         for (PowerUpModel powerup:this.board.powerups){
             sb.draw(powerup.texture, powerup.position.x, powerup.position.y, 20, 20);
         }
@@ -131,7 +134,7 @@ public class GameView extends State {
 
     public void updateLine() {
         line.setColor(player.getColor());
-        Vector2 pos = player.getPosition();
+        Vector2 pos = player.getLastLinePosition();
         line.fillCircle((int)pos.x, (int)pos.y, 8);
 
         ArrayList<OpponentModel> players = board.getOpponents();
