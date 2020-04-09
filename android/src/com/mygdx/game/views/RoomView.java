@@ -95,6 +95,7 @@ public class RoomView extends State {
             }
             if(timeToStart > 4.1f) {
                 room.playerStart(gsm);
+                Log.d("RoomID", this.roomID);
                 DatabaseReference roomState = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.roomID).child("started");
                 roomState.setValue(true);
             }
