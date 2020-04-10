@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Game;
 import com.mygdx.game.models.BoardModel;
@@ -28,6 +29,7 @@ public class GameView extends State {
     private PlayerModel player;
     Texture lines;
     Texture playerTexture;
+    private ShapeRenderer playerHead = new ShapeRenderer();
     private BoardModel board;
     BitmapFont font;
     BitmapFont playerScore;
@@ -119,11 +121,11 @@ public class GameView extends State {
             scoresIt.next().draw(sb, Integer.toString(score), (width/2) + 300 + scoresIt.nextIndex()*100, (height)-50);
         }
         sb.draw(lines, 0, 0, width, height);
-        sb.draw(this.playerTexture, this.player.getPosition().x - 20, Game.HEIGHT - this.player.getPosition().y - 20, 40, 40);
         for (PowerUpModel powerup:this.board.powerups){
             sb.draw(powerup.texture, powerup.position.x, powerup.position.y, 40, 40);
         }
         sb.end();
+        renderPlayerHead();
         lines.dispose();
 
     }
@@ -148,6 +150,14 @@ public class GameView extends State {
             }
         }
         lines = new Texture(line, Format.RGBA8888, false);
+    }
+
+    private void renderPlayerHead() {
+        playerHead.begin(ShapeRenderer.ShapeType.Filled);
+        Vector3 pos = player.getPosition();
+        playerHead.setColor(player.getColor());
+        playerHead.circle((int)pos.x, height - (int)pos.y, player.getCurrentHeadSize());
+        playerHead.end();
     }
 }
 

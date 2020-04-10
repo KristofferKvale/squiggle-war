@@ -21,8 +21,8 @@ import java.util.Random;
 
 public class PlayerModel {
     //Gap timer values
-    private static final int MIN_GAP_TIME = 20;
-    private static final int MAX_GAP_TIME = 50;
+    private static final int MIN_GAP_TIME = 30;
+    private static final int MAX_GAP_TIME = 80;
 
     private static final int MIN_LINE_TIME = 200;
     private static final int MAX_LINE_TIME = 250;
@@ -317,6 +317,29 @@ public class PlayerModel {
     }
 
 
+    public int getCurrentHeadSize() {
+        int z = getSize();
+        if (z == Game.SMALL_SIZE){
+            return Game.SMALL_HEAD_SIZE;
+        } else if (z == Game.BIG_SIZE){
+            return Game.BIG_HEAD_SIZE;
+        }  else {
+            return Game.DEFAULT_HEAD_SIZE;
+        }
+    }
+
+
+    public int getHeadSize(int z) {
+        if (z == Game.SMALL_SIZE){
+            return Game.SMALL_HEAD_SIZE;
+        } else if (z == Game.BIG_SIZE){
+            return Game.BIG_HEAD_SIZE;
+        }  else {
+            return Game.DEFAULT_HEAD_SIZE;
+        }
+    }
+
+
     private void updateTimer(){
         if (this.isGhost()) {
             this.line_on = false;
@@ -351,5 +374,27 @@ public class PlayerModel {
     private static int randomLineTime() {
         Random rand = new Random();
         return rand.nextInt(MAX_LINE_TIME-MIN_LINE_TIME) + MIN_LINE_TIME;
+    }
+
+    private float dist(int x1, int y1, int x2, int y2){
+        return (float) Math.sqrt((int) Math.pow((x1-x2), 2) + (int) Math.pow((y1-y2), 2));
+    }
+
+    public boolean CollisionTestCircle(int x, int y, int r){
+        Vector3 pos = getPosition();
+        return (dist((int) pos.x, (int) pos.y, x, y) <= r + getCurrentHeadSize());
+    }
+
+    public boolean CollisionTestRectangle(int x, int y, int w, int h){
+        int testX = 0;
+        int testY = 0;
+        Vector3 pos = getPosition();
+
+        if (pos.x < x)          testX = x;        // left edge
+        else if (pos.x > x + w) testX = x + w;     // right edge
+        if (pos.y < y)          testY = y;        // top edge
+        else if (pos.y > y + h) testY = y + h;     // bottom edge
+
+        return (dist((int) pos.x, (int) pos.y, testX, testY) <= getCurrentHeadSize());
     }
 }
