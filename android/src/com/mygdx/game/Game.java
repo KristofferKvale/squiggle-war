@@ -14,7 +14,7 @@ public class Game extends ApplicationAdapter {
 
     public static int WIDTH;
     public static int HEIGHT;
-    public static boolean PLAY_TESTING = true;
+    public static boolean PLAY_TESTING = false;
     public static final int DEFAULT_SIZE = 8;
     public static final int SMALL_SIZE = 2;
     public static final int BIG_SIZE = 24;
