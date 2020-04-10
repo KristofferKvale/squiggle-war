@@ -156,7 +156,7 @@ public class BoardModel {
                 numPlayerCrash++;
             }
         }
-        if(numPlayerCrash >= opponents.size()) {
+        if(numPlayerCrash >= opponents.size() && (!Game.PLAY_TESTING || player.isCrashed())) {
             if (!player.isCrashed()){player.incScore();} //Skal være !player.isCrashed
             if(postCrash < 6.1f) {
                 postCrash += dt;
