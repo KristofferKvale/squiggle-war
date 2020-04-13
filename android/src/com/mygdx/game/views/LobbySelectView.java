@@ -67,8 +67,12 @@ public class LobbySelectView extends State {
                     mDatabase.child(roomID).child("started").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(! dataSnapshot.getValue(Boolean.class)){
-                            roomIDs.add(roomID);
+                            try {
+                                if (!dataSnapshot.getValue(Boolean.class)) {
+                                    roomIDs.add(roomID);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
 
