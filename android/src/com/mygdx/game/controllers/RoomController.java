@@ -2,7 +2,9 @@ package com.mygdx.game.controllers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.game.models.RoomModel;
 import com.mygdx.game.views.GameStateManager;
 import com.mygdx.game.views.LobbySelectView;
@@ -14,8 +16,11 @@ public class RoomController implements InputProcessor {
     private RoomModel room;
     private GameStateManager gsm;
 
-    public RoomController(RoomView view, RoomModel room, GameStateManager gsm){
-        Gdx.input.setInputProcessor(this);
+    public RoomController(RoomView view, RoomModel room, GameStateManager gsm, Stage buttons){
+        InputMultiplexer im = new InputMultiplexer();
+        im.addProcessor(this);
+        im.addProcessor(buttons);
+        Gdx.input.setInputProcessor(im);
         Gdx.input.setCatchKey(Input.Keys.BACK, true);
         this.view = view;
         this.room = room;

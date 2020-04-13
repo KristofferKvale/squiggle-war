@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -100,7 +101,7 @@ public class RoomView extends State {
 
     public void createPlayer() {
         room.createPlayer(Config.getInstance().username);
-        roomController = new RoomController(this, room, gsm);
+        roomController = new RoomController(this, room, gsm, mainStage);
     }
 
     @Override
@@ -137,8 +138,6 @@ public class RoomView extends State {
         Gdx.gl.glClearColor(.1f, .12f, .16f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         sb.setProjectionMatrix(this.cam.combined);
-
-        Gdx.input.setInputProcessor(mainStage);
 
         sb.begin();
 
