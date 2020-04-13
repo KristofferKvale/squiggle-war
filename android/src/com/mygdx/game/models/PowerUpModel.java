@@ -44,14 +44,15 @@ public class PowerUpModel {
     }
 
     public boolean checkStatus() {
-        long delta = this.getTimeDelta();
-        if (delta >= this.duration * 1000) {
-            this.active = false;
-        }
+        this.active = (this.getTimeLeft() > 0);
         return this.active;
     }
 
     public long getTimeDelta(){
         return new Timestamp(new Date().getTime()).getTime() - this.activated.getTime();
+    }
+
+    public int getTimeLeft(){
+        return (int) (this.duration * 1000 - this.getTimeDelta());
     }
 }
