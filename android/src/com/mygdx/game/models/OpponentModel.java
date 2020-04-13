@@ -21,6 +21,7 @@ public class OpponentModel {
     public String playerID;
     private String roomID;
     private String username;
+    private boolean ready = false;
     private int score = 0;
     private boolean crashed = false;
     private Color color = Color.BLUE;
@@ -146,6 +147,38 @@ public class OpponentModel {
             }
         });
 
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("ready");
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                    setReadyState(dataSnapshot.getValue(Boolean.class));
+                } catch (Exception e) {
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("ready");
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                    setReadyState(dataSnapshot.getValue(Boolean.class));
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     public String getUsername() {
@@ -171,6 +204,9 @@ public class OpponentModel {
     public void nextGame() {
         points = new ArrayList<>();
     }
+
+    public boolean getReadyState() { return this.ready; }
+    private void setReadyState(boolean ready) { this.ready = ready;}
 
     public Vector3 getPosition() {
         if(points.size() >= 1) {

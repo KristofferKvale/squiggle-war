@@ -196,6 +196,16 @@ public class RoomView extends State {
         if(room != null) {
             room.removeSelf();
             if(room.getOpponents().size() >= 1 && this.room.getPlayer().getReadyState()) {
+                boolean opponentsReady = false;
+                for (OpponentModel opponent : opponents) {
+                    if (!opponent.getReadyState()) {
+                        opponentsReady = false;
+                        break;
+                    } else {
+                        opponentsReady = true;
+                        continue;
+                    }
+                }
                 timeToStart += dt;
             } else if (Game.PLAY_TESTING && this.room.getPlayer().getReadyState()) {
                 timeToStart += dt;
@@ -291,13 +301,27 @@ public class RoomView extends State {
         Label playerLabel = new Label(player.getUsername(), uiskin);
         playerLabel.setFontScale(3);
         playerLabel.setAlignment(Align.left);
-        mainTable.add(playerLabel).left().row();
+
+        mainTable.add(playerLabel).left();
+
+        if (player.getReadyState()) {
+            Image checkMark = new Image(new TextureRegion(new Texture("checkmark.png")));
+            mainTable.add(checkMark).width(50).height(50).padLeft(50);
+        }
+
+        mainTable.row();
 
 
         for (OpponentModel opponent : this.opponents) {
             Label opponentLabel = new Label(opponent.getUsername(), uiskin);
             opponentLabel.setFontScale(3);
-            mainTable.add(opponentLabel).left().row();
+
+            mainTable.add(opponentLabel).left();
+            if (opponent.getReadyState()) {
+                Image checkMark = new Image(new TextureRegion(new Texture("checkmark.png")));
+                mainTable.add(checkMark).width(50).height(50).padLeft(50);
+            }
+            mainTable.row();
         }
 
         } catch (Exception e) {

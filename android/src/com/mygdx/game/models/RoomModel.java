@@ -160,6 +160,8 @@ public class RoomModel {
         return new BoardModel(getOpponents(), player);
     }
 
+    public String getRoomID() { return this.roomID; }
+
     public void createGameView(GameStateManager gsm) {
         gameView = new GameView(gsm, getBoard());
         gsm.push(gameView);
