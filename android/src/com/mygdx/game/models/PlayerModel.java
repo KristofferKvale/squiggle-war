@@ -243,8 +243,8 @@ public class PlayerModel {
 
     public void nextGame() {
         this.line.delete();
+        this.position = this.line.getLastPoint();
         this.setCrashed(false);
-
     }
 
     private boolean hasSpeedBoost(){
