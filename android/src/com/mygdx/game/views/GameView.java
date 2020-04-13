@@ -25,15 +25,15 @@ public class GameView extends State {
     private int height = Game.HEIGHT;
     private ArrayList<OpponentModel> opponents;
     private PlayerModel player;
-    Texture lines;
+    private Texture lines;
     private ShapeRenderer playerHead = new ShapeRenderer();
     private ShapeRenderer playableArea = new ShapeRenderer();
     private BoardModel board;
-    BitmapFont font;
-    BitmapFont playerScore;
-    String number = "3";
-    public Pixmap line;
-    ArrayList<BitmapFont> scores;
+    private BitmapFont font;
+    private BitmapFont playerScore;
+    private String number = "3";
+    private Pixmap line;
+    private ArrayList<BitmapFont> scores;
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
@@ -46,7 +46,7 @@ public class GameView extends State {
         font.setColor(Color.WHITE);
         font.getData().setScale(5f);
         line = new Pixmap(width, height, Pixmap.Format.RGBA8888);
-        scores = new ArrayList<BitmapFont>();
+        scores = new ArrayList<>();
         opponents = board.getOpponents();
         player = board.getPlayer();
         playerScore = new BitmapFont();
@@ -110,17 +110,10 @@ public class GameView extends State {
         sb.setProjectionMatrix(this.cam.combined);
         renderPlayableArea();
         sb.begin();
-        font.draw(sb,number,width/2,height/2);
-        playerScore.draw(sb, Integer.toString(player.getScore()),(width/2) + 200, height - 20);
-        ListIterator<BitmapFont> scoresIt = scores.listIterator();
-        while (scoresIt.hasNext()) {
-            int score = opponents.get(scoresIt.nextIndex()).getScore();
-            scoresIt.next().draw(sb, Integer.toString(score), (width/2) + 300 + scoresIt.nextIndex()*100, height - 20);
-        }
+        font.draw(sb,number,width/2f,height/2f);
+        renderPowerUps(sb);
+        renderScores(sb);
         sb.draw(lines, 0, 0, width, height);
-        for (PowerUpModel powerup:this.board.powerups){
-            sb.draw(powerup.texture, powerup.position.x, powerup.position.y, 40, 40);
-        }
         sb.end();
         renderPlayerHead();
         lines.dispose();
@@ -133,21 +126,37 @@ public class GameView extends State {
         lines.dispose();
     }
 
-    public void updateLine() {
+    private void updateLine() {
         line.setColor(player.getColor());
         Vector3 pos = player.getLastLinePosition();
-        line.fillCircle((int)pos.x, (int)pos.y, (int)pos.z);
+        line.fillCircle((int)pos.x + Game.SPACE_SIDE, (int)pos.y + Game.SPACE_TOP, (int)pos.z);
 
         ArrayList<OpponentModel> players = board.getOpponents();
         for(OpponentModel opponent:players) {
             Vector3 point = opponent.getPosition();
             if (point.x != -100) {
                 line.setColor(opponent.getColor());
-                line.fillCircle((int)point.x, (int)point.y, (int)point.z);
+                line.fillCircle((int)point.x + Game.SPACE_SIDE, (int)point.y + Game.SPACE_TOP, (int)point.z);
             }
         }
         lines = new Texture(line, Format.RGBA8888, false);
     }
+
+    private void renderScores(SpriteBatch sb){
+        playerScore.draw(sb, Integer.toString(player.getScore()),(width/2f) + 200, height - 20);
+        ListIterator<BitmapFont> scoresIt = scores.listIterator();
+        while (scoresIt.hasNext()) {
+            int score = opponents.get(scoresIt.nextIndex()).getScore();
+            scoresIt.next().draw(sb, Integer.toString(score), (width/2f) + 300 + scoresIt.nextIndex()*100, height - 20);
+        }
+    }
+
+    private void renderPowerUps(SpriteBatch sb){
+        for (PowerUpModel powerup:this.board.powerups){
+            sb.draw(powerup.texture, powerup.position.x + Game.SPACE_SIDE, powerup.position.y - Game.SPACE_TOP, 40, 40);
+        }
+    }
+
 
     private void renderPlayableArea() {
         playableArea.begin(ShapeRenderer.ShapeType.Filled);
@@ -160,7 +169,7 @@ public class GameView extends State {
         playerHead.begin(ShapeRenderer.ShapeType.Filled);
         Vector3 pos = player.getPosition();
         playerHead.setColor(player.getColor());
-        playerHead.circle((int)pos.x, height - (int)pos.y, player.getCurrentHeadSize());
+        playerHead.circle((int)pos.x + Game.SPACE_SIDE, height - (int)pos.y - Game.SPACE_TOP, player.getCurrentHeadSize());
         playerHead.end();
     }
 }

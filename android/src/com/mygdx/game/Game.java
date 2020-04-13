@@ -62,15 +62,14 @@ public class Game extends ApplicationAdapter {
     }
 
     public static Vector3 randomPlayerPosition(int distance) {
-        int x = (int) (Math.random() * (PLAYABLE_WIDTH - 2 * distance)) + distance + SPACE_SIDE;
-        int y = (int) (Math.random() * (PLAYABLE_HEIGHT - 2 * distance)) + distance + SPACE_TOP;
-        int z = DEFAULT_SIZE;
-        return new Vector3(x, y, z);
+        int x = (int) (Math.random() * (PLAYABLE_WIDTH - 2 * distance)) + distance;
+        int y = (int) (Math.random() * (PLAYABLE_HEIGHT - 2 * distance)) + distance;
+        return new Vector3(x, y, DEFAULT_SIZE);
     }
 
     public static Vector2 randomPosition(int distance) {
-        int x = (int) (Math.random() * (PLAYABLE_WIDTH - 2 * distance)) + distance + SPACE_SIDE;;
-        int y = (int) (Math.random() * (PLAYABLE_HEIGHT - 2 * distance)) + distance + SPACE_TOP;
+        int x = (int) (Math.random() * (PLAYABLE_WIDTH - 2 * distance)) + distance;
+        int y = (int) (Math.random() * (PLAYABLE_HEIGHT - 2 * distance)) + distance;
         return new Vector2(x, y);
     }
 }

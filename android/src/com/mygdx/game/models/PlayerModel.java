@@ -34,7 +34,7 @@ public class PlayerModel {
     float angle;
     public String playerID;
     String gameID;
-    ArrayList<PowerUpModel> powerups;
+    private ArrayList<PowerUpModel> powerups;
     private DatabaseReference mDatabase;
     private int score;
     private boolean crashed = false;
@@ -260,6 +260,10 @@ public class PlayerModel {
         this.setCrashed(false);
     }
 
+    public ArrayList getPowerups(){ return this.powerups; }
+
+    public void addPowerup(PowerUpModel powerup){ this.powerups.add(powerup); }
+
     private boolean hasSpeedBoost(){
         int x = 0;
         for (PowerUpModel powerup:this.powerups){
@@ -270,7 +274,7 @@ public class PlayerModel {
         return x == 1;
     }
 
-    public boolean isGhost(){
+    boolean isGhost(){
         int x = 0;
         for (PowerUpModel powerup:this.powerups){
             if (powerup.name.equals("Ghost") && powerup.checkStatus()){
@@ -280,7 +284,7 @@ public class PlayerModel {
         return x == 1;
     }
 
-    public boolean isBig(){
+    private boolean isBig(){
         int x = 0;
         for (PowerUpModel powerup:this.powerups){
             if (powerup.name.equals("Grow") && powerup.checkStatus()){
@@ -290,7 +294,7 @@ public class PlayerModel {
         return x == 1;
     }
 
-    public boolean isSmall(){
+    private boolean isSmall(){
         int x = 0;
         for (PowerUpModel powerup:this.powerups){
             if (powerup.name.equals("Shrink") && powerup.checkStatus()){
@@ -301,7 +305,7 @@ public class PlayerModel {
     }
 
 
-    public int getSize(){
+    private int getSize(){
         int size = Game.DEFAULT_SIZE;
         if (this.isBig() && this.isSmall()){
             long bigDelta = 0;
@@ -390,12 +394,12 @@ public class PlayerModel {
         return (float) Math.sqrt(((x1-x2) * (x1-x2)) + ((y1-y2) * (y1-y2)));
     }
 
-    public boolean CollisionTestCircle(int x, int y, int r){
+    boolean CollisionTestCircle(int x, int y, int r){
         Vector3 pos = getPosition();
         return (dist((int) pos.x, (int) pos.y, x, y) <= r + getCurrentHeadSize());
     }
 
-    public boolean CollisionTestRectangle(int x, int y, int w, int h){
+    boolean CollisionTestRectangle(int x, int y, int w, int h){
         Vector3 pos = getPosition();
         int testX = (int) pos.x;
         int testY = (int) pos.y;

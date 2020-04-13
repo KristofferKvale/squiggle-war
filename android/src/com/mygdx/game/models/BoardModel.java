@@ -57,7 +57,7 @@ public class BoardModel {
         int x = (int) point.x;
         int y = (int) point.y;
         int z = this.player.getCurrentHeadSize();
-        return x + z > Game.PLAYABLE_WIDTH + Game.SPACE_SIDE || x - z < Game.SPACE_SIDE || y + z > Game.PLAYABLE_HEIGHT + Game.SPACE_TOP || y - z < Game.SPACE_TOP;
+        return x + z > Game.PLAYABLE_WIDTH|| x - z < 0|| y + z > Game.PLAYABLE_HEIGHT || y - z < 0;
     }
 
     //Help function that checks if a players position has been visited
@@ -95,7 +95,7 @@ public class BoardModel {
                 int powerUpY = Game.HEIGHT - (int) powerup.position.y - 40;
                 if (player.CollisionTestRectangle(powerUpX, powerUpY, 40, 40)) {
                     powerup.activate();
-                    this.player.powerups.add(powerup);
+                    this.player.addPowerup(powerup);
                     this.powerups.remove(powerup);
                 }
             }
