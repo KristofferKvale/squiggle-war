@@ -46,7 +46,7 @@ import java.util.Date;
 public class RoomView extends State {
 
     private RoomModel room = null;
-    private String roomID;
+    public String roomID;
 
     private Stage mainStage;
     private Stage playerStage;
@@ -59,7 +59,7 @@ public class RoomView extends State {
     private float timeToStart;
     private String adminID;
 
-    private PlayerModel player;
+    public PlayerModel player;
     private ArrayList<OpponentModel> opponents;
     private RoomController roomController;
     private Float pingtimer = 0f;
