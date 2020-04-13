@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mygdx.game.models.RoomModel;
 import com.mygdx.game.views.GameStateManager;
 import com.mygdx.game.views.LobbySelectView;
@@ -32,7 +33,9 @@ public class RoomController implements InputProcessor {
         if(keycode == Input.Keys.BACK){
             room.back();
             gsm.push(new LobbySelectView(gsm));
+            FirebaseDatabase.getInstance().getReference().child("rooms").child(view.roomID).child("players").child(view.player.playerID).removeValue();
             return true;
+
         }
         return false;
     }
