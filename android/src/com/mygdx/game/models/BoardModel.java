@@ -113,7 +113,7 @@ public class BoardModel {
         if (timeseconds > period) {
             this.Collision();
             if (!player.isCrashed()) {
-                player.move();
+                player.move(dt);
             }
             this.playersCrashed(dt);
         }

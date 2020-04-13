@@ -212,7 +212,7 @@ public class PlayerModel {
         this.angle -= Game.ROTATION_SPEED;
     }
 
-    public void move() {
+    public void move(float dt) {
         Vector3 coords = this.getPosition();
         int speed = Game.SPEED;
         float x = coords.x;
@@ -221,10 +221,10 @@ public class PlayerModel {
             speed *= 2;
         }
 
-        x += (speed * Math.cos(this.angle));
-        y += (speed * Math.sin(this.angle));
+        x += (speed * Math.cos(this.angle) * dt);
+        y += (speed * Math.sin(this.angle) * dt);
 
-        this.updateTimer();
+        this.updateTimer(dt);
 
         setNewPoint(Math.round(x), Math.round(y));
     }
@@ -337,7 +337,7 @@ public class PlayerModel {
     }
 
 
-    private void updateTimer(){
+    private void updateTimer(float dt){
         if (this.isGhost()) {
             this.line_on = false;
             this.line_timer = 0;
@@ -348,13 +348,13 @@ public class PlayerModel {
                 this.line_timer = randomLineTime();
             }
             if (this.line_timer > this.line_gap_timer){
-                this.line_timer -= 1;
+                this.line_timer -= dt;
                 if (this.line_timer == 0) {
                     this.line_on = false;
                     this.line_gap_timer = randomGapTime();
                 }
             } else {
-                this.line_gap_timer -= 1;
+                this.line_gap_timer -= dt;
                 if (this.line_gap_timer == 0) {
                     this.line_on = true;
                     this.line_timer = randomLineTime();

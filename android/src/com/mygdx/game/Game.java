@@ -21,7 +21,7 @@ public class Game extends ApplicationAdapter {
     public static final int DEFAULT_HEAD_SIZE = 16;
     public static final int SMALL_HEAD_SIZE = 8;
     public static final int BIG_HEAD_SIZE = 36;
-    public static final int SPEED = 2;
+    public static final int SPEED = 200;
     public static final double ROTATION_SPEED = 0.03;
     public static final String[] AVAILABLE_POWERUPS = new String[]{"Speed_boost", "Ghost"};
 
