@@ -21,14 +21,11 @@ import java.util.ListIterator;
 
 
 public class GameView extends State {
-    //TODO: get and draw old lines
-
     private int width = Game.WIDTH;
     private int height = Game.HEIGHT;
     private ArrayList<OpponentModel> opponents;
     private PlayerModel player;
     Texture lines;
-    Texture playerTexture;
     private ShapeRenderer playerHead = new ShapeRenderer();
     private ShapeRenderer playableArea = new ShapeRenderer();
     private BoardModel board;
@@ -40,7 +37,6 @@ public class GameView extends State {
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
-        this.playerTexture = new Texture("redDot.png");
         this.board = board;
         this.board.addSpeedBoost();
         this.board.addGhost();

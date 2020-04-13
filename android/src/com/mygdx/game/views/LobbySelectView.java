@@ -107,12 +107,6 @@ public class LobbySelectView extends State {
 
             }
         });
-
-
-        // Lager én lobby
-        // TODO: Check for actual lobbies
-
-
     }
 
     public void makeButtons(){
@@ -138,7 +132,6 @@ public class LobbySelectView extends State {
                 int y = LOBBY_TOP - i * (LOBBY_HEIGHT + LOBBY_DISTANCE);
                 int t = i + 1;
                 String name = "Lobby " + t;
-                //int players = rand.nextInt(5); //TODO: get number of players from lobby
                 int players = 0;
 
                 RoomView rv = new RoomView(gsm);
@@ -221,24 +214,6 @@ public class LobbySelectView extends State {
         this.font.getData().setScale(5f);
         this.font.draw(sb, Config.getInstance().username, 50, Game.HEIGHT - 50);
         sb.end();
-
-
-        /*//working shitty code
-        this.shapes.begin(ShapeRenderer.ShapeType.Filled);
-        for (int i = 0; i < this.lobbies.size(); i++) {
-            this.shapes.rect(this.lobbyLeft, this.lobbyBottom - i * (this.lobbyHeight + this.lobbyMargin), this.lobbyWidth, this.lobbyHeight);
-        }
-        this.shapes.end();
-
-        sb.begin();
-        this.font.getData().setScale(5f);
-        this.font.setColor(Color.MAGENTA);
-        for (int i = 0; i < this.lobbies.size(); i++) {
-            //sb.draw(this.lobby, this.lobbyLeft, this.lobbyBottom - i * (this.lobbyHeight + 10), this.lobbyWidth, this.lobbyHeight);
-            this.font.draw(sb,this.lobbies.get(i).get("name").toString(),this.lobbyLeft + this.lobbyMargin, this.lobbyBottom + this.lobbyHeight - this.lobbyMargin - i * (this.lobbyHeight + this.lobbyMargin));
-            this.font.draw(sb,this.lobbies.get(i).get("players").toString() + "/5",this.lobbyLeft + 700, this.lobbyBottom + this.lobbyHeight - this.lobbyMargin - i * (this.lobbyHeight + this.lobbyMargin));
-        }
-        sb.end();*/
     }
 
     @Override

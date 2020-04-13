@@ -53,8 +53,7 @@ public class BoardModel {
 
     //Help function that checks if one player is outside the board
     private boolean CollisionWalls() {
-        ArrayList<Vector3> points = this.player.getLinePoints();
-        Vector3 point = points.get(points.size() - 1);
+        Vector3 point = player.getPosition();
         int x = (int) point.x;
         int y = (int) point.y;
         int z = this.player.getCurrentHeadSize();
