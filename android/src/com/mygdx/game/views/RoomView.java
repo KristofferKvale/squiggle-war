@@ -115,6 +115,8 @@ public class RoomView extends State {
             room.removeSelf();
             if(room.getOpponents().size() >= 1 && this.room.getPlayer().getReadyState()) {
                 timeToStart += dt;
+            } else if (Game.PLAY_TESTING && this.room.getPlayer().getReadyState()) {
+                timeToStart += dt;
             } else {
                 timeToStart = 0;
             }

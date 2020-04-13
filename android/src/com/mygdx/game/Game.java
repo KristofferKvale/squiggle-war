@@ -2,26 +2,25 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.google.firebase.database.FirebaseDatabase;
-import com.mygdx.game.models.BoardModel;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.models.Config;
-import com.mygdx.game.models.PlayerModel;
 import com.mygdx.game.views.GameStateManager;
-import com.mygdx.game.views.GameView;
 import com.mygdx.game.views.UsernameView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Game extends ApplicationAdapter {
 
     public static int WIDTH;
     public static int HEIGHT;
+    public static boolean PLAY_TESTING = false;
+    public static final int DEFAULT_SIZE = 8;
+    public static final int SMALL_SIZE = 2;
+    public static final int BIG_SIZE = 24;
+    public static final int DEFAULT_HEAD_SIZE = 16;
+    public static final int SMALL_HEAD_SIZE = 8;
+    public static final int BIG_HEAD_SIZE = 36;
     public static final int SPEED = 2;
     public static final double ROTATION_SPEED = 0.03;
     public static final String[] AVAILABLE_POWERUPS = new String[]{"Speed_boost", "Ghost"};
@@ -55,6 +54,13 @@ public class Game extends ApplicationAdapter {
     @Override
     public void dispose() {
         batch.dispose();
+    }
+
+    public static Vector3 randomPlayerPosition(int distance) {
+        int x = (int) (Math.random() * (WIDTH - 2 * distance)) + distance;
+        int y = (int) (Math.random() * (HEIGHT - 2 * distance)) + distance;
+        int z = DEFAULT_SIZE;
+        return new Vector3(x, y, z);
     }
 
     public static Vector2 randomPosition(int distance) {

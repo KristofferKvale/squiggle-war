@@ -3,7 +3,7 @@ package com.mygdx.game.models;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,13 +17,13 @@ import java.util.List;
 
 public class LineModel implements Line {
 
-    private ArrayList<Vector2> points = new ArrayList<>();
+    private ArrayList<Vector3> points = new ArrayList<>();
     String roomID;
     String playerID;
     private DatabaseReference mDatabase;
 
 
-    LineModel(Vector2 start, String playerID, String roomID) {
+    LineModel(Vector3 start, String playerID, String roomID) {
         this.playerID = playerID;
         this.roomID = roomID;
         points.add(start);
@@ -37,7 +37,7 @@ public class LineModel implements Line {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try{
-                    Vector2 point = dataSnapshot.getValue(Vector2.class);
+                    Vector3 point = dataSnapshot.getValue(Vector3.class);
                     points.add(point);
 
                 }catch (Exception e) {
@@ -71,7 +71,7 @@ public class LineModel implements Line {
     }
 
     @Override
-    public void addPoint(Vector2 point) {
+    public void addPoint(Vector3 point) {
         points.add(point);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("points");
         String key = mDatabase.push().getKey();
@@ -80,13 +80,12 @@ public class LineModel implements Line {
     }
 
     @Override
-    public ArrayList<Vector2> getPoints() {
-
+    public ArrayList<Vector3> getPoints() {
         return points;
     }
 
     @Override
-    public Vector2 getLastPoint() {
+    public Vector3 getLastPoint() {
         return this.points.get(points.size() - 1);
     }
 
@@ -94,7 +93,7 @@ public class LineModel implements Line {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("points");
         mDatabase.removeValue();
         this.points = new ArrayList<>();
-        points.add(Game.randomPosition(100));
+        points.add(Game.randomPlayerPosition(100));
     }
 
 }

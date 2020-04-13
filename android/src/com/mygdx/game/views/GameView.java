@@ -8,7 +8,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Game;
 import com.mygdx.game.models.BoardModel;
 import com.mygdx.game.models.PlayerModel;
@@ -28,6 +29,7 @@ public class GameView extends State {
     private PlayerModel player;
     Texture lines;
     Texture playerTexture;
+    private ShapeRenderer playerHead = new ShapeRenderer();
     private BoardModel board;
     BitmapFont font;
     BitmapFont playerScore;
@@ -119,11 +121,11 @@ public class GameView extends State {
             scoresIt.next().draw(sb, Integer.toString(score), (width/2) + 300 + scoresIt.nextIndex()*100, (height)-50);
         }
         sb.draw(lines, 0, 0, width, height);
-        sb.draw(this.playerTexture, this.player.getPosition().x - 20, Game.HEIGHT - this.player.getPosition().y - 20, 40, 40);
         for (PowerUpModel powerup:this.board.powerups){
             sb.draw(powerup.texture, powerup.position.x, powerup.position.y, 40, 40);
         }
         sb.end();
+        renderPlayerHead();
         lines.dispose();
 
     }
@@ -136,18 +138,26 @@ public class GameView extends State {
 
     public void updateLine() {
         line.setColor(player.getColor());
-        Vector2 pos = player.getLastLinePosition();
-        line.fillCircle((int)pos.x, (int)pos.y, 8);
+        Vector3 pos = player.getLastLinePosition();
+        line.fillCircle((int)pos.x, (int)pos.y, (int)pos.z);
 
         ArrayList<OpponentModel> players = board.getOpponents();
-        for(int j = 0; j < players.size(); j++) {
-            Vector2 point = players.get(j).getPosition();
+        for(OpponentModel opponent:players) {
+            Vector3 point = opponent.getPosition();
             if (point.x != -100) {
-                line.setColor(players.get(j).getColor());
-                line.fillCircle((int)point.x, (int)point.y, 8);
+                line.setColor(opponent.getColor());
+                line.fillCircle((int)point.x, (int)point.y, (int)point.z);
             }
         }
         lines = new Texture(line, Format.RGBA8888, false);
+    }
+
+    private void renderPlayerHead() {
+        playerHead.begin(ShapeRenderer.ShapeType.Filled);
+        Vector3 pos = player.getPosition();
+        playerHead.setColor(player.getColor());
+        playerHead.circle((int)pos.x, height - (int)pos.y, player.getCurrentHeadSize());
+        playerHead.end();
     }
 }
 

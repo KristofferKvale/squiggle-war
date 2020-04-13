@@ -1,9 +1,8 @@
 package com.mygdx.game.models;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Game;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,17 +14,17 @@ public class BoardModel {
     // Push collided boolean to firebase
     // Clear lines and start new round
 
+    public String AdminID;
+    public List<PowerUpModel> powerups = new ArrayList<>();
+    public float timeseconds = 0f;
+    public float postCrash = 0f;
+    ArrayList<OpponentModel> opponents;
+    float period = 4f;
     private int width = Gdx.graphics.getWidth();
     private int height = Gdx.graphics.getHeight();
-    public String AdminID;
-    ArrayList<OpponentModel> opponents;
-    public List<PowerUpModel> powerups  = new ArrayList<>();
     private PlayerModel player;
-    public float timeseconds= 0f;
-    public float postCrash = 0f;
-    float period = 4f;
 
-    public BoardModel(ArrayList<OpponentModel> opponents, PlayerModel player){
+    public BoardModel(ArrayList<OpponentModel> opponents, PlayerModel player) {
         this.opponents = opponents;
         this.player = player;
     }
@@ -53,12 +52,13 @@ public class BoardModel {
     }
 
     //Help function that checks if one player is outside the board
-    private boolean CollisionWalls(){
-        ArrayList<Vector2> points = this.player.getLinePoints();
-        Vector2 point = points.get(points.size() -1);
+    private boolean CollisionWalls() {
+        ArrayList<Vector3> points = this.player.getLinePoints();
+        Vector3 point = points.get(points.size() - 1);
         int x = (int) point.x;
         int y = (int) point.y;
-        if (x > this.width || x < 0 || y > this.height || y < 0){
+        int z = this.player.getCurrentHeadSize();
+        if (x + z > this.width || x - z < 0 || y + z > this.height || y - z < 0) {
             return true;
         } else {
             return false;
@@ -67,29 +67,25 @@ public class BoardModel {
 
     //Help function that checks if a players position has been visited
 
-    private boolean CollisionOpponent(){
-        for(OpponentModel opponent : this.opponents){
-            Vector2 lastPlayerPos = this.player.getPosition();
-            ArrayList<Vector2> oppPoints;
+    private boolean CollisionOpponent() {
+        for (OpponentModel opponent : this.opponents) {
+            ArrayList<Vector3> oppPoints;
             oppPoints = opponent.getPoints();
-            for (Vector2 pos : oppPoints){
-                if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12) {
+            for (Vector3 pos : oppPoints) {
+                if (player.CollisionTestCircle((int) pos.x, (int) pos.y, (int) pos.z)) {
                     return true;
                 }
             }
         }
-
         return false;
     }
 
     private boolean CollisionPlayer() {
-        ArrayList<Vector2> playerPoints = new ArrayList<>();
-        playerPoints.addAll(player.getLinePoints());
-        Vector2 lastPlayerPos = this.player.getPosition();
-        if(playerPoints.size()>50) {
-            playerPoints.subList(playerPoints.size()-50,playerPoints.size()).clear();
-            for (Vector2 pos : playerPoints) {
-                if(Math.abs(lastPlayerPos.x - pos.x) < 12 && Math.abs(lastPlayerPos.y - pos.y) < 12){
+        ArrayList<Vector3> playerPoints = new ArrayList<>(player.getLinePoints());
+        if (playerPoints.size() > 50) {
+            playerPoints.subList(playerPoints.size() - 50, playerPoints.size()).clear();
+            for (Vector3 pos : playerPoints) {
+                if (player.CollisionTestCircle((int) pos.x, (int) pos.y, (int) pos.z)) {
                     return true;
                 }
             }
@@ -97,20 +93,19 @@ public class BoardModel {
         return false;
     }
 
-    private void CollisionPowerup(){
-        Vector2 point = this.player.getPosition();
+    private void CollisionPowerup() {
+        Vector3 point = this.player.getPosition();
         int x = (int) point.x;
         int y = (int) point.y;
+        int z = this.player.getCurrentHeadSize();
         try {
             for (PowerUpModel powerup : this.powerups) {
                 int powerUpX = (int) powerup.position.x;
-                int powerUpY = Game.HEIGHT - (int) powerup.position.y;
-                if (powerUpX <= x && x <= powerUpX + 40) {
-                    if (powerUpY - 40 <= y && y <= powerUpY) {
-                        powerup.activate();
-                        this.player.powerups.add(powerup);
-                        this.powerups.remove(powerup);
-                    }
+                int powerUpY = Game.HEIGHT - (int) powerup.position.y - 40;
+                if (player.CollisionTestRectangle(powerUpX, powerUpY, 40, 40)) {
+                    powerup.activate();
+                    this.player.powerups.add(powerup);
+                    this.powerups.remove(powerup);
                 }
             }
         } catch (Exception ignored) {
@@ -128,49 +123,53 @@ public class BoardModel {
         }
     }
 
-    public void playersCrashed(float dt){
+    public void playersCrashed(float dt) {
         //Get status from opponents
         int numPlayerCrash = 0; // Skal være 0
-        if (player.isCrashed()){numPlayerCrash++;}
-        for(OpponentModel opponent : opponents) {
-            if(opponent.isCrashed()) {
+        if (player.isCrashed()) {
+            numPlayerCrash++;
+        }
+        for (OpponentModel opponent : opponents) {
+            if (opponent.isCrashed()) {
                 numPlayerCrash++;
             }
         }
-        if(numPlayerCrash >= opponents.size()) {
-            if (!player.isCrashed()){player.incScore();} //Skal være !player.isCrashed
-            if(postCrash < 6.1f) {
+        if (numPlayerCrash >= opponents.size() && (!Game.PLAY_TESTING || player.isCrashed())) {
+            if (!player.isCrashed()) {
+                player.incScore();
+            } //Skal være !player.isCrashed
+            if (postCrash < 6.1f) {
                 postCrash += dt;
-            } else{
-                for(OpponentModel opp : opponents) {
+            } else {
+                for (OpponentModel opp : opponents) {
                     opp.nextGame();
                 }
                 player.nextGame();
                 postCrash = 0f;
-                timeseconds= 0f;
+                timeseconds = 0f;
             }
 
         }
     }
 
-    public void addRandomPowerUp(){
-        int rnd = (int)(Math.random()* Game.AVAILABLE_POWERUPS.length);
+    public void addRandomPowerUp() {
+        int rnd = (int) (Math.random() * Game.AVAILABLE_POWERUPS.length);
         this.powerups.add(new PowerUpModel(Game.AVAILABLE_POWERUPS[rnd]));
     }
 
-    public void addSpeedBoost(){
+    public void addSpeedBoost() {
         this.powerups.add(new PowerUpModel("Speed_boost"));
     }
 
-    public void addGhost(){
+    public void addGhost() {
         this.powerups.add(new PowerUpModel("Ghost"));
     }
 
-    public void addGrow(){
+    public void addGrow() {
         this.powerups.add(new PowerUpModel("Grow"));
     }
 
-    public void addShrink(){
+    public void addShrink() {
         this.powerups.add(new PowerUpModel("Shrink"));
     }
 
