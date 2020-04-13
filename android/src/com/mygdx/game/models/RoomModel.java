@@ -23,7 +23,6 @@ import com.mygdx.game.views.GameView;
 public class RoomModel {
     //Links up with firebase and creates game and player models
     private ArrayList<OpponentModel> opponents;
-    private ArrayList<String> players = new ArrayList<>();
 
     private PlayerModel player = null;
     private BoardModel board;
@@ -62,12 +61,10 @@ public class RoomModel {
                     String playerID = dataSnapshot.getKey();
                     if (player != null){
                         if(player.playerID != playerID){
-                            players.add(playerID);
                             opponents.add(new OpponentModel(playerID, roomID));
                         }
 
                     }else {
-                        players.add(playerID);
                         opponents.add(new OpponentModel(playerID, roomID));
                     }
                 }catch (Exception ignored){}
@@ -82,7 +79,8 @@ public class RoomModel {
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                 try{
                     String playerID = dataSnapshot.getKey();
-                    opponents.remove(playerID);
+                    removePlayer(playerID);
+
                 }catch(Exception e){}
             }
 
@@ -102,11 +100,7 @@ public class RoomModel {
 
     public void createPlayer(String u) {
         player = new PlayerModel(u, setColor(), roomID);
-        if (opponents.size() > 0) {
-            if(opponents.get(opponents.size()-1).getPlayerID() == player.playerID) {
-                opponents.remove(opponents.size()-1);
-            }
-        }
+
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("admin");
         if (opponents.size() == 0){
             mDatabase.setValue(player.playerID);
@@ -176,6 +170,14 @@ public class RoomModel {
     public void removeSelf(){
         for (OpponentModel opp : opponents) {
             if (opp.getPlayerID() == player.playerID){
+                opponents.remove(opp);
+            }
+        }
+    }
+    public void removePlayer(String ID){
+        for (OpponentModel opp : opponents) {
+            String oppID = opp.getPlayerID();
+            if (oppID == ID){
                 opponents.remove(opp);
             }
         }
