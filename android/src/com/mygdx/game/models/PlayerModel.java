@@ -58,7 +58,6 @@ public class PlayerModel {
         this.color = color;
         this.roomID = roomID;
         this.score = 0;
-        this.angle = (float) (Math.random() * 2 * Math.PI);
         this.powerups = new ArrayList<>();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players");
         playerID = mDatabase.push().getKey();
@@ -133,6 +132,7 @@ public class PlayerModel {
         });
 
         this.position = this.line.getLastPoint();
+        this.setStartAngle();
         this.powerups = new ArrayList<>();
     }
 
@@ -190,8 +190,6 @@ public class PlayerModel {
         Log.d("MSG", "Score incremented" + score);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
         mDatabase.setValue(score);
-
-
     }
 
     public boolean isCrashed() {
@@ -203,6 +201,18 @@ public class PlayerModel {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("crashed");
         mDatabase.setValue(crashed);
     }
+
+
+    private void setStartAngle(){
+        Vector3 pos = this.getPosition();
+        float direction;
+        if (pos.x <= (float) Game.WIDTH/2 && pos.y <= (float) Game.HEIGHT/2)        direction = 0.25f;
+        else if (pos.x > (float) Game.WIDTH/2 && pos.y <= (float) Game.HEIGHT/2)    direction = 0.75f;
+        else if (pos.x > (float) Game.WIDTH/2 && pos.y > (float) Game.HEIGHT/2)     direction = 1.25f;
+        else                                                                        direction = 1.75f;
+        this.angle = (float) (direction * Math.PI);
+    }
+
 
     public void turnLeft() {
         this.angle += Game.ROTATION_SPEED;
@@ -244,6 +254,7 @@ public class PlayerModel {
     public void nextGame() {
         this.line.delete();
         this.position = this.line.getLastPoint();
+        this.setStartAngle();
         this.setCrashed(false);
     }
 
