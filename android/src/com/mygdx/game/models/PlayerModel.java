@@ -233,10 +233,7 @@ public class PlayerModel {
     public void setNewPoint(int x, int y){
         Vector3 point = new Vector3(x,y, getSize());
 
-        if ((int) point.x == (int) this.line.getLastPoint().x && (int) point.y == (int) this.line.getLastPoint().y){
-
-        }
-        else {
+        if ((int) point.x != (int) this.line.getLastPoint().x || (int) point.y != (int) this.line.getLastPoint().y){
             this.position = point;
             if (this.line_on) {
                 this.line.addPoint(point);
@@ -377,7 +374,7 @@ public class PlayerModel {
     }
 
     private float dist(int x1, int y1, int x2, int y2){
-        return (float) Math.sqrt((int) Math.pow((x1-x2), 2) + (int) Math.pow((y1-y2), 2));
+        return (float) Math.sqrt(((x1-x2) * (x1-x2)) + ((y1-y2) * (y1-y2)));
     }
 
     public boolean CollisionTestCircle(int x, int y, int r){
@@ -386,9 +383,9 @@ public class PlayerModel {
     }
 
     public boolean CollisionTestRectangle(int x, int y, int w, int h){
-        int testX = 0;
-        int testY = 0;
         Vector3 pos = getPosition();
+        int testX = (int) pos.x;
+        int testY = (int) pos.y;
 
         if (pos.x < x)          testX = x;        // left edge
         else if (pos.x > x + w) testX = x + w;     // right edge

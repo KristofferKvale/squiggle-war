@@ -94,10 +94,6 @@ public class BoardModel {
     }
 
     private void CollisionPowerup() {
-        Vector3 point = this.player.getPosition();
-        int x = (int) point.x;
-        int y = (int) point.y;
-        int z = this.player.getCurrentHeadSize();
         try {
             for (PowerUpModel powerup : this.powerups) {
                 int powerUpX = (int) powerup.position.x;
