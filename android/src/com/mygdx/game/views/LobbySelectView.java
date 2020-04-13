@@ -131,14 +131,15 @@ public class LobbySelectView extends State {
             }
         }
 
-        ListIterator<String> roomIt = roomIDs.listIterator();
+        final ListIterator<String> roomIt = roomIDs.listIterator();
         try {
             while (roomIt.hasNext()) {
-                int i = roomIt.nextIndex();
+                final int i = roomIt.nextIndex();
                 int y = LOBBY_TOP - i * (LOBBY_HEIGHT + LOBBY_DISTANCE);
                 int t = i + 1;
                 String name = "Lobby " + t;
-                int players = rand.nextInt(5); //TODO: get number of players from lobby
+                //int players = rand.nextInt(5); //TODO: get number of players from lobby
+                int players = 0;
 
                 RoomView rv = new RoomView(gsm);
                 rv.createRoom(roomIt.next());
@@ -146,6 +147,19 @@ public class LobbySelectView extends State {
 
                 this.lobbies.add(lby);
                 this.buttons.add(lby);
+
+                mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomIDs.get(i)).child("players");
+                mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        lobbies.get(i).players = (int) dataSnapshot.getChildrenCount();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         }catch (Exception e){}
     }
