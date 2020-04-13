@@ -32,7 +32,7 @@ public class PlayerModel {
     LineModel line;
     boolean active;
     float angle;
-    String playerID;
+    public String playerID;
     String gameID;
     ArrayList<PowerUpModel> powerups;
     private DatabaseReference mDatabase;

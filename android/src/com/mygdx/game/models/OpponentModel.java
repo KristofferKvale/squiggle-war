@@ -18,7 +18,7 @@ import com.mygdx.game.Game;
 import java.util.ArrayList;
 
 public class OpponentModel {
-    private String playerID;
+    public String playerID;
     private String roomID;
     private String username;
     private int score = 0;
