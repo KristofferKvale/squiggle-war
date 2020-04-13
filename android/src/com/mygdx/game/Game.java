@@ -27,7 +27,7 @@ public class Game extends ApplicationAdapter {
     public static final int BIG_HEAD_SIZE = 36;
     public static final int SPEED = 160;
     public static final double ROTATION_SPEED = 0.03;
-    public static final String[] AVAILABLE_POWERUPS = new String[]{"Speed_boost", "Ghost"};
+    public static final String[] AVAILABLE_POWERUPS = new String[]{"Speed_boost", "Ghost", "Grow", "Shrink"};
 
     public static final String TITLE = "Squiggle War";
 
