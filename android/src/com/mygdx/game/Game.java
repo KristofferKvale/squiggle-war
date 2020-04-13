@@ -14,6 +14,10 @@ public class Game extends ApplicationAdapter {
 
     public static int WIDTH;
     public static int HEIGHT;
+    public static final int PLAYABLE_WIDTH = 1750;
+    public static final int PLAYABLE_HEIGHT = 1000;
+    public static int SPACE_TOP = 90;
+    public static int SPACE_SIDE;
     public static boolean PLAY_TESTING = false;
     public static final int DEFAULT_SIZE = 8;
     public static final int SMALL_SIZE = 2;
@@ -21,7 +25,7 @@ public class Game extends ApplicationAdapter {
     public static final int DEFAULT_HEAD_SIZE = 16;
     public static final int SMALL_HEAD_SIZE = 8;
     public static final int BIG_HEAD_SIZE = 36;
-    public static final int SPEED = 200;
+    public static final int SPEED = 160;
     public static final double ROTATION_SPEED = 0.03;
     public static final String[] AVAILABLE_POWERUPS = new String[]{"Speed_boost", "Ghost"};
 
@@ -35,6 +39,7 @@ public class Game extends ApplicationAdapter {
     public void create() {
         WIDTH = Gdx.app.getGraphics().getWidth();
         HEIGHT = Gdx.app.getGraphics().getHeight();
+        SPACE_SIDE = (WIDTH - PLAYABLE_WIDTH) / 2;
 
         config = Config.getInstance();
         batch = new SpriteBatch();
@@ -57,15 +62,15 @@ public class Game extends ApplicationAdapter {
     }
 
     public static Vector3 randomPlayerPosition(int distance) {
-        int x = (int) (Math.random() * (WIDTH - 2 * distance)) + distance;
-        int y = (int) (Math.random() * (HEIGHT - 2 * distance)) + distance;
+        int x = (int) (Math.random() * (PLAYABLE_WIDTH - 2 * distance)) + distance + SPACE_SIDE;
+        int y = (int) (Math.random() * (PLAYABLE_HEIGHT - 2 * distance)) + distance + SPACE_TOP;
         int z = DEFAULT_SIZE;
         return new Vector3(x, y, z);
     }
 
     public static Vector2 randomPosition(int distance) {
-        int x = (int) (Math.random() * (WIDTH - 2 * distance)) + distance;
-        int y = (int) (Math.random() * (HEIGHT - 2 * distance)) + distance;
+        int x = (int) (Math.random() * (PLAYABLE_WIDTH - 2 * distance)) + distance + SPACE_SIDE;;
+        int y = (int) (Math.random() * (PLAYABLE_HEIGHT - 2 * distance)) + distance + SPACE_TOP;
         return new Vector2(x, y);
     }
 }

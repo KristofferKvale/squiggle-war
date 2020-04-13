@@ -30,6 +30,7 @@ public class GameView extends State {
     Texture lines;
     Texture playerTexture;
     private ShapeRenderer playerHead = new ShapeRenderer();
+    private ShapeRenderer playableArea = new ShapeRenderer();
     private BoardModel board;
     BitmapFont font;
     BitmapFont playerScore;
@@ -111,14 +112,14 @@ public class GameView extends State {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         sb.setProjectionMatrix(this.cam.combined);
-
+        renderPlayableArea();
         sb.begin();
         font.draw(sb,number,width/2,height/2);
-        playerScore.draw(sb, Integer.toString(player.getScore()),(width/2) + 200, (height)-50);
+        playerScore.draw(sb, Integer.toString(player.getScore()),(width/2) + 200, height - 20);
         ListIterator<BitmapFont> scoresIt = scores.listIterator();
         while (scoresIt.hasNext()) {
             int score = opponents.get(scoresIt.nextIndex()).getScore();
-            scoresIt.next().draw(sb, Integer.toString(score), (width/2) + 300 + scoresIt.nextIndex()*100, (height)-50);
+            scoresIt.next().draw(sb, Integer.toString(score), (width/2) + 300 + scoresIt.nextIndex()*100, height - 20);
         }
         sb.draw(lines, 0, 0, width, height);
         for (PowerUpModel powerup:this.board.powerups){
@@ -150,6 +151,13 @@ public class GameView extends State {
             }
         }
         lines = new Texture(line, Format.RGBA8888, false);
+    }
+
+    private void renderPlayableArea() {
+        playableArea.begin(ShapeRenderer.ShapeType.Filled);
+        playableArea.setColor(Color.GRAY);
+        playableArea.rect(Game.SPACE_SIDE, height - Game.SPACE_TOP, Game.PLAYABLE_WIDTH, -Game.PLAYABLE_HEIGHT);
+        playableArea.end();
     }
 
     private void renderPlayerHead() {

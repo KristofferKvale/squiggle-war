@@ -58,11 +58,7 @@ public class BoardModel {
         int x = (int) point.x;
         int y = (int) point.y;
         int z = this.player.getCurrentHeadSize();
-        if (x + z > this.width || x - z < 0 || y + z > this.height || y - z < 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return x + z > Game.PLAYABLE_WIDTH + Game.SPACE_SIDE || x - z < Game.SPACE_SIDE || y + z > Game.PLAYABLE_HEIGHT + Game.SPACE_TOP || y - z < Game.SPACE_TOP;
     }
 
     //Help function that checks if a players position has been visited

@@ -230,7 +230,7 @@ public class PlayerModel {
         float x = coords.x;
         float y = coords.y;
         if (this.hasSpeedBoost()){
-            speed *= 2;
+            speed *= 1.5;
         }
 
         x += (speed * Math.cos(this.angle) * dt);
