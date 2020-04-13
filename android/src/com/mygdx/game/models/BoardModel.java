@@ -1,7 +1,17 @@
 package com.mygdx.game.models;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mygdx.game.Game;
 
 import java.util.ArrayList;
@@ -15,6 +25,8 @@ public class BoardModel {
     // Clear lines and start new round
 
     public String AdminID;
+    private DatabaseReference mDatabase;
+
     public List<PowerUpModel> powerups = new ArrayList<>();
     public float timeseconds = 0f;
     public float postCrash = 0f;
@@ -24,9 +36,41 @@ public class BoardModel {
     private int height = Gdx.graphics.getHeight();
     private PlayerModel player;
 
-    public BoardModel(ArrayList<OpponentModel> opponents, PlayerModel player) {
+    public BoardModel(ArrayList<OpponentModel> opponents, final PlayerModel player) {
         this.opponents = opponents;
         this.player = player;
+
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(player.getRoomID()).child("players");
+        //mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID);
+
+        //Legger til nye spillere i "players":
+        mDatabase.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                try{
+                    String playerID = dataSnapshot.getKey();
+                    removePlayer(playerID);
+                }catch(Exception e){}
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
     }
 
     //Function that returns a player if it has collided with a player or a wall
@@ -167,6 +211,14 @@ public class BoardModel {
 
     public ArrayList<OpponentModel> getOpponents() {
         return opponents;
+    }
+
+    public void removePlayer(String ID){
+        for (OpponentModel opp : opponents) {
+            if (opp.getPlayerID() == ID){
+                opponents.remove(opp);
+            }
+        }
     }
 
     public PlayerModel getPlayer() {
