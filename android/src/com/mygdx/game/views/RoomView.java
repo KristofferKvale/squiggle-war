@@ -167,18 +167,19 @@ public class RoomView extends State {
                             mdatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    Date d = dataSnapshot.getValue(Date.class);
-                                    Date now = new Date();
-                                    Long l = now.getTime() - d.getTime();
-                                    if (l > 50000) {
-                                        try {
+                                    try {
+                                        Date d = dataSnapshot.getValue(Date.class);
+                                        Date now = new Date();
+                                        Long l = now.getTime() - d.getTime();
+                                        if (l > 50000) {
                                             FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(opponent.playerID).removeValue();
                                             if (opponent.playerID.equals(adminID)) {
                                                 FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("admin").setValue(playerID);
                                             }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
+
                                         }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
                                 }
 
