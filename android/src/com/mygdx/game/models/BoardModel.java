@@ -131,12 +131,12 @@ public class BoardModel {
             }
         }
         if (numPlayerCrash >= opponents.size() && (!Game.PLAY_TESTING || player.isCrashed())) {
-            if (!player.isCrashed()) {
-                player.incScore();
-            } //Skal være !player.isCrashed
             if (postCrash < 6.1f) {
                 postCrash += dt;
             } else {
+                if (!player.isCrashed()) {
+                    player.incScore();
+                }
                 for (OpponentModel opp : opponents) {
                     opp.nextGame();
                 }

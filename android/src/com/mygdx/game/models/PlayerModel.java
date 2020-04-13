@@ -67,7 +67,7 @@ public class PlayerModel {
         mDatabase.child(playerID).child("color").setValue(color);
         mDatabase.child(playerID).child("ready").setValue(ready);
         this.line = new LineModel(Game.randomPlayerPosition(100), playerID, roomID);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
+        /*mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -129,7 +129,7 @@ public class PlayerModel {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
         this.position = this.line.getLastPoint();
         this.setStartAngle();
@@ -189,7 +189,8 @@ public class PlayerModel {
         this.score += 1;
         Log.d("MSG", "Score incremented" + score);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
-        mDatabase.setValue(score);
+        String key = mDatabase.push().getKey();
+        mDatabase.child(key).setValue(score);
     }
 
     public boolean isCrashed() {
@@ -199,7 +200,8 @@ public class PlayerModel {
     public void setCrashed(boolean crashed) {
         this.crashed = crashed;
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("crashed");
-        mDatabase.setValue(crashed);
+        String key = mDatabase.push().getKey();
+        mDatabase.child(key).setValue(crashed);
     }
 
 

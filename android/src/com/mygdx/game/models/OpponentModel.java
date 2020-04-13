@@ -49,12 +49,31 @@ public class OpponentModel {
         });
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try{
-                    score = dataSnapshot.getValue(int.class);
-                }catch(Exception e){}
+                    score = dataSnapshot.getValue(Integer.class);
+
+                }catch (Exception e){
+                    Log.e("ERR", "Err: " + e.toString());
+                }
+            }
+
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override
@@ -64,13 +83,30 @@ public class OpponentModel {
         });
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("crashed");
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try{
                     crashed = dataSnapshot.getValue(Boolean.class);
-                    Log.d("CRASHED", Boolean.toString(crashed));
-                }catch(Exception e){}
+
+                }catch (Exception e){
+                    Log.e("ERR", "Err: " + e.toString());
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override
@@ -179,6 +215,11 @@ public class OpponentModel {
             }
         });
 
+    }
+
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     public String getUsername() {
