@@ -34,6 +34,7 @@ public class GameView extends State {
     private String number = "3";
     private Pixmap line;
     private ArrayList<BitmapFont> scores;
+    private ArrayList<BitmapFont> durations;
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
@@ -47,6 +48,7 @@ public class GameView extends State {
         font.getData().setScale(5f);
         line = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         scores = new ArrayList<>();
+        durations = new ArrayList<>();
         opponents = board.getOpponents();
         player = board.getPlayer();
         playerScore = new BitmapFont();
@@ -111,8 +113,9 @@ public class GameView extends State {
         renderPlayableArea();
         sb.begin();
         font.draw(sb,number,width/2f,height/2f);
-        renderPowerUps(sb);
         renderScores(sb);
+        renderPowerUpDurations(sb);
+        renderPowerUps(sb);
         sb.draw(lines, 0, 0, width, height);
         sb.end();
         renderPlayerHead();
@@ -148,6 +151,21 @@ public class GameView extends State {
         while (scoresIt.hasNext()) {
             int score = opponents.get(scoresIt.nextIndex()).getScore();
             scoresIt.next().draw(sb, Integer.toString(score), (width/2f) + 300 + scoresIt.nextIndex()*100, height - 20);
+        }
+    }
+
+    private void renderPowerUpDurations(SpriteBatch sb){
+        int x = 0;
+        for(PowerUpModel powerup:this.player.getPowerups()) {
+            if (powerup.checkStatus()) {
+                BitmapFont powerupDuration = new BitmapFont();
+                powerupDuration.setColor(Color.WHITE);
+                powerupDuration.getData().setScale(5f);
+                durations.add(powerupDuration);
+                powerupDuration.draw(sb, ":" + Integer.toString(powerup.getTimeLeft()), 60 + 180 * x, height - 10);
+                sb.draw(powerup.texture, 180 * x, height-70, 50, 50);
+                x += 1;
+            }
         }
     }
 

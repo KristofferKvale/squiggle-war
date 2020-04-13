@@ -53,6 +53,9 @@ public class PowerUpModel {
     }
 
     public int getTimeLeft(){
-        return (int) (this.duration * 1000 - this.getTimeDelta());
+        if (this.duration * 1000 - this.getTimeDelta() > 0){
+            return (int) (this.duration - (this.getTimeDelta() / 1000));
+        }
+        return 0;
     }
 }

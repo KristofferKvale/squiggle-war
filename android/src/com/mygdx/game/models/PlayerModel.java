@@ -260,7 +260,7 @@ public class PlayerModel {
         this.setCrashed(false);
     }
 
-    public ArrayList getPowerups(){ return this.powerups; }
+    public ArrayList<PowerUpModel> getPowerups(){ return this.powerups; }
 
     public void addPowerup(PowerUpModel powerup){ this.powerups.add(powerup); }
 
