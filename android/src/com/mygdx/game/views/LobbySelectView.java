@@ -160,6 +160,19 @@ public class LobbySelectView extends State {
 
                     }
                 });
+                mDatabase.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (lobbies.get(i).players != (int) dataSnapshot.getChildrenCount()) {
+                            lobbies.get(i).players = (int) dataSnapshot.getChildrenCount();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         }catch (Exception e){}
     }
@@ -188,7 +201,6 @@ public class LobbySelectView extends State {
             makeButtons();
         }
         oldListLength = listLength;
-
     }
 
     @Override
