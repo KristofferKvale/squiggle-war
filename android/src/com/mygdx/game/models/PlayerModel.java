@@ -217,11 +217,19 @@ public class PlayerModel {
 
 
     public void turnLeft() {
-        this.angle += Game.ROTATION_SPEED;
+        if (this.hasSpeedBoost()){
+            this.angle += Game.ROTATION_SPEED * 1.4;
+        } else {
+            this.angle += Game.ROTATION_SPEED;
+        }
     }
 
     public void turnRight() {
-        this.angle -= Game.ROTATION_SPEED;
+        if (this.hasSpeedBoost()){
+            this.angle -= Game.ROTATION_SPEED * 1.4;
+        } else {
+            this.angle -= Game.ROTATION_SPEED;
+        }
     }
 
     public void move(float dt) {
