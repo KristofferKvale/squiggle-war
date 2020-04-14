@@ -60,7 +60,7 @@ public class RoomModel {
                 try{
                     String playerID = dataSnapshot.getKey();
                     if (player != null){
-                        if(player.playerID.equals(playerID)){
+                        if(!player.playerID.equals(playerID)){
                             opponents.add(new OpponentModel(playerID, roomID));
                         }
 
