@@ -148,10 +148,12 @@ public class GameView extends State {
     private void renderScores(SpriteBatch sb){
         playerScore.draw(sb, Integer.toString(player.getScore()),(width/2f) + 200, height - 20);
         ListIterator<BitmapFont> scoresIt = scores.listIterator();
-        while (scoresIt.hasNext()) {
-            int score = opponents.get(scoresIt.nextIndex()).getScore();
-            scoresIt.next().draw(sb, Integer.toString(score), (width/2f) + 300 + scoresIt.nextIndex()*100, height - 20);
-        }
+        try{
+            while (scoresIt.hasNext()) {
+                int score = opponents.get(scoresIt.nextIndex()).getScore();
+                scoresIt.next().draw(sb, Integer.toString(score), (width/2f) + 300 + scoresIt.nextIndex()*100, height - 20);
+            }
+        }catch(Exception e) {}
     }
 
     private void renderPowerUpDurations(SpriteBatch sb){
