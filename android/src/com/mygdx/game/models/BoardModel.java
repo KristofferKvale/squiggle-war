@@ -215,7 +215,7 @@ public class BoardModel {
 
     public void removePlayer(String ID){
         for (OpponentModel opp : opponents) {
-            if (opp.getPlayerID() == ID){
+            if (opp.getPlayerID().equals(ID)){
                 opponents.remove(opp);
             }
         }

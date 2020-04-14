@@ -169,17 +169,17 @@ public class RoomModel {
 
     public void removeSelf(){
         for (OpponentModel opp : opponents) {
-            if (opp.getPlayerID() == player.playerID){
+            if (opp.getPlayerID().equals(player.playerID)){
                 opponents.remove(opp);
             }
         }
     }
-    public void removePlayer(String ID){
+    public void removePlayer(String id){
         for (OpponentModel opp : opponents) {
-            String oppID = opp.getPlayerID();
-            if (oppID == ID){
+            if (opp.getPlayerID().equals(id)){
                 opponents.remove(opp);
             }
+
         }
     }
 
