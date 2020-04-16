@@ -1,5 +1,7 @@
 package com.mygdx.game.views;
 
+import androidx.annotation.NonNull;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -10,6 +12,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mygdx.game.Game;
 import com.mygdx.game.models.BoardModel;
 import com.mygdx.game.models.PlayerModel;
@@ -17,6 +24,7 @@ import com.mygdx.game.models.OpponentModel;
 import com.mygdx.game.models.PowerUpModel;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.ListIterator;
 
 
@@ -35,6 +43,8 @@ public class GameView extends State {
     private Pixmap line;
     private ArrayList<BitmapFont> scores;
     private ArrayList<BitmapFont> durations;
+    private Float pingtimer = 0f;
+    private Float getAllPingTimer = 0f;
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
@@ -83,6 +93,52 @@ public class GameView extends State {
 
     @Override
     public void update(float dt) {
+        pingtimer += dt;
+        if (pingtimer > 1f){
+            DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("players").child(player.playerID).child("ping");
+            Date d = new Date();
+            mdatabase.setValue(d);
+            pingtimer = 0f;
+        }
+
+        getAllPingTimer +=dt;
+        if (getAllPingTimer > 5f) {
+            getAllPingTimer = 0f;
+            if (opponents.size()> 0) {
+                final String roomID = this.player.getRoomID();
+
+                final String playerID = this.player.playerID;
+                for (final OpponentModel opponent : opponents) {
+                    try {
+
+
+                        DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("players").child(opponent.playerID).child("ping");
+                        mdatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                try {
+                                    Date d = dataSnapshot.getValue(Date.class);
+                                    Date now = new Date();
+                                    Long l = now.getTime() - d.getTime();
+                                    if (l > 50000) {
+                                        FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(opponent.playerID).removeValue();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
         this.handleInput();
         this.board.update(dt);
         this.updateLine();

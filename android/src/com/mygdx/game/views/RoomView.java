@@ -136,7 +136,7 @@ public class RoomView extends State {
             DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.roomID).child("players").child(player.playerID).child("ping");
             Date d = new Date();
             mdatabase.setValue(d);
-
+            pingtimer = 0f;
             DatabaseReference mdata = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.roomID).child("admin");
             mdata.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -154,6 +154,7 @@ public class RoomView extends State {
 
         getAllPingTimer +=dt;
         if (getAllPingTimer > 5f) {
+            getAllPingTimer = 0f;
             if (opponents.size()> 0) {
                 final String roomID = this.roomID;
                 final String adminID = this.adminID;
