@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -15,6 +16,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.mygdx.game.Game;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -35,6 +38,7 @@ public class BoardModel {
     private int width = Gdx.graphics.getWidth();
     private int height = Gdx.graphics.getHeight();
     private PlayerModel player;
+    private RoomModel room;
     public boolean finished = false;
 
 
@@ -73,6 +77,61 @@ public class BoardModel {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+
+        DatabaseReference powerupDB = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("powerups");
+        final BoardModel this_board = this;
+        powerupDB.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                long x = (long) dataSnapshot.child("x").getValue();
+                long y = (long) dataSnapshot.child("y").getValue();
+                Vector2 pos = new Vector2();
+                pos.x = x;
+                pos.y = y;
+                String powerupName = dataSnapshot.getKey();
+                if (Arrays.asList(Game.AVAILABLE_POWERUPS).contains(powerupName)) {
+                    PowerUpModel addedPowerup = new PowerUpModel(powerupName, pos);
+                    this_board.powerups.add(addedPowerup);
+                } else {
+                    throw new Error("Powerup name not collected properly from firebase");
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                try{
+                    long x = (long) dataSnapshot.child("x").getValue();
+                    long y = (long) dataSnapshot.child("y").getValue();
+                    Vector2 pos = new Vector2();
+                    pos.x = x;
+                    pos.y = y;
+                    for (PowerUpModel powerup : this_board.powerups){
+                        if (powerup.position.equals(pos)){
+                            this_board.powerups.remove(powerup);
+                        }
+                    }
+                }catch(Exception e){}
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+        for (String powerupName : Game.AVAILABLE_POWERUPS) {
+            PowerUpModel powerUpModel = new PowerUpModel(powerupName);
+            pushPowerup(powerUpModel);
+        }
     }
 
     //Function that returns a player if it has collided with a player or a wall
@@ -143,6 +202,8 @@ public class BoardModel {
                     powerup.activate();
                     this.player.addPowerup(powerup);
                     this.powerups.remove(powerup);
+                    DatabaseReference powerupsDB = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("powerups");
+                    powerupsDB.child(powerup.name).removeValue();
                 }
             }
         } catch (Exception ignored) {
@@ -182,40 +243,70 @@ public class BoardModel {
             if (postCrash < 6.1f) {
                 postCrash += dt;
             } else {
-
-                if (!player.isCrashed()) {
-                    player.incScore();
-                }
-                for (OpponentModel opp : opponents) {
-                    opp.nextGame();
-                }
-                player.nextGame();
-                postCrash = 0f;
-                timeseconds = 0f;
+                this.reset();
             }
-
         }
+    }
+
+    private void reset() {
+        if (!player.isCrashed()) {
+            player.incScore();
+        }
+        for (OpponentModel opp : opponents) {
+            opp.nextGame();
+        }
+        player.nextGame();
+        postCrash = 0f;
+        timeseconds = 0f;
+
+        String adminID = this.room.AdminID;
+        if (this.player.playerID == adminID) {
+            addSpeedBoost();
+            addGhost();
+            addGrow();
+            addShrink();
+        }
+    }
+
+    public void setRoom(RoomModel room) {
+        this.room = room;
+    }
+
+    private void pushPowerup(PowerUpModel powerup) {
+        DatabaseReference powerupsDB = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("powerups").child(powerup.name);
+        try {
+            powerupsDB.setValue(powerup.position);
+            System.out.println("pushed");
+        } catch (Exception e) {
+            System.out.println("This never works");
+        }
+
     }
 
     public void addRandomPowerUp() {
         int rnd = (int) (Math.random() * Game.AVAILABLE_POWERUPS.length);
-        this.powerups.add(new PowerUpModel(Game.AVAILABLE_POWERUPS[rnd]));
+        PowerUpModel new_powerup = new PowerUpModel(Game.AVAILABLE_POWERUPS[rnd]);
+        pushPowerup(new_powerup);
     }
 
     public void addSpeedBoost() {
-        this.powerups.add(new PowerUpModel("Speed_boost"));
+        PowerUpModel new_powerup = new PowerUpModel("Speed_boost");
+        pushPowerup(new_powerup);
     }
 
     public void addGhost() {
-        this.powerups.add(new PowerUpModel("Ghost"));
+        PowerUpModel new_powerup = new PowerUpModel("Ghost");
+        pushPowerup(new_powerup);
     }
 
     public void addGrow() {
-        this.powerups.add(new PowerUpModel("Grow"));
+        PowerUpModel new_powerup = new PowerUpModel("Grow");
+        pushPowerup(new_powerup);
     }
 
     public void addShrink() {
-        this.powerups.add(new PowerUpModel("Shrink"));
+        PowerUpModel new_powerup = new PowerUpModel("Shrink");
+        pushPowerup(new_powerup);
     }
 
 

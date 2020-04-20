@@ -151,12 +151,17 @@ public class RoomModel {
     }
 
     public BoardModel getBoard(){
-        return new BoardModel(getOpponents(), player);
+        if (this.board == null) {
+            this.board = new BoardModel(getOpponents(), player);
+            this.board.setRoom(this);
+        }
+        return this.board;
     }
 
     public String getRoomID() { return this.roomID; }
 
     public void createGameView(GameStateManager gsm) {
+
         gameView = new GameView(gsm, getBoard());
         gsm.push(gameView);
     }
