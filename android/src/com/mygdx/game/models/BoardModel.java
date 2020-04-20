@@ -35,6 +35,8 @@ public class BoardModel {
     private int width = Gdx.graphics.getWidth();
     private int height = Gdx.graphics.getHeight();
     private PlayerModel player;
+    public boolean finished = false;
+
 
     public BoardModel(ArrayList<OpponentModel> opponents, final PlayerModel player) {
         this.opponents = opponents;
@@ -148,6 +150,13 @@ public class BoardModel {
     }
 
     public void update(float dt) {
+        int score = this.player.getScore();
+        for (OpponentModel opp : opponents){
+            score += opp.getScore();
+        }
+        if (score>6){
+            this.finished = true;
+        }
         timeseconds += dt;
         if (timeseconds > period) {
             this.Collision();
@@ -173,6 +182,7 @@ public class BoardModel {
             if (postCrash < 6.1f) {
                 postCrash += dt;
             } else {
+
                 if (!player.isCrashed()) {
                     player.incScore();
                 }

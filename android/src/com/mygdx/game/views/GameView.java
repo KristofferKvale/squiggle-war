@@ -164,6 +164,9 @@ public class GameView extends State {
         this.handleInput();
         this.board.update(dt);
         this.updateLine();
+        if (this.board.finished){
+            gsm.push(new ResultView(gsm,this.player.getRoomID()));
+        }
         if(this.board.timeseconds < 4.1f) {
             if (this.board.timeseconds > 2f && this.board.timeseconds < 3f) {
                 number = "1";
