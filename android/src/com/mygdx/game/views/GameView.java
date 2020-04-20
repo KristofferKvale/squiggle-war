@@ -45,6 +45,7 @@ public class GameView extends State {
     private ArrayList<BitmapFont> durations;
     private Float pingtimer = 0f;
     private Float getAllPingTimer = 0f;
+    private String adminID;
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
@@ -71,6 +72,22 @@ public class GameView extends State {
             scores.add(oppScore);
         }
         this.updateLine();
+        try {
+            DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("admin");
+            mdatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    adminID = dataSnapshot.getValue(String.class);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -108,6 +125,7 @@ public class GameView extends State {
                 final String roomID = this.player.getRoomID();
 
                 final String playerID = this.player.playerID;
+                final String adminID = this.adminID;
                 for (final OpponentModel opponent : opponents) {
                     try {
 
@@ -122,7 +140,11 @@ public class GameView extends State {
                                     Long l = now.getTime() - d.getTime();
                                     if (l > 50000) {
                                         FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(opponent.playerID).removeValue();
+                                        if (opponent.playerID.equals(adminID)) {
+                                            FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("admin").setValue(playerID);
+                                        }
                                     }
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }

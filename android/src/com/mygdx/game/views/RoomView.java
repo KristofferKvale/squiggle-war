@@ -77,7 +77,7 @@ public class RoomView extends State {
 
     public RoomView(GameStateManager gsm) {
         super(gsm);
-        DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child("admin");
+        DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.roomID).child("admin");
         mdatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
