@@ -169,7 +169,7 @@ public class BoardModel {
                 numPlayerCrash++;
             }
         }
-        if (numPlayerCrash >= opponents.size() && (!Game.PLAY_TESTING || player.isCrashed())) {
+        if ((numPlayerCrash >= opponents.size() && (!Game.PLAY_TESTING || player.isCrashed())) || postCrash > 0f) {
             if (postCrash < 6.1f) {
                 postCrash += dt;
             } else {
