@@ -180,14 +180,13 @@ public class GameView extends State {
                         public void onAdClosed() {
                             super.onAdClosed();
                             Log.d("AdMob", "Ad is closed.");
-                            gsm.push(new ResultView(gsm, player.getRoomID()));
 
                         }
                     });
                     Game.mAL.mInterstitialAd.show();
                 }
             });
-
+            gsm.push(new ResultView(gsm, player.getRoomID()));
         }
         if(this.board.timeseconds < 4.1f) {
             if (this.board.timeseconds > 2f && this.board.timeseconds < 3f) {
