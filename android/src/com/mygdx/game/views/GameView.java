@@ -55,10 +55,6 @@ public class GameView extends State {
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
         this.board = board;
-        this.board.addSpeedBoost();
-        this.board.addGhost();
-        this.board.addGrow();
-        this.board.addShrink();
         font = new BitmapFont();
         font.setColor(Color.WHITE);
         font.getData().setScale(5f);
