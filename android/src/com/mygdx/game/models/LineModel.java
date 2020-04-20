@@ -26,7 +26,7 @@ public class LineModel implements Line {
     LineModel(Vector3 start, String playerID, String roomID) {
         this.playerID = playerID;
         this.roomID = roomID;
-        points.add(start);
+        addPoint(start);
         float x = start.x;
         float y = start.y;
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("points");
@@ -89,11 +89,11 @@ public class LineModel implements Line {
         return this.points.get(points.size() - 1);
     }
 
-    public void delete() {
+    void delete() {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("points");
         mDatabase.removeValue();
         this.points = new ArrayList<>();
-        points.add(Game.randomPlayerPosition(100));
+        addPoint(Game.randomPlayerPosition(100));
     }
 
 }
