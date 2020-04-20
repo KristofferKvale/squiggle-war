@@ -227,12 +227,14 @@ public class GameView extends State {
     }
 
     private void renderScores(SpriteBatch sb){
-        playerScore.draw(sb, Integer.toString(player.getScore()),(width/2f) + 200, height - 20);
+        playerScore.draw(sb, "You: " + Integer.toString(player.getScore()),(width/2f)-200, height - 20);
         ListIterator<BitmapFont> scoresIt = scores.listIterator();
         try{
             while (scoresIt.hasNext()) {
-                int score = opponents.get(scoresIt.nextIndex()).getScore();
-                scoresIt.next().draw(sb, Integer.toString(score), (width/2f) + 300 + scoresIt.nextIndex()*100, height - 20);
+                OpponentModel opp = opponents.get(scoresIt.nextIndex());
+                int score = opp.getScore();
+                String name = opp.getUsername();
+                scoresIt.next().draw(sb, name.substring(0,3) + ": " + Integer.toString(score), (width/2f)-200 + scoresIt.nextIndex()*250, height - 20);
             }
         }catch(Exception e) {}
     }
