@@ -52,6 +52,8 @@ public class RoomView extends State {
     private Stage mainStage;
     private Stage playerStage;
     private SpriteBatch batch;
+    private Image checkMark = new Image(new TextureRegion(new Texture("checkmark.png")));
+    private Image readyButtonCheckMark = this.checkMark;
 
     private TextButton.TextButtonStyle style;
     private BitmapFont font;
@@ -72,8 +74,6 @@ public class RoomView extends State {
 
     Table playerTable;
     Table readyTable;
-
-    Image checkMark;
 
 
     public RoomView(GameStateManager gsm) {
@@ -317,7 +317,6 @@ public class RoomView extends State {
         mainTable.add(playerLabel).left();
 
         if (player.getReadyState()) {
-            Image checkMark = new Image(new TextureRegion(new Texture("checkmark.png")));
             mainTable.add(checkMark).width(50).height(50).padLeft(50);
         }
 
@@ -330,7 +329,6 @@ public class RoomView extends State {
 
             mainTable.add(opponentLabel).left();
             if (opponent.getReadyState()) {
-                Image checkMark = new Image(new TextureRegion(new Texture("checkmark.png")));
                 mainTable.add(checkMark).width(50).height(50).padLeft(50);
             }
             mainTable.row();
@@ -362,7 +360,7 @@ public class RoomView extends State {
                 Log.d("READY?", "TRIED!!!");
 
                 ready = !ready;
-                checkMark.setVisible(ready);
+                readyButtonCheckMark.setVisible(ready);
 
                 if (ready) {
                     mDatabase.child(roomID).child("players").child(room.getPlayer().getPlayerID()).child("ready").setValue(true);
@@ -379,10 +377,9 @@ public class RoomView extends State {
         readyBtn.sizeBy(200);
         readyBtn.getLabel().setFontScale(3);
 
-        checkMark = new Image(new TextureRegion(new Texture("checkmark.png")));
-        checkMark.setVisible(ready);
+        readyButtonCheckMark.setVisible(ready);
 
-        t.add(checkMark).width(50).height(50).padLeft(50);
+        t.add(readyButtonCheckMark).width(50).height(50).padLeft(50);
 
         t.pack();
         t.setX((Game.WIDTH - t.getWidth()) / 2 );
