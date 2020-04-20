@@ -208,10 +208,10 @@ public class PlayerModel {
     private void setStartAngle(){
         Vector3 pos = this.getPosition();
         float direction;
-        if (pos.x <= (float) Game.WIDTH/2 && pos.y <= (float) Game.HEIGHT/2)        direction = 0.25f;
-        else if (pos.x > (float) Game.WIDTH/2 && pos.y <= (float) Game.HEIGHT/2)    direction = 0.75f;
-        else if (pos.x > (float) Game.WIDTH/2 && pos.y > (float) Game.HEIGHT/2)     direction = 1.25f;
-        else                                                                        direction = 1.75f;
+        if (pos.x <= (float) Game.WIDTH/2 && pos.y <= (float) Game.HEIGHT/2)        direction = (float)(Math.random() * 0.5f);
+        else if (pos.x > (float) Game.WIDTH/2 && pos.y <= (float) Game.HEIGHT/2)    direction = (float)(Math.random() * 0.5f) + 0.5f;
+        else if (pos.x > (float) Game.WIDTH/2 && pos.y > (float) Game.HEIGHT/2)     direction = (float)(Math.random() * 0.5f) + 1f;
+        else                                                                        direction = (float)(Math.random() * 0.5f) + 1.5f;
         this.angle = (float) (direction * Math.PI);
     }
 
