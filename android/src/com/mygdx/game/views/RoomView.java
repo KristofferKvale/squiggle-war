@@ -52,8 +52,8 @@ public class RoomView extends State {
     private Stage mainStage;
     private Stage playerStage;
     private SpriteBatch batch;
-    private Image checkMark = new Image(new TextureRegion(new Texture("checkmark.png")));
-    private Image readyButtonCheckMark = this.checkMark;
+    private Texture checkMarkTexture = new Texture("checkmark.png");
+    private Image readyButtonCheckMark = new Image(new TextureRegion(checkMarkTexture));
 
     private TextButton.TextButtonStyle style;
     private BitmapFont font;
@@ -317,7 +317,8 @@ public class RoomView extends State {
         mainTable.add(playerLabel).left();
 
         if (player.getReadyState()) {
-            mainTable.add(checkMark).width(50).height(50).padLeft(50);
+            Image image = new Image(new TextureRegion(checkMarkTexture));
+            mainTable.add(image).width(50).height(50).padLeft(50);
         }
 
         mainTable.row();
@@ -329,7 +330,8 @@ public class RoomView extends State {
 
             mainTable.add(opponentLabel).left();
             if (opponent.getReadyState()) {
-                mainTable.add(checkMark).width(50).height(50).padLeft(50);
+                Image image = new Image(new TextureRegion(checkMarkTexture));
+                mainTable.add(image).width(50).height(50).padLeft(50);
             }
             mainTable.row();
         }
