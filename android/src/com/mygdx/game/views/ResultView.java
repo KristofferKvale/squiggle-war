@@ -7,17 +7,13 @@ import androidx.annotation.NonNull;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -147,7 +143,11 @@ public class ResultView extends State {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                         String username = snapshot.child("username").getValue(String.class);
-                        int scoreValue = snapshot.child("score").getValue(int.class);
+                        int scoreValue = 0;
+                        for (DataSnapshot scoreSnapshot:snapshot.child("score").getChildren()){
+                            scoreValue = scoreSnapshot.getValue(int.class);
+                        }
+
 
                         scores.add(new Score(username, scoreValue));
                     }
