@@ -177,7 +177,7 @@ public class RoomView extends State {
                                         Date d = dataSnapshot.getValue(Date.class);
                                         Date now = new Date();
                                         Long l = now.getTime() - d.getTime();
-                                        if (l > 50000) {
+                                        if (l > 5000) {
                                             FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(opponent.playerID).removeValue();
                                             if (opponent.playerID.equals(adminID)) {
                                                 FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("admin").setValue(playerID);
