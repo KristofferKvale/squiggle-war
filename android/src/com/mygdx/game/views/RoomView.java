@@ -207,17 +207,21 @@ public class RoomView extends State {
                 for (OpponentModel opponent : opponents) {
                     if (!opponent.getReadyState()) {
                         opponentsReady = false;
+                        timeToStart = 0;
                         break;
                     } else {
                         opponentsReady = true;
                         continue;
                     }
                 }
-                timeToStart += dt;
+                if(opponentsReady) {
+                    timeToStart += dt;
+                }
             } else if (Game.PLAY_TESTING && this.room.getPlayer().getReadyState()) {
                 timeToStart += dt;
             } else {
                 timeToStart = 0;
+
             }
 
             if(timeToStart > 4.1f) {
