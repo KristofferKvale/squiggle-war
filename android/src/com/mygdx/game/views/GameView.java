@@ -1,5 +1,7 @@
 package com.mygdx.game.views;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.badlogic.gdx.Gdx;
@@ -12,11 +14,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mygdx.game.AndroidLauncher;
 import com.mygdx.game.Game;
 import com.mygdx.game.models.BoardModel;
 import com.mygdx.game.models.PlayerModel;
@@ -165,7 +170,27 @@ public class GameView extends State {
         this.board.update(dt);
         this.updateLine();
         if (this.board.finished){
-            gsm.push(new ResultView(gsm,this.player.getRoomID()));
+            AndroidLauncher.mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            AndroidLauncher.mInterstitialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+                    AndroidLauncher.mInterstitialAd.show();
+                }
+
+                @Override
+                public void onAdOpened() {
+                    super.onAdOpened();
+                    Log.d("AdMob", "Showing Ad.");
+                }
+
+                @Override
+                public void onAdClosed() {
+                    super.onAdClosed();
+                    Log.d("AdMob", "Ad closed.");
+                    gsm.push(new ResultView(gsm, player.getRoomID()));
+                }
+            });
         }
         if(this.board.timeseconds < 4.1f) {
             if (this.board.timeseconds > 2f && this.board.timeseconds < 3f) {
