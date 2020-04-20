@@ -242,7 +242,7 @@ public class GameView extends State {
                 powerupDuration.setColor(Color.WHITE);
                 powerupDuration.getData().setScale(5f);
                 durations.add(powerupDuration);
-                powerupDuration.draw(sb, ":" + Integer.toString(powerup.getTimeLeft()), 60 + 180 * x, height - 10);
+                powerupDuration.draw(sb, ":" + powerup.getTimeLeft(), 60 + 180 * x, height - 10);
                 sb.draw(powerup.texture, 180 * x, height-70, 50, 50);
                 x += 1;
             }
