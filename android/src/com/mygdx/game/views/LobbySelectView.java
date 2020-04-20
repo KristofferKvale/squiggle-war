@@ -247,7 +247,6 @@ public class LobbySelectView extends State {
             }
             return (x_good && y_good);
         }
-        void create() {}
 
         void click(){
             gsm.push(this.state);
@@ -292,12 +291,11 @@ public class LobbySelectView extends State {
 
         @Override
         void click(){
-            create();
+            createRoomView();
             super.click();
         }
 
-        @Override
-        void create() {
+        void createRoomView() {
             this.roomView.createPlayer();
         }
 

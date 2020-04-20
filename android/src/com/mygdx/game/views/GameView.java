@@ -30,10 +30,14 @@ import com.mygdx.game.models.PowerUpModel;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.ListIterator;
 
 
 public class GameView extends State {
+    private HashMap<String, Texture> powerup_textures;
+
     private int width = Game.WIDTH;
     private int height = Game.HEIGHT;
     private ArrayList<OpponentModel> opponents;
@@ -54,6 +58,13 @@ public class GameView extends State {
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
+
+        this.powerup_textures = new HashMap<String, Texture>();
+        this.powerup_textures.put("Ghost", new Texture("Ghost.png"));
+        this.powerup_textures.put("Grow", new Texture("Grow.png"));
+        this.powerup_textures.put("Shrink", new Texture("Shrink.png"));
+        this.powerup_textures.put("Speed_boost", new Texture("Speed_boost.png"));
+
         this.board = board;
         font = new BitmapFont();
         font.setColor(Color.WHITE);
@@ -269,7 +280,7 @@ public class GameView extends State {
                 powerupDuration.getData().setScale(5f);
                 durations.add(powerupDuration);
                 powerupDuration.draw(sb, ":" + powerup.getTimeLeft(), 60 + 180 * x, height - 10);
-                sb.draw(powerup.texture, 180 * x, height-70, 50, 50);
+                sb.draw(this.powerup_textures.get(powerup.name), 180 * x, height-70, 50, 50);
                 x += 1;
             }
         }
@@ -277,7 +288,7 @@ public class GameView extends State {
 
     private void renderPowerUps(SpriteBatch sb){
         for (PowerUpModel powerup:this.board.powerups){
-            sb.draw(powerup.texture, powerup.position.x + Game.SPACE_SIDE, powerup.position.y - Game.SPACE_TOP, 40, 40);
+            sb.draw(this.powerup_textures.get(powerup.name), powerup.position.x + Game.SPACE_SIDE, powerup.position.y - Game.SPACE_TOP, 40, 40);
         }
     }
 

@@ -100,7 +100,18 @@ public class BoardModel {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                long x = (long) dataSnapshot.child("x").getValue();
+                long y = (long) dataSnapshot.child("y").getValue();
+                Vector2 pos = new Vector2();
+                pos.x = x;
+                pos.y = y;
+                String powerupName = dataSnapshot.getKey();
+                if (Arrays.asList(Game.AVAILABLE_POWERUPS).contains(powerupName)) {
+                    PowerUpModel addedPowerup = new PowerUpModel(powerupName, pos);
+                    this_board.powerups.add(addedPowerup);
+                } else {
+                    throw new Error("Powerup name not collected properly from firebase");
+                }
             }
 
             @Override
@@ -259,6 +270,8 @@ public class BoardModel {
         postCrash = 0f;
         timeseconds = 0f;
 
+        //Uncomment code when RoomModel.adminID is fixed
+        /*
         String adminID = this.room.AdminID;
         if (this.player.playerID == adminID) {
             addSpeedBoost();
@@ -266,6 +279,7 @@ public class BoardModel {
             addGrow();
             addShrink();
         }
+         */
     }
 
     public void setRoom(RoomModel room) {
