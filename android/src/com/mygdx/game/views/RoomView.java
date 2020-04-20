@@ -77,18 +77,22 @@ public class RoomView extends State {
 
     public RoomView(GameStateManager gsm) {
         super(gsm);
-        DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child("admin");
-        mdatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                adminID = dataSnapshot.getValue(String.class);
-            }
+        try {
+            DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.roomID).child("admin");
+            mdatabase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    adminID = dataSnapshot.getValue(String.class);
+                }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
 
@@ -131,6 +135,7 @@ public class RoomView extends State {
 
     @Override
     public void update(float dt) {
+
         pingtimer += dt;
         if (pingtimer > 1f){
             DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.roomID).child("players").child(player.playerID).child("ping");
@@ -172,7 +177,7 @@ public class RoomView extends State {
                                         Date d = dataSnapshot.getValue(Date.class);
                                         Date now = new Date();
                                         Long l = now.getTime() - d.getTime();
-                                        if (l > 50000) {
+                                        if (l > 5000) {
                                             FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(opponent.playerID).removeValue();
                                             if (opponent.playerID.equals(adminID)) {
                                                 FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("admin").setValue(playerID);
@@ -202,17 +207,21 @@ public class RoomView extends State {
                 for (OpponentModel opponent : opponents) {
                     if (!opponent.getReadyState()) {
                         opponentsReady = false;
+                        timeToStart = 0;
                         break;
                     } else {
                         opponentsReady = true;
                         continue;
                     }
                 }
-                timeToStart += dt;
+                if(opponentsReady) {
+                    timeToStart += dt;
+                }
             } else if (Game.PLAY_TESTING && this.room.getPlayer().getReadyState()) {
                 timeToStart += dt;
             } else {
                 timeToStart = 0;
+
             }
 
             if(timeToStart > 4.1f) {

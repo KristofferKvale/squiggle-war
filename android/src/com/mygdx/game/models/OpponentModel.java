@@ -26,6 +26,7 @@ public class OpponentModel {
     private boolean crashed = false;
     private Color color = Color.BLUE;
     private DatabaseReference mDatabase;
+    private ArrayList<Vector3> drawnHeads = new ArrayList<>();
     private ArrayList<Vector3> points = new ArrayList<>();
 
 
@@ -259,5 +260,20 @@ public class OpponentModel {
 
     public String getPlayerID() {
         return playerID;
+    }
+
+
+    public Vector3 getLastDrawnHead(){
+        if (this.drawnHeads.size()>10){
+            return this.drawnHeads.get(drawnHeads.size()-10);
+        }else if (this.drawnHeads.size()>0) {
+            return this.drawnHeads.get(drawnHeads.size() - 1);
+        }
+        return new Vector3(-100,-100, Game.DEFAULT_SIZE);
+    }
+
+
+    public void addLastDrawnHead(){
+        this.drawnHeads.add(getPosition());
     }
 }

@@ -45,6 +45,7 @@ public class GameView extends State {
     private ArrayList<BitmapFont> durations;
     private Float pingtimer = 0f;
     private Float getAllPingTimer = 0f;
+    private String adminID;
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
@@ -71,6 +72,22 @@ public class GameView extends State {
             scores.add(oppScore);
         }
         this.updateLine();
+        try {
+            DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("admin");
+            mdatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    adminID = dataSnapshot.getValue(String.class);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -108,6 +125,7 @@ public class GameView extends State {
                 final String roomID = this.player.getRoomID();
 
                 final String playerID = this.player.playerID;
+                final String adminID = this.adminID;
                 for (final OpponentModel opponent : opponents) {
                     try {
 
@@ -120,9 +138,13 @@ public class GameView extends State {
                                     Date d = dataSnapshot.getValue(Date.class);
                                     Date now = new Date();
                                     Long l = now.getTime() - d.getTime();
-                                    if (l > 50000) {
+                                    if (l > 5000) {
                                         FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(opponent.playerID).removeValue();
+                                        if (opponent.playerID.equals(adminID)) {
+                                            FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("admin").setValue(playerID);
+                                        }
                                     }
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -142,6 +164,9 @@ public class GameView extends State {
         this.handleInput();
         this.board.update(dt);
         this.updateLine();
+        if (this.board.finished){
+            gsm.push(new ResultView(gsm,this.player.getRoomID()));
+        }
         if(this.board.timeseconds < 4.1f) {
             if (this.board.timeseconds > 2f && this.board.timeseconds < 3f) {
                 number = "1";
@@ -174,7 +199,7 @@ public class GameView extends State {
         renderPowerUps(sb);
         sb.draw(lines, 0, 0, width, height);
         sb.end();
-        renderPlayerHead();
+        renderPlayerHeads();
         lines.dispose();
 
     }
@@ -202,12 +227,14 @@ public class GameView extends State {
     }
 
     private void renderScores(SpriteBatch sb){
-        playerScore.draw(sb, Integer.toString(player.getScore()),(width/2f) + 200, height - 20);
+        playerScore.draw(sb, "You: " + Integer.toString(player.getScore()),(width/2f)-200, height - 20);
         ListIterator<BitmapFont> scoresIt = scores.listIterator();
         try{
             while (scoresIt.hasNext()) {
-                int score = opponents.get(scoresIt.nextIndex()).getScore();
-                scoresIt.next().draw(sb, Integer.toString(score), (width/2f) + 300 + scoresIt.nextIndex()*100, height - 20);
+                OpponentModel opp = opponents.get(scoresIt.nextIndex());
+                int score = opp.getScore();
+                String name = opp.getUsername();
+                scoresIt.next().draw(sb, name.substring(0,3) + ": " + Integer.toString(score), (width/2f)-200 + scoresIt.nextIndex()*250, height - 20);
             }
         }catch(Exception e) {}
     }
@@ -220,7 +247,7 @@ public class GameView extends State {
                 powerupDuration.setColor(Color.WHITE);
                 powerupDuration.getData().setScale(5f);
                 durations.add(powerupDuration);
-                powerupDuration.draw(sb, ":" + Integer.toString(powerup.getTimeLeft()), 60 + 180 * x, height - 10);
+                powerupDuration.draw(sb, ":" + powerup.getTimeLeft(), 60 + 180 * x, height - 10);
                 sb.draw(powerup.texture, 180 * x, height-70, 50, 50);
                 x += 1;
             }
@@ -241,12 +268,24 @@ public class GameView extends State {
         playableArea.end();
     }
 
-    private void renderPlayerHead() {
+    private void renderPlayerHeads() {
         playerHead.begin(ShapeRenderer.ShapeType.Filled);
         Vector3 pos = player.getPosition();
         playerHead.setColor(player.getColor());
         playerHead.circle((int)pos.x + Game.SPACE_SIDE, height - (int)pos.y - Game.SPACE_TOP, player.getCurrentHeadSize());
         playerHead.end();
+
+        ArrayList<OpponentModel> players = board.getOpponents();
+        for(OpponentModel opponent:players) {
+            Vector3 point = opponent.getPosition();
+            if (point.x != -100 && point != opponent.getLastDrawnHead()) {
+                playerHead.begin(ShapeRenderer.ShapeType.Filled);
+                playerHead.setColor(opponent.getColor());
+                playerHead.circle((int)point.x + Game.SPACE_SIDE, height - (int)point.y - Game.SPACE_TOP, player.getHeadSize((int) point.z));
+                playerHead.end();
+                opponent.addLastDrawnHead();
+            }
+        }
     }
 }
 
