@@ -170,27 +170,28 @@ public class GameView extends State {
         this.board.update(dt);
         this.updateLine();
         if (this.board.finished){
-            AndroidLauncher.mInterstitialAd.loadAd(new AdRequest.Builder().build());
-            AndroidLauncher.mInterstitialAd.setAdListener(new AdListener() {
+            Game.mAL.runOnUiThread(new Runnable() {
                 @Override
-                public void onAdLoaded() {
-                    super.onAdLoaded();
-                    AndroidLauncher.mInterstitialAd.show();
-                }
+                public void run() {
+                    Game.mAL.mInterstitialAd.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdOpened() {
+                            super.onAdOpened();
+                            Log.d("AdMob", "Ad showed.");
+                        }
 
-                @Override
-                public void onAdOpened() {
-                    super.onAdOpened();
-                    Log.d("AdMob", "Showing Ad.");
-                }
+                        @Override
+                        public void onAdClosed() {
+                            super.onAdClosed();
+                            Log.d("AdMob", "Ad is closed.");
+                            gsm.push(new ResultView(gsm, player.getRoomID()));
 
-                @Override
-                public void onAdClosed() {
-                    super.onAdClosed();
-                    Log.d("AdMob", "Ad closed.");
-                    gsm.push(new ResultView(gsm, player.getRoomID()));
+                        }
+                    });
+                    Game.mAL.mInterstitialAd.show();
                 }
             });
+
         }
         if(this.board.timeseconds < 4.1f) {
             if (this.board.timeseconds > 2f && this.board.timeseconds < 3f) {

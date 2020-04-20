@@ -31,6 +31,9 @@ public class AndroidLauncher extends AndroidApplication {
 		mInterstitialAd = new InterstitialAd(this);
 		mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
 
-		initialize(new Game(), config);
+		mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+		initialize(new Game(this), config);
+
 	}
 }

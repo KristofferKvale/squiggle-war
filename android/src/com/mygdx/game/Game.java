@@ -12,6 +12,8 @@ import com.mygdx.game.views.UsernameView;
 
 public class Game extends ApplicationAdapter {
 
+    public static AndroidLauncher mAL;
+
     public static int WIDTH;
     public static int HEIGHT;
     public static final int PLAYABLE_WIDTH = 1750;
@@ -34,6 +36,10 @@ public class Game extends ApplicationAdapter {
     private GameStateManager gsm;
     private SpriteBatch batch;
     public Config config;
+
+    public Game(AndroidLauncher mAL) {
+        this.mAL = mAL;
+    }
 
     @Override
     public void create() {
