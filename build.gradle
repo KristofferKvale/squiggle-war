@@ -61,7 +61,7 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
         implementation 'com.google.firebase:firebase-database:19.2.1'
-        
+        implementation 'com.google.android.gms:play-services-ads:19.1.0'
     }
 }
 
