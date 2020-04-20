@@ -77,18 +77,22 @@ public class RoomView extends State {
 
     public RoomView(GameStateManager gsm) {
         super(gsm);
-        DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.roomID).child("admin");
-        mdatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                adminID = dataSnapshot.getValue(String.class);
-            }
+        try {
+            DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.roomID).child("admin");
+            mdatabase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    adminID = dataSnapshot.getValue(String.class);
+                }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
 
@@ -131,6 +135,7 @@ public class RoomView extends State {
 
     @Override
     public void update(float dt) {
+
         pingtimer += dt;
         if (pingtimer > 1f){
             DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.roomID).child("players").child(player.playerID).child("ping");
