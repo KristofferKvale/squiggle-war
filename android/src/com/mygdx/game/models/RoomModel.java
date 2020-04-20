@@ -35,7 +35,7 @@ public class RoomModel {
     //String playerID;
     private boolean gameStarted;
     public String AdminID;
-    private ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.MAGENTA, Color.CHARTREUSE, Color.WHITE));
+    private ArrayList<Color> colors = new ArrayList<>(Arrays.asList(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.MAGENTA, Color.CHARTREUSE));
 
 
 
@@ -61,11 +61,11 @@ public class RoomModel {
                     String playerID = dataSnapshot.getKey();
                     if (player != null){
                         if(!player.playerID.equals(playerID)){
-                            opponents.add(new OpponentModel(playerID, roomID));
+                            opponents.add(new OpponentModel(playerID, roomID, setColor()));
                         }
 
                     }else {
-                        opponents.add(new OpponentModel(playerID, roomID));
+                        opponents.add(new OpponentModel(playerID, roomID, setColor()));
                     }
                 }catch (Exception ignored){}
             }
@@ -126,8 +126,8 @@ public class RoomModel {
     //}
 
 
-    private Color randomColor(Integer min, Integer max){
-        Integer i = (int)(Math.random() * (max - min) + min);
+    private Color randomColor(int min, int max){
+        int i = (int)(Math.random() * (max - min) + min);
         return colors.get(i);
     }
 

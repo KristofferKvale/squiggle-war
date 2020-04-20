@@ -24,16 +24,16 @@ public class OpponentModel {
     private boolean ready = false;
     private int score = 0;
     private boolean crashed = false;
-    private Color color = Color.BLUE;
+    private Color color;
     private DatabaseReference mDatabase;
     private ArrayList<Vector3> drawnHeads = new ArrayList<>();
     private ArrayList<Vector3> points = new ArrayList<>();
 
 
-    public OpponentModel(String playerId, String roomId) {
+    public OpponentModel(String playerId, String roomId, Color inputColor) {
         this.playerID = playerId;
         this.roomID = roomId;
-
+        this.setColor(inputColor);
         final OpponentModel thisOpponent = this;
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("username");
