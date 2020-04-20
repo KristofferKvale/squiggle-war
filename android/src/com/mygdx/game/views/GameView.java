@@ -174,7 +174,7 @@ public class GameView extends State {
         renderPowerUps(sb);
         sb.draw(lines, 0, 0, width, height);
         sb.end();
-        renderPlayerHead();
+        renderPlayerHeads();
         lines.dispose();
 
     }
@@ -241,12 +241,24 @@ public class GameView extends State {
         playableArea.end();
     }
 
-    private void renderPlayerHead() {
+    private void renderPlayerHeads() {
         playerHead.begin(ShapeRenderer.ShapeType.Filled);
         Vector3 pos = player.getPosition();
         playerHead.setColor(player.getColor());
         playerHead.circle((int)pos.x + Game.SPACE_SIDE, height - (int)pos.y - Game.SPACE_TOP, player.getCurrentHeadSize());
         playerHead.end();
+
+        ArrayList<OpponentModel> players = board.getOpponents();
+        for(OpponentModel opponent:players) {
+            Vector3 point = opponent.getPosition();
+            if (point.x != -100 && point != opponent.getLastDrawnHead()) {
+                playerHead.begin(ShapeRenderer.ShapeType.Filled);
+                playerHead.setColor(opponent.getColor());
+                playerHead.circle((int)point.x + Game.SPACE_SIDE, height - (int)point.y - Game.SPACE_TOP, player.getHeadSize((int) point.z));
+                playerHead.end();
+                opponent.addLastDrawnHead();
+            }
+        }
     }
 }
 
