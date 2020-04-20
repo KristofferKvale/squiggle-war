@@ -15,26 +15,26 @@ public class PowerUpModel {
     private Boolean active = true;
     private int duration = 10;
 
-    public PowerUpModel(String name) {
-        this.name = name;
-        this.texture = new Texture(name + ".png");
+    public PowerUpModel(String inputName) {
+        this.name = inputName;
+        this.texture = new Texture(inputName + ".png");
     }
 
-    public PowerUpModel(String name, int duration) {
-        this.name = name;
-        this.texture = new Texture(name + ".png");
+    public PowerUpModel(String inputName, int duration) {
+        this.name = inputName;
+        this.texture = new Texture(inputName + ".png");
         this.duration = duration;
     }
 
-    public PowerUpModel(String name, Vector2 position) {
-        this.name = name;
-        this.texture = new Texture(name + ".png");
+    public PowerUpModel(String inputName, Vector2 position) {
+        this.name = inputName;
+        this.texture = new Texture(inputName + ".png");
         this.position = position;
     }
 
-    public PowerUpModel(String name, int duration, Vector2 position) {
-        this.name = name;
-        this.texture = new Texture(name + ".png");
+    public PowerUpModel(String inputName, int duration, Vector2 position) {
+        this.name = inputName;
+        this.texture = new Texture(inputName + ".png");
         this.duration = duration;
         this.position = position;
     }
