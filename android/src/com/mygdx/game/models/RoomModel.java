@@ -1,24 +1,19 @@
 package com.mygdx.game.models;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.mygdx.game.Game;
-import com.mygdx.game.models.Config;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import com.mygdx.game.views.GameStateManager;
 import com.mygdx.game.views.GameView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class RoomModel {
     //Links up with firebase and creates game and player models
@@ -100,13 +95,17 @@ public class RoomModel {
 
     public void createPlayer(String u) {
         player = new PlayerModel(u, setColor(), roomID);
-
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("admin");
         if (opponents.size() == 0){
             mDatabase.setValue(player.playerID);
             this.AdminID = player.playerID;
             //board.AdminID = player.playerID;
 
+        }else if (opponents.size() == 1) {
+            if (opponents.get(0).getPlayerID().equals(player.playerID)){
+                mDatabase.setValue(player.playerID);
+                this.AdminID = player.playerID;
+            }
         }
 
     }

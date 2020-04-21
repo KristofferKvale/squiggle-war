@@ -1,7 +1,5 @@
 package com.mygdx.game.models;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -17,7 +15,6 @@ import com.mygdx.game.Game;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -270,8 +267,7 @@ public class BoardModel {
         postCrash = 0f;
         timeseconds = 0f;
 
-        //Uncomment code when RoomModel.adminID is fixed
-        /*
+
         String adminID = this.room.AdminID;
         if (this.player.playerID == adminID) {
             addSpeedBoost();
@@ -279,7 +275,6 @@ public class BoardModel {
             addGrow();
             addShrink();
         }
-         */
     }
 
     public void setRoom(RoomModel room) {

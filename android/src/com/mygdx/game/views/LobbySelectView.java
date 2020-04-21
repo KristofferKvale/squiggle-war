@@ -71,8 +71,8 @@ public class LobbySelectView extends State {
                                 if (!dataSnapshot.getValue(Boolean.class)) {
                                     roomIDs.add(roomID);
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            } catch (Exception ignored) {
+
                             }
                         }
 

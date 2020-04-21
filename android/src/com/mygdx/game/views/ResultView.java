@@ -144,10 +144,11 @@ public class ResultView extends State {
 
                         String username = snapshot.child("username").getValue(String.class);
                         int scoreValue = 0;
-                        for (DataSnapshot scoreSnapshot:snapshot.child("score").getChildren()){
-                            scoreValue = scoreSnapshot.getValue(int.class);
-                        }
-
+                        try{
+                            for (DataSnapshot scoreSnapshot:snapshot.child("score").getChildren()){
+                                scoreValue = scoreSnapshot.getValue(int.class);
+                            }
+                        }catch(Exception ignored){}
 
                         scores.add(new Score(username, scoreValue));
                     }
