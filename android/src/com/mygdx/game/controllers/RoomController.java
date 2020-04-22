@@ -33,7 +33,7 @@ public class RoomController implements InputProcessor {
         if(keycode == Input.Keys.BACK){
             room.back();
             gsm.push(new LobbySelectView(gsm));
-            FirebaseDatabase.getInstance().getReference().child("rooms").child(view.roomID).child("players").child(view.player.playerID).removeValue();
+            FirebaseDatabase.getInstance().getReference().child("rooms").child(view.roomID).child("players").child(view.player.getPlayerID()).removeValue();
             return true;
 
         }

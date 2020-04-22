@@ -18,8 +18,8 @@ import java.util.List;
 public class LineModel implements Line {
 
     private ArrayList<Vector3> points = new ArrayList<>();
-    String roomID;
-    String playerID;
+    private String roomID;
+    private String playerID;
     private DatabaseReference mDatabase;
 
 
@@ -27,47 +27,10 @@ public class LineModel implements Line {
         this.playerID = playerID;
         this.roomID = roomID;
         addPoint(start);
-        float x = start.x;
-        float y = start.y;
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("points");
         String key = mDatabase.push().getKey();
+        assert key != null;
         mDatabase.child(key).setValue(start);
-        /*mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("points");
-        mDatabase.addChildEventListener(new ChildEventListener() {
-
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                try{
-                    Vector3 point = dataSnapshot.getValue(Vector3.class);
-                    points.add(point);
-
-                }catch (Exception e) {
-
-                }
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
-
-
     }
 
     @Override
@@ -75,8 +38,8 @@ public class LineModel implements Line {
         points.add(point);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("points");
         String key = mDatabase.push().getKey();
+        assert key != null;
         mDatabase.child(key).setValue(point);
-
     }
 
     @Override

@@ -30,7 +30,7 @@ public class OpponentModel {
     private ArrayList<Vector3> points = new ArrayList<>();
 
 
-    public OpponentModel(String playerId, String roomId, Color inputColor) {
+    OpponentModel(String playerId, String roomId, Color inputColor) {
         this.playerID = playerId;
         this.roomID = roomId;
         this.setColor(inputColor);
@@ -45,7 +45,6 @@ public class OpponentModel {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
 
@@ -53,33 +52,28 @@ public class OpponentModel {
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                try{
+                try {
                     score = dataSnapshot.getValue(Integer.class);
 
-                }catch (Exception e){
+                } catch (Exception e) {
                     Log.e("ERR", "Err: " + e.toString());
                 }
             }
 
-
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
 
@@ -87,32 +81,28 @@ public class OpponentModel {
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                try{
+                try {
                     crashed = dataSnapshot.getValue(Boolean.class);
 
-                }catch (Exception e){
+                } catch (Exception e) {
                     Log.e("ERR", "Err: " + e.toString());
                 }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
 
@@ -120,33 +110,27 @@ public class OpponentModel {
         mDatabase.addChildEventListener(new ChildEventListener() {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                try{
+                try {
                     points.add(dataSnapshot.getValue(Vector3.class));
-
-                }catch (Exception e) {
-
+                } catch (Exception ignored) {
                 }
 
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
 
@@ -154,33 +138,26 @@ public class OpponentModel {
         mDatabase.addChildEventListener(new ChildEventListener() {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                try{
+                try {
                     color = dataSnapshot.getValue(Color.class);
-
-                }catch (Exception e) {
-
+                } catch (Exception ignored) {
                 }
-
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
 
@@ -190,14 +167,12 @@ public class OpponentModel {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
                     setReadyState(dataSnapshot.getValue(Boolean.class));
-                } catch (Exception e) {
-
+                } catch (Exception ignored) {
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("ready");
@@ -206,13 +181,12 @@ public class OpponentModel {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
                     setReadyState(dataSnapshot.getValue(Boolean.class));
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
 
@@ -231,11 +205,11 @@ public class OpponentModel {
         return score;
     }
 
-    public boolean isCrashed() {
+    boolean isCrashed() {
         return crashed;
     }
 
-    public ArrayList<Vector3> getPoints() {
+    ArrayList<Vector3> getPoints() {
         return points;
     }
 
@@ -243,37 +217,42 @@ public class OpponentModel {
         return color;
     }
 
-    public void nextGame() {
+    void nextGame() {
         points = new ArrayList<>();
     }
 
-    public boolean getReadyState() { return this.ready; }
-    private void setReadyState(boolean ready) { this.ready = ready;}
+    public boolean getReadyState() {
+        return this.ready;
+    }
+
+    private void setReadyState(boolean ready) {
+        this.ready = ready;
+    }
 
     public Vector3 getPosition() {
-        if(points.size() >= 1) {
+        if (points.size() >= 1) {
             return this.points.get(points.size() - 1);
-        }else{
-            return new Vector3(-100,-100, Game.DEFAULT_SIZE);
+        } else {
+            return new Vector3(-100, -100, Game.DEFAULT_SIZE);
         }
     }
 
-    public String getPlayerID() {
+    String getPlayerID() {
         return playerID;
     }
 
 
-    public Vector3 getLastDrawnHead(){
-        if (this.drawnHeads.size()>10){
-            return this.drawnHeads.get(drawnHeads.size()-10);
-        }else if (this.drawnHeads.size()>0) {
+    public Vector3 getLastDrawnHead() {
+        if (this.drawnHeads.size() > 10) { //
+            return this.drawnHeads.get(drawnHeads.size() - 10);
+        } else if (this.drawnHeads.size() > 0) {
             return this.drawnHeads.get(drawnHeads.size() - 1);
         }
-        return new Vector3(-100,-100, Game.DEFAULT_SIZE);
+        return new Vector3(-100, -100, Game.DEFAULT_SIZE);
     }
 
 
-    public void addLastDrawnHead(){
+    public void addLastDrawnHead() {
         this.drawnHeads.add(getPosition());
     }
 }
