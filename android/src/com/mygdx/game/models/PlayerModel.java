@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -61,7 +63,7 @@ public class PlayerModel {
         DatabaseReference colDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("color");
 
         // Attach a listener to read the data at our color reference
-        colDatabase.addValueEventListener(new ValueEventListener() {
+        colDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Color c = dataSnapshot.getValue(Color.class);
