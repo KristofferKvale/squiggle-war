@@ -127,7 +127,7 @@ public class LobbySelectView extends State {
             }
         }
 
-        final ListIterator<String> roomIt = roomIDs.listIterator();
+        final ListIterator<String> roomIt = roomIDs.subList(0,5).listIterator();
         try {
             while (roomIt.hasNext()) {
                 final int i = roomIt.nextIndex();
