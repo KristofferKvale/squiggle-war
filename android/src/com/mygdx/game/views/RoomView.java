@@ -272,18 +272,93 @@ public class RoomView extends State {
 
         final Button redBtn = new Button(uiskin);
         redBtn.setColor(Color.RED);
+        //redBtn.setTouchable(Touchable.enabled);
 
-        Button greenBtn = new Button(uiskin);
+        final Button greenBtn = new Button(uiskin);
         greenBtn.setColor(Color.GREEN);
-        Button blueBtn = new Button(uiskin);
+        greenBtn.setTouchable(Touchable.enabled);
+
+        final Button blueBtn = new Button(uiskin);
         blueBtn.setColor(Color.BLUE);
+        blueBtn.setTouchable(Touchable.enabled);
+
+        final Button yellowBtn = new Button(uiskin);
+        yellowBtn.setColor(Color.YELLOW);
+        yellowBtn.setTouchable(Touchable.enabled);
+
+        final Button orangeBtn = new Button(uiskin);
+        orangeBtn.setColor(Color.ORANGE);
+        orangeBtn.setTouchable(Touchable.enabled);
+
+        final Button cyanBtn = new Button(uiskin);
+        cyanBtn.setColor(Color.CYAN);
+        cyanBtn.setTouchable(Touchable.enabled);
+
+        redBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                DatabaseReference cdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(player.getPlayerID()).child("color");
+                cdatabase.setValue(Color.RED);
+            }
+
+        });
+
+        greenBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                DatabaseReference cdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(player.getPlayerID()).child("color");
+                cdatabase.setValue(Color.GREEN);
+            }
+        });
+
+        blueBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                DatabaseReference cdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(player.getPlayerID()).child("color");
+                cdatabase.setValue(Color.BLUE);
+            }
+        });
+
+        yellowBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                DatabaseReference cdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(player.getPlayerID()).child("color");
+                cdatabase.setValue(Color.YELLOW);
+            }
+        });
+
+        orangeBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                DatabaseReference cdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(player.getPlayerID()).child("color");
+                cdatabase.setValue(Color.ORANGE);
+            }
+        });
+
+        cyanBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                DatabaseReference cdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(player.getPlayerID()).child("color");
+                cdatabase.setValue(Color.CYAN);
+            }
+        });
 
         //Add buttons to table
         mainTable.add(colorLabel);
         mainTable.row();
-        mainTable.add(redBtn).width(size).height(size);
+        mainTable.add(redBtn).width(size).height(size).padRight(padSize);
         mainTable.add(greenBtn).width(size).height(size).padRight(padSize);
         mainTable.add(blueBtn).width(size).height(size);
+        mainTable.row();
+        mainTable.add(orangeBtn).width(size).height(size).padRight(padSize).padTop(padSize);
+        mainTable.add(yellowBtn).width(size).height(size).padRight(padSize).padTop(padSize);
+        mainTable.add(cyanBtn).width(size).height(size).padTop(padSize);
 
         mainTable.pack();
         mainTable.setX(Game.WIDTH - mainTable.getWidth() - 200);
@@ -291,6 +366,8 @@ public class RoomView extends State {
 
         return mainTable;
     }
+
+
 
     private Table playerTable() {
 

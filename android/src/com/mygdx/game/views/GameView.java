@@ -52,6 +52,7 @@ public class GameView extends State {
     private Float pingtimer = 0f;
     private Float getAllPingTimer = 0f;
     private String adminID;
+    private Color player_color;
 
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
@@ -71,8 +72,9 @@ public class GameView extends State {
         durations = new ArrayList<>();
         opponents = board.getOpponents();
         player = board.getPlayer();
+        player_color = player.getColor();
         playerScore = new BitmapFont();
-        playerScore.setColor(player.getColor());
+        playerScore.setColor(player_color);
         playerScore.getData().setScale(5f);
         for(OpponentModel opp : opponents) {
             BitmapFont oppScore = new BitmapFont();
@@ -97,6 +99,8 @@ public class GameView extends State {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
     }
 
 
@@ -240,7 +244,7 @@ public class GameView extends State {
     }
 
     private void updateLine() {
-        line.setColor(player.getColor());
+        line.setColor(player_color);
         Vector3 pos = player.getLastLinePosition();
         line.fillCircle((int)pos.x + Game.SPACE_SIDE, (int)pos.y + Game.SPACE_TOP, (int)pos.z);
 
@@ -302,7 +306,7 @@ public class GameView extends State {
     private void renderPlayerHeads() {
         playerHead.begin(ShapeRenderer.ShapeType.Filled);
         Vector3 pos = player.getPosition();
-        playerHead.setColor(player.getColor());
+        playerHead.setColor(player_color);
         playerHead.circle((int)pos.x + Game.SPACE_SIDE, height - (int)pos.y - Game.SPACE_TOP, player.getCurrentHeadSize());
         playerHead.end();
 

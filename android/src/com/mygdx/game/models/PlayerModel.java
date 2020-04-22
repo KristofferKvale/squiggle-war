@@ -13,6 +13,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mygdx.game.Game;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class PlayerModel {
     private static final int MAX_LINE_TIME = 250;
 
     String username;
-    Color color;
+    private Color color;
     LineModel line;
     boolean active;
     float angle;
@@ -53,7 +54,6 @@ public class PlayerModel {
 
     public PlayerModel(final String username, Color color, String roomID) {
         this.username = username;
-        this.color = color;
         this.active = true;
         this.color = color;
         this.roomID = roomID;
@@ -134,6 +134,23 @@ public class PlayerModel {
         this.position = this.line.getLastPoint();
         this.setStartAngle();
         this.powerups = new ArrayList<>();
+
+        // Get a reference to colors
+        DatabaseReference colDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("color");
+
+        // Attach a listener to read the data at our color reference
+        colDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Color c = dataSnapshot.getValue(Color.class);
+                Log.d("INSIDE", "color: " + c);
+                setColor(c);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     public ArrayList<Vector3> getLinePoints() {
@@ -167,6 +184,10 @@ public class PlayerModel {
 
     public Vector3 getLastLinePosition() {
         return this.line.getLastPoint();
+    }
+
+    private void setColor(Color c){
+        this.color = c;
     }
 
     public Color getColor() {
