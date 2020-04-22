@@ -317,8 +317,7 @@ public class RoomView extends State {
         mainTable.add(playerLabel).left();
 
         if (player.getReadyState()) {
-            Image image = new Image(new TextureRegion(checkMarkTexture));
-            mainTable.add(image).width(50).height(50).padLeft(50);
+            mainTable.add(readyButtonCheckMark).width(50).height(50).padLeft(50);
         }
 
         mainTable.row();
@@ -330,8 +329,7 @@ public class RoomView extends State {
 
             mainTable.add(opponentLabel).left();
             if (opponent.getReadyState()) {
-                Image image = new Image(new TextureRegion(checkMarkTexture));
-                mainTable.add(image).width(50).height(50).padLeft(50);
+                mainTable.add(readyButtonCheckMark).width(50).height(50).padLeft(50);
             }
             mainTable.row();
         }
