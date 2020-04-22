@@ -3,7 +3,6 @@ package com.mygdx.game.models;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.google.firebase.database.ChildEventListener;
@@ -19,34 +18,25 @@ import java.util.List;
 
 
 public class BoardModel {
-    //TO DO:
-    // Push position to firebase
-    // Push collided boolean to firebase
-    // Clear lines and start new round
-
-    public String AdminID;
     private DatabaseReference mDatabase;
 
     public List<PowerUpModel> powerups = new ArrayList<>();
     public float timeseconds = 0f;
-    public float postCrash = 0f;
-    ArrayList<OpponentModel> opponents;
-    float period = 4f;
-    private int width = Gdx.graphics.getWidth();
-    private int height = Gdx.graphics.getHeight();
+    private float postCrash = 0f;
+    private ArrayList<OpponentModel> opponents;
+    private float period = 4f;
     private PlayerModel player;
     private RoomModel room;
     public boolean finished = false;
 
 
-    public BoardModel(ArrayList<OpponentModel> opponents, final PlayerModel player) {
+    BoardModel(ArrayList<OpponentModel> opponents, final PlayerModel player) {
         this.opponents = opponents;
         this.player = player;
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(player.getRoomID()).child("players");
-        //mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID);
 
-        //Legger til nye spillere i "players":
+        //Adds new players to "players":
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -54,20 +44,19 @@ public class BoardModel {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                try{
+                try {
                     String playerID = dataSnapshot.getKey();
                     removePlayer(playerID);
-                }catch(Exception e){}
+                } catch (Exception ignored) {
+                }
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
@@ -82,9 +71,7 @@ public class BoardModel {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 long x = (long) dataSnapshot.child("x").getValue();
                 long y = (long) dataSnapshot.child("y").getValue();
-                Vector2 pos = new Vector2();
-                pos.x = x;
-                pos.y = y;
+                Vector2 pos = new Vector2(x, y);
                 String powerupName = dataSnapshot.getKey();
                 if (Arrays.asList(Game.AVAILABLE_POWERUPS).contains(powerupName)) {
                     PowerUpModel addedPowerup = new PowerUpModel(powerupName, pos);
@@ -99,9 +86,7 @@ public class BoardModel {
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 long x = (long) dataSnapshot.child("x").getValue();
                 long y = (long) dataSnapshot.child("y").getValue();
-                Vector2 pos = new Vector2();
-                pos.x = x;
-                pos.y = y;
+                Vector2 pos = new Vector2(x, y);
                 String powerupName = dataSnapshot.getKey();
                 if (Arrays.asList(Game.AVAILABLE_POWERUPS).contains(powerupName)) {
                     PowerUpModel addedPowerup = new PowerUpModel(powerupName, pos);
@@ -113,23 +98,23 @@ public class BoardModel {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                try{
+                try {
                     long x = (long) dataSnapshot.child("x").getValue();
                     long y = (long) dataSnapshot.child("y").getValue();
                     Vector2 pos = new Vector2();
                     pos.x = x;
                     pos.y = y;
-                    for (PowerUpModel powerup : this_board.powerups){
-                        if (powerup.position.equals(pos)){
+                    for (PowerUpModel powerup : this_board.powerups) {
+                        if (powerup.position.equals(pos)) {
                             this_board.powerups.remove(powerup);
                         }
                     }
-                }catch(Exception e){}
+                } catch (Exception ignored) {
+                }
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
@@ -143,7 +128,7 @@ public class BoardModel {
     }
 
     //Function that returns a player if it has collided with a player or a wall
-    public void Collision() {
+    private void Collision() {
         if (!player.isCrashed()) {
             CollisionPowerup();
             if (CollisionWalls()) {
@@ -151,11 +136,11 @@ public class BoardModel {
             }
 
             if (!player.isGhost()) {
-                if (CollisionPlayer() && player.line_on) {
+                if (CollisionPlayer() && player.getLineStatus()) {
                     player.setCrashed(true);
                 }
                 try {
-                    if (CollisionOpponent() && player.line_on) {
+                    if (CollisionOpponent() && player.getLineStatus()) {
                         player.setCrashed(true);
                     }
                 } catch (Exception ignored) {
@@ -170,11 +155,10 @@ public class BoardModel {
         int x = (int) point.x;
         int y = (int) point.y;
         int z = this.player.getCurrentHeadSize();
-        return x + z > Game.PLAYABLE_WIDTH|| x - z < 0|| y + z > Game.PLAYABLE_HEIGHT || y - z < 0;
+        return x + z > Game.PLAYABLE_WIDTH || x - z < 0 || y + z > Game.PLAYABLE_HEIGHT || y - z < 0;
     }
 
     //Help function that checks if a players position has been visited
-
     private boolean CollisionOpponent() {
         for (OpponentModel opponent : this.opponents) {
             ArrayList<Vector3> oppPoints;
@@ -220,10 +204,10 @@ public class BoardModel {
 
     public void update(float dt) {
         int score = this.player.getScore();
-        for (OpponentModel opp : opponents){
+        for (OpponentModel opp : opponents) {
             score += opp.getScore();
         }
-        if (score>6){
+        if (score > 6) {
             this.finished = true;
         }
         timeseconds += dt;
@@ -236,7 +220,7 @@ public class BoardModel {
         }
     }
 
-    public void playersCrashed(float dt) {
+    private void playersCrashed(float dt) {
         //Get status from opponents
         int numPlayerCrash = 0; // Skal være 0
         if (player.isCrashed()) {
@@ -269,7 +253,14 @@ public class BoardModel {
 
 
         String adminID = this.room.AdminID;
-        if (this.player.playerID == adminID) {
+        if (this.player.getPlayerID().equals(adminID)) {
+            if(this.powerups.size() > 0) {
+                for (PowerUpModel powerup : this.powerups) {
+                    this.powerups.remove(powerup);
+                    DatabaseReference powerupsDB = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("powerups");
+                    powerupsDB.child(powerup.name).removeValue();
+                }
+            }
             addSpeedBoost();
             addGhost();
             addGrow();
@@ -277,7 +268,7 @@ public class BoardModel {
         }
     }
 
-    public void setRoom(RoomModel room) {
+    void setRoom(RoomModel room) {
         this.room = room;
     }
 
@@ -289,7 +280,6 @@ public class BoardModel {
         } catch (Exception e) {
             System.out.println("This never works");
         }
-
     }
 
     public void addRandomPowerUp() {
@@ -298,22 +288,22 @@ public class BoardModel {
         pushPowerup(new_powerup);
     }
 
-    public void addSpeedBoost() {
+    private void addSpeedBoost() {
         PowerUpModel new_powerup = new PowerUpModel("Speed_boost");
         pushPowerup(new_powerup);
     }
 
-    public void addGhost() {
+    private void addGhost() {
         PowerUpModel new_powerup = new PowerUpModel("Ghost");
         pushPowerup(new_powerup);
     }
 
-    public void addGrow() {
+    private void addGrow() {
         PowerUpModel new_powerup = new PowerUpModel("Grow");
         pushPowerup(new_powerup);
     }
 
-    public void addShrink() {
+    private void addShrink() {
         PowerUpModel new_powerup = new PowerUpModel("Shrink");
         pushPowerup(new_powerup);
     }
@@ -323,9 +313,9 @@ public class BoardModel {
         return opponents;
     }
 
-    public void removePlayer(String ID){
+    private void removePlayer(String ID) {
         for (OpponentModel opp : opponents) {
-            if (opp.getPlayerID().equals(ID)){
+            if (opp.getPlayerID().equals(ID)) {
                 opponents.remove(opp);
             }
         }

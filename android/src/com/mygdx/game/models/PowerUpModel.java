@@ -9,51 +9,44 @@ import java.util.Date;
 
 public class PowerUpModel {
     public String name;
-    public Texture texture;
     public Vector2 position = Game.randomPosition(150);
     private Timestamp activated = null;
-    private Boolean active = true;
-    private int duration = 10;
+    private int duration = Game.DEFAULT_POWERUP_DURATION;
 
-    public PowerUpModel(String inputName) {
+    PowerUpModel(String inputName) {
         this.name = inputName;
-        this.texture = new Texture(inputName + ".png");
     }
 
-    public PowerUpModel(String inputName, int duration) {
+    PowerUpModel(String inputName, int duration) {
         this.name = inputName;
-        this.texture = new Texture(inputName + ".png");
         this.duration = duration;
     }
 
-    public PowerUpModel(String inputName, Vector2 position) {
+    PowerUpModel(String inputName, Vector2 position) {
         this.name = inputName;
-        this.texture = new Texture(inputName + ".png");
         this.position = position;
     }
 
-    public PowerUpModel(String inputName, int duration, Vector2 position) {
+    PowerUpModel(String inputName, int duration, Vector2 position) {
         this.name = inputName;
-        this.texture = new Texture(inputName + ".png");
         this.duration = duration;
         this.position = position;
     }
 
-    public void activate() {
+    void activate() {
         this.activated = new Timestamp(new Date().getTime());
     }
 
     public boolean checkStatus() {
-        this.active = (this.getTimeLeft() > 0);
-        return this.active;
+        return this.getTimeLeft() > 0;
     }
 
-    public long getTimeDelta(){
+    long getTimeDelta() {
         return new Timestamp(new Date().getTime()).getTime() - this.activated.getTime();
     }
 
-    public int getTimeLeft(){
-        if (this.duration * 1000 - this.getTimeDelta() > 0){
+    public int getTimeLeft() {
+        if (this.duration * 1000 - this.getTimeDelta() > 0) {
             return (int) (this.duration - (this.getTimeDelta() / 1000));
         }
         return 0;

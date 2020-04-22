@@ -21,15 +21,11 @@ public class RoomModel {
 
     private PlayerModel player = null;
     private BoardModel board;
-    private String username;
-    private Color color;
-    //Config config = new Config();
     private GameView gameView;
     private DatabaseReference mDatabase;
     private String roomID;
-    //String playerID;
     private boolean gameStarted;
-    public String AdminID;
+    String AdminID;
     private ArrayList<Color> colors = new ArrayList<>(Arrays.asList(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.MAGENTA, Color.CHARTREUSE));
 
 
@@ -38,9 +34,9 @@ public class RoomModel {
         opponents = new ArrayList<>();
         gameStarted = false;
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms");
-        if (roomId == "1") {
-            String key = mDatabase.push().getKey();
-            this.roomID = key;
+        if (roomId.equals("1")) {
+            this.roomID = mDatabase.push().getKey();
+            assert roomID != null;
             mDatabase.child(roomID).child("started").setValue(gameStarted);
         } else {
             this.roomID = roomId;
@@ -55,7 +51,7 @@ public class RoomModel {
                 try{
                     String playerID = dataSnapshot.getKey();
                     if (player != null){
-                        if(!player.playerID.equals(playerID)){
+                        if(!player.getPlayerID().equals(playerID)){
                             opponents.add(new OpponentModel(playerID, roomID, setColor()));
                         }
 
@@ -76,7 +72,7 @@ public class RoomModel {
                     String playerID = dataSnapshot.getKey();
                     removePlayer(playerID);
 
-                }catch(Exception e){}
+                }catch(Exception ignored){}
             }
 
             @Override
@@ -97,14 +93,13 @@ public class RoomModel {
         player = new PlayerModel(u, setColor(), roomID);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("admin");
         if (opponents.size() == 0){
-            mDatabase.setValue(player.playerID);
-            this.AdminID = player.playerID;
-            //board.AdminID = player.playerID;
+            mDatabase.setValue(player.getPlayerID());
+            this.AdminID = player.getPlayerID();
 
         }else if (opponents.size() == 1) {
-            if (opponents.get(0).getPlayerID().equals(player.playerID)){
-                mDatabase.setValue(player.playerID);
-                this.AdminID = player.playerID;
+            if (opponents.get(0).getPlayerID().equals(player.getPlayerID())){
+                mDatabase.setValue(player.getPlayerID());
+                this.AdminID = player.getPlayerID();
             }
         }
 
@@ -115,14 +110,11 @@ public class RoomModel {
             mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("admin");
             mDatabase.removeValue();
         }
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(player.playerID);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(player.getPlayerID());
         mDatabase.removeValue();
 
 
     }
-
-    //public void changeColor(){
-    //}
 
 
     private Color randomColor(int min, int max){
@@ -149,7 +141,7 @@ public class RoomModel {
 
     }
 
-    public BoardModel getBoard(){
+    private BoardModel getBoard(){
         if (this.board == null) {
             this.board = new BoardModel(getOpponents(), player);
             this.board.setRoom(this);
@@ -159,8 +151,7 @@ public class RoomModel {
 
     public String getRoomID() { return this.roomID; }
 
-    public void createGameView(GameStateManager gsm) {
-
+    private void createGameView(GameStateManager gsm) {
         gameView = new GameView(gsm, getBoard());
         gsm.push(gameView);
     }
@@ -173,12 +164,13 @@ public class RoomModel {
 
     public void removeSelf(){
         for (OpponentModel opp : opponents) {
-            if (opp.getPlayerID().equals(player.playerID)){
+            if (opp.getPlayerID().equals(player.getPlayerID())){
                 opponents.remove(opp);
             }
         }
     }
-    public void removePlayer(String id){
+
+    private void removePlayer(String id){
         for (OpponentModel opp : opponents) {
             if (opp.getPlayerID().equals(id)){
                 opponents.remove(opp);

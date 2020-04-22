@@ -14,13 +14,18 @@ public class Game extends ApplicationAdapter {
 
     public static AndroidLauncher mAL;
 
+    //Set to True to enable single player to test new code alone
+    public static boolean PLAY_TESTING = false;
+
+    //Screen size
     public static int WIDTH;
     public static int HEIGHT;
     public static final int PLAYABLE_WIDTH = 1750;
     public static final int PLAYABLE_HEIGHT = 1000;
     public static int SPACE_TOP = 90;
     public static int SPACE_SIDE;
-    public static boolean PLAY_TESTING = false;
+
+    //Gameplay variables
     public static final int DEFAULT_SIZE = 8;
     public static final int SMALL_SIZE = 2;
     public static final int BIG_SIZE = 24;
@@ -28,8 +33,19 @@ public class Game extends ApplicationAdapter {
     public static final int SMALL_HEAD_SIZE = 8;
     public static final int BIG_HEAD_SIZE = 36;
     public static final int SPEED = 160;
+    public static final double SPEED_BOOST = 1.5;
     public static final double ROTATION_SPEED = 0.03;
+    public static final double ROTATION_SPEED_BOOST = 1.4;
+    public static final int DEFAULT_POWERUP_DURATION = 8;
     public static final String[] AVAILABLE_POWERUPS = new String[]{"Speed_boost", "Ghost", "Grow", "Shrink"};
+
+    //Gap timer values
+    public static final int MIN_GAP_TIME = 30;
+    public static final int MAX_GAP_TIME = 80;
+
+    public static final int MIN_LINE_TIME = 200;
+    public static final int MAX_LINE_TIME = 250;
+
 
     public static final String TITLE = "Squiggle War";
 
@@ -38,7 +54,7 @@ public class Game extends ApplicationAdapter {
     public Config config;
 
     public Game(AndroidLauncher mAL) {
-        this.mAL = mAL;
+        Game.mAL = mAL;
     }
 
     @Override
@@ -56,7 +72,6 @@ public class Game extends ApplicationAdapter {
 
     @Override
     public void render() {
-
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         gsm.update(Gdx.graphics.getDeltaTime());
         gsm.render(batch);
