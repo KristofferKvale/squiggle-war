@@ -269,7 +269,14 @@ public class BoardModel {
 
 
         String adminID = this.room.AdminID;
-        if (this.player.playerID == adminID) {
+        if (this.player.getPlayerID().equals(adminID)) {
+            if(this.powerups.size() > 0) {
+                for (PowerUpModel powerup : this.powerups) {
+                    this.powerups.remove(powerup);
+                    DatabaseReference powerupsDB = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("powerups");
+                    powerupsDB.child(powerup.name).removeValue();
+                }
+            }
             addSpeedBoost();
             addGhost();
             addGrow();

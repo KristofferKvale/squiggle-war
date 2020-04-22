@@ -48,7 +48,6 @@ public class GameView extends State {
     private String number = "3";
     private Pixmap line;
     private ArrayList<BitmapFont> scores;
-    private ArrayList<BitmapFont> durations;
     private Float pingtimer = 0f;
     private Float getAllPingTimer = 0f;
     private String adminID;
@@ -68,7 +67,6 @@ public class GameView extends State {
         font.getData().setScale(5f);
         line = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         scores = new ArrayList<>();
-        durations = new ArrayList<>();
         opponents = board.getOpponents();
         player = board.getPlayer();
         playerScore = new BitmapFont();
@@ -121,7 +119,7 @@ public class GameView extends State {
     public void update(float dt) {
         pingtimer += dt;
         if (pingtimer > 1f){
-            DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("players").child(player.playerID).child("ping");
+            DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("players").child(player.getPlayerID()).child("ping");
             Date d = new Date();
             mdatabase.setValue(d);
             pingtimer = 0f;
@@ -133,7 +131,7 @@ public class GameView extends State {
             if (opponents.size()> 0) {
                 final String roomID = this.player.getRoomID();
 
-                final String playerID = this.player.playerID;
+                final String playerID = this.player.getPlayerID();
                 final String adminID = this.adminID;
                 for (final OpponentModel opponent : opponents) {
                     try {
@@ -146,7 +144,8 @@ public class GameView extends State {
                                 try {
                                     Date d = dataSnapshot.getValue(Date.class);
                                     Date now = new Date();
-                                    Long l = now.getTime() - d.getTime();
+                                    assert d != null;
+                                    long l = now.getTime() - d.getTime();
                                     if (l > 5000) {
                                         FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(opponent.playerID).removeValue();
                                         if (opponent.playerID.equals(adminID)) {
@@ -256,16 +255,16 @@ public class GameView extends State {
     }
 
     private void renderScores(SpriteBatch sb){
-        playerScore.draw(sb, "You: " + Integer.toString(player.getScore()),(width/2f)-200, height - 20);
+        playerScore.draw(sb, "You: " + player.getScore(),(width/2f)-200, height - 20);
         ListIterator<BitmapFont> scoresIt = scores.listIterator();
         try{
             while (scoresIt.hasNext()) {
                 OpponentModel opp = opponents.get(scoresIt.nextIndex());
                 int score = opp.getScore();
                 String name = opp.getUsername();
-                scoresIt.next().draw(sb, name.substring(0,3) + ": " + Integer.toString(score), (width/2f)-200 + scoresIt.nextIndex()*250, height - 20);
+                scoresIt.next().draw(sb, name.substring(0,3) + ": " + score, (width/2f)-200 + scoresIt.nextIndex()*250, height - 20);
             }
-        }catch(Exception e) {}
+        }catch(Exception ignored) {}
     }
 
     private void renderPowerUpDurations(SpriteBatch sb){
@@ -275,7 +274,6 @@ public class GameView extends State {
                 BitmapFont powerupDuration = new BitmapFont();
                 powerupDuration.setColor(Color.WHITE);
                 powerupDuration.getData().setScale(5f);
-                durations.add(powerupDuration);
                 powerupDuration.draw(sb, ":" + powerup.getTimeLeft(), 60 + 180 * x, height - 10);
                 sb.draw(this.powerup_textures.get(powerup.name), 180 * x, height-70, 50, 50);
                 x += 1;

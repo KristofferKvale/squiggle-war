@@ -61,9 +61,10 @@ public class LobbySelectView extends State {
         mDatabase.addChildEventListener(new ChildEventListener() {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                try{
+                try {
                     final String roomID = dataSnapshot.getKey();
                     final Boolean[] started = new Boolean[1];
+                    assert roomID != null;
                     mDatabase.child(roomID).child("started").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -81,7 +82,7 @@ public class LobbySelectView extends State {
 
                         }
                     });
-                }catch (Exception e) {
+                } catch (Exception e) {
                     Log.e("Err", e.toString());
                 }
 
@@ -109,17 +110,18 @@ public class LobbySelectView extends State {
         });
     }
 
-    public void makeButtons(){
+    private void makeButtons() {
         //roomIDs.add("1");
         this.buttons = new ArrayList<>();
         this.lobbies = new ArrayList<>();
 
         this.buttons.add(this.settings);
 
-        if (roomIDs.size() < 5){
-            for (int x=0; x<(5-roomIDs.size()); x++){
+        if (roomIDs.size() < 5) {
+            for (int x = 0; x < (5 - roomIDs.size()); x++) {
                 mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms");
                 String key = mDatabase.push().getKey();
+                assert key != null;
                 mDatabase.child(key).child("started").setValue(false);
 
             }
@@ -167,7 +169,8 @@ public class LobbySelectView extends State {
                     }
                 });
             }
-        }catch (Exception e){}
+        } catch (Exception ignored) {
+        }
     }
 
     @Override
@@ -176,7 +179,7 @@ public class LobbySelectView extends State {
             int x = Gdx.input.getX();
             int y = Game.HEIGHT - Gdx.input.getY();
 
-            for (Button btn : this.buttons){
+            for (Button btn : this.buttons) {
                 if (btn.checkHit(x, y)) {
                     btn.click();
                 }
@@ -190,7 +193,7 @@ public class LobbySelectView extends State {
         // check for new room information and update it
         this.handleInput();
         listLength = roomIDs.size();
-        if (listLength != oldListLength){
+        if (listLength != oldListLength) {
             makeButtons();
         }
         oldListLength = listLength;
@@ -206,7 +209,7 @@ public class LobbySelectView extends State {
 
         this.settings.draw(sb);
 
-        for (Lobby l : this.lobbies){
+        for (Lobby l : this.lobbies) {
             l.draw(sb);
         }
 
@@ -221,14 +224,14 @@ public class LobbySelectView extends State {
         // dispose of any textures used
     }
 
-    private abstract class Button{
+    private abstract class Button {
         int x;
         int y;
         int width;
         int height;
         State state;
 
-        Button(int x, int y, int width, int height, State state){
+        Button(int x, int y, int width, int height, State state) {
             this.x = x;
             this.y = y;
             this.width = width;
@@ -236,7 +239,7 @@ public class LobbySelectView extends State {
             this.state = state;
         }
 
-        boolean checkHit(int x, int y){
+        boolean checkHit(int x, int y) {
             boolean x_good = false;
             boolean y_good = false;
             if (x > this.x && x < this.x + this.width) {
@@ -248,14 +251,14 @@ public class LobbySelectView extends State {
             return (x_good && y_good);
         }
 
-        void click(){
+        void click() {
             gsm.push(this.state);
         }
 
         abstract void draw(SpriteBatch sb);
     }
 
-    private class NormalButton extends Button{
+    private class NormalButton extends Button {
         private Texture texture;
 
         NormalButton(Texture texture, int x, int y, int width, int height, State state) {
@@ -271,7 +274,7 @@ public class LobbySelectView extends State {
         }
     }
 
-    private class Lobby extends Button{
+    private class Lobby extends Button {
         private ShapeRenderer shapes;
         private BitmapFont font;
         private String name;
@@ -290,7 +293,7 @@ public class LobbySelectView extends State {
         }
 
         @Override
-        void click(){
+        void click() {
             createRoomView();
             super.click();
         }
@@ -299,17 +302,15 @@ public class LobbySelectView extends State {
             this.roomView.createPlayer();
         }
 
-        public void draw(SpriteBatch sb){
+        public void draw(SpriteBatch sb) {
             this.shapes.begin(ShapeRenderer.ShapeType.Filled);
             this.shapes.rect(this.x, this.y, this.width, this.height);
             this.shapes.end();
             sb.begin();
             font.setColor(Color.MAGENTA);
             font.getData().setScale(5f);
-            font.draw(sb, this.name,
-                    this.x + this.margin, this.height + this.y - this.margin);
-            font.draw(sb, this.players + "/5",
-                    Game.WIDTH/2, this.height + this.y - this.margin);
+            font.draw(sb, this.name, this.x + this.margin, this.height + this.y - this.margin);
+            font.draw(sb, this.players + "/5", Game.WIDTH / 2f, this.height + this.y - this.margin);
             sb.end();
         }
     }

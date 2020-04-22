@@ -30,22 +30,22 @@ import java.util.ArrayList;
 
 public class ResultView extends State {
 
-    Stage buttonStage;
-    TextButton rematch;
-    TextButton backToLobby;
+    private Stage buttonStage;
+    private TextButton rematch;
+    private TextButton backToLobby;
 
-    Skin uiskin;
+    private Skin uiskin;
 
 
-    ArrayList<Score> scores;
-    Stage scoreStage;
-    Table scoreTable;
+    private ArrayList<Score> scores;
+    private Stage scoreStage;
+    private Table scoreTable;
 
     private DatabaseReference mDatabase;
-    RoomModel room;
+    private RoomModel room;
     private GameStateManager gsm;
 
-    public ResultView(GameStateManager gsm, String roomID) {
+    ResultView(GameStateManager gsm, String roomID) {
         super(gsm);
         this.gsm = gsm;
         this.room = new RoomModel(roomID);
@@ -111,7 +111,7 @@ public class ResultView extends State {
                 scoreLabel.setFontScale(3);
                 scoreLabel.setAlignment(Align.left);
 
-                if (score.name == Config.getInstance().username) {
+                if (score.name.equals(Config.getInstance().username)) {
                     nameLabel.setColor(Color.RED);
                     scoreLabel.setColor(Color.RED);
                 }
@@ -120,8 +120,7 @@ public class ResultView extends State {
                 table.add(scoreLabel).left().row();
             }
 
-        } catch (Exception e) {
-
+        } catch (Exception ignored) {
         }
 
         table.pack();
@@ -160,8 +159,7 @@ public class ResultView extends State {
                 }
             });
 
-        } catch (Exception e) {
-
+        } catch (Exception ignored) {
         }
 
         this.scores = scores;
