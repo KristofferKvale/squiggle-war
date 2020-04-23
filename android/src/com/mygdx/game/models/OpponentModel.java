@@ -17,7 +17,7 @@ import com.mygdx.game.Game;
 
 import java.util.ArrayList;
 
-public class OpponentModel {
+public class OpponentModel implements Line {
     public String playerID;
     private String roomID;
     private String username;
@@ -111,7 +111,7 @@ public class OpponentModel {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try {
-                    points.add(dataSnapshot.getValue(Vector3.class));
+                    addPoint(dataSnapshot.getValue(Vector3.class));
                 } catch (Exception ignored) {
                 }
 
@@ -209,8 +209,20 @@ public class OpponentModel {
         return crashed;
     }
 
-    ArrayList<Vector3> getPoints() {
+    @Override
+    public void addPoint(Vector3 point) {
+        points.add(point);
+    }
+
+    @Override
+    public ArrayList<Vector3> getPoints() {
         return points;
+    }
+
+
+    @Override
+    public Vector3 getLastPoint() {
+        return getPosition();
     }
 
     public Color getColor() {
