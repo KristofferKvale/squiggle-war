@@ -28,10 +28,12 @@ public class GameController extends Controller{
     public GameController(PlayerModel player, BoardModel board) {
         super(player, board);
 
-        for (String powerUpName : Game.AVAILABLE_POWERUPS) {
-            PowerUpModel powerUp = new PowerUpModel(powerUpName);
-            this.board.addPowerUp(powerUp);
-            pushPowerup(powerUp);
+        if (this.player.getPlayerID().equals(this.board.getRoom().getAdminID())) {
+            for (String powerUpName : Game.AVAILABLE_POWERUPS) {
+                PowerUpModel powerUp = new PowerUpModel(powerUpName);
+                this.board.addPowerUp(powerUp);
+                pushPowerup(powerUp);
+            }
         }
     }
 
