@@ -27,18 +27,22 @@ public class PlayerController extends Controller {
     }
 
     public void turnLeft() {
-        if (this.player.hasSpeedBoost()) {
-            this.player.updateAngle(Game.ROTATION_SPEED * Game.ROTATION_SPEED_BOOST);
-        } else {
-            this.player.updateAngle(Game.ROTATION_SPEED);
+        if (this.board.gameStarted()) {
+            if (this.player.hasSpeedBoost()) {
+                this.player.updateAngle(Game.ROTATION_SPEED * Game.ROTATION_SPEED_BOOST);
+            } else {
+                this.player.updateAngle(Game.ROTATION_SPEED);
+            }
         }
     }
 
     public void turnRight() {
-        if (this.player.hasSpeedBoost()) {
-            this.player.updateAngle(-(Game.ROTATION_SPEED * Game.ROTATION_SPEED_BOOST));
-        } else {
-            this.player.updateAngle(-Game.ROTATION_SPEED);
+        if (this.board.gameStarted()) {
+            if (this.player.hasSpeedBoost()) {
+                this.player.updateAngle(-(Game.ROTATION_SPEED * Game.ROTATION_SPEED_BOOST));
+            } else {
+                this.player.updateAngle(-Game.ROTATION_SPEED);
+            }
         }
     }
 
