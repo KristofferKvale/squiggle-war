@@ -25,7 +25,6 @@ public class OpponentModel implements Line {
     private int score = 0;
     private boolean crashed = false;
     private Color color;
-    private DatabaseReference mDatabase;
     private ArrayList<Vector3> drawnHeads = new ArrayList<>();
     private ArrayList<Vector3> points = new ArrayList<>();
 
@@ -35,9 +34,9 @@ public class OpponentModel implements Line {
         this.roomID = roomId;
         this.setColor(inputColor);
         final OpponentModel thisOpponent = this;
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("username");
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("username").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 thisOpponent.username = dataSnapshot.getValue(String.class);
@@ -48,8 +47,7 @@ public class OpponentModel implements Line {
             }
         });
 
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
-        mDatabase.addChildEventListener(new ChildEventListener() {
+        mDatabase.child("score").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try {
@@ -77,8 +75,7 @@ public class OpponentModel implements Line {
             }
         });
 
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("crashed");
-        mDatabase.addChildEventListener(new ChildEventListener() {
+        mDatabase.child("crashed").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try {
@@ -106,8 +103,7 @@ public class OpponentModel implements Line {
             }
         });
 
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("points");
-        mDatabase.addChildEventListener(new ChildEventListener() {
+        mDatabase.child("points").addChildEventListener(new ChildEventListener() {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try {
@@ -134,8 +130,7 @@ public class OpponentModel implements Line {
             }
         });
 
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("color");
-        mDatabase.addChildEventListener(new ChildEventListener() {
+        mDatabase.child("color").addChildEventListener(new ChildEventListener() {
 
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try {
@@ -161,8 +156,7 @@ public class OpponentModel implements Line {
             }
         });
 
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("ready");
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("ready").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
@@ -175,8 +169,8 @@ public class OpponentModel implements Line {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("ready");
-        mDatabase.addValueEventListener(new ValueEventListener() {
+
+        mDatabase.child("ready").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
