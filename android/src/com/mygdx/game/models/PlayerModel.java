@@ -1,15 +1,8 @@
 package com.mygdx.game.models;
 
 
-import android.util.Log;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mygdx.game.Game;
 
 import java.util.ArrayList;
@@ -24,7 +17,6 @@ public class PlayerModel {
     private float angle;
     private Vector3 position;
     private ArrayList<PowerUpModel> powerups;
-    private DatabaseReference mDatabase;
     private int score;
     private boolean crashed = false;
     private boolean ready = false;
@@ -45,37 +37,13 @@ public class PlayerModel {
         this.roomID = roomID;
         this.score = 0;
         this.powerups = new ArrayList<>();
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players");
-        playerID = mDatabase.push().getKey();
-        assert playerID != null;
-        mDatabase.child(playerID).child("username").setValue(username);
-        mDatabase.child(playerID).child("score").setValue(score);
-        mDatabase.child(playerID).child("crashed").setValue(crashed);
-        mDatabase.child(playerID).child("color").setValue(color);
-        mDatabase.child(playerID).child("ready").setValue(ready);
         this.line = new LineModel(Game.randomPlayerPosition(100), playerID, roomID);
 
         this.position = this.line.getLastPoint();
         setAngle(Game.startDirection(this.position));
         this.powerups = new ArrayList<>();
-
-        // Get a reference to colors
-        DatabaseReference colDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("color");
-
-        // Attach a listener to read the data at our color reference
-        colDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Color c = dataSnapshot.getValue(Color.class);
-                Log.d("INSIDE", "color: " + c);
-                setColor(c);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
     }
+
 
     public ArrayList<Vector3> getLinePoints() {
         return this.line.getPoints();
@@ -117,7 +85,7 @@ public class PlayerModel {
         return this.line.getLastPoint();
     }
 
-    private void setColor(Color c){
+    public void setColor(Color c){
         this.color = c;
     }
 
@@ -135,6 +103,10 @@ public class PlayerModel {
 
     public String getPlayerID() {
         return playerID;
+    }
+
+    public void setPlayerID(String id) {
+        this.playerID = id;
     }
 
     public boolean getLineStatus() {
