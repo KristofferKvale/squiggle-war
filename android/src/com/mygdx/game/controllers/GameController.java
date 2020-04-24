@@ -139,6 +139,10 @@ public class GameController extends Controller{
         this.player.setPosition(this.player.getLastLinePosition());
         this.player.setAngle(Game.startDirection(this.player.getLastLinePosition()));
         this.player.setCrashed(false);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(player.getRoomID()).child("players").child(player.getPlayerID()).child("crashed");
+        String key = mDatabase.push().getKey();
+        assert key != null;
+        mDatabase.child(key).setValue(false);
     }
 
     private void resetOpponents(){
@@ -150,7 +154,7 @@ public class GameController extends Controller{
     private void incPlayerScore() {
         this.player.incScore();
         Log.d("MSG", "Score incremented" + this.player.getScore());
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("players").child(this.player.getRoomID()).child("score");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("players").child(this.player.getPlayerID()).child("score");
         String key = mDatabase.push().getKey();
         assert key != null;
         mDatabase.child(key).setValue(this.player.getScore());
