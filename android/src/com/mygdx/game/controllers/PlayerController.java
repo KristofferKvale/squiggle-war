@@ -71,6 +71,9 @@ public class PlayerController extends Controller {
             CollisionPowerup(pos);
             if (CollisionWalls(pos)) {
                 this.player.setCrashed(true);
+                String key =  mDatabase.child("players").child(player.getPlayerID()).child("crashed").push().getKey();
+                assert key != null;
+                mDatabase.child("players").child(player.getPlayerID()).child("crashed").child(key).setValue(true);
             }
 
             if (!this.player.isGhost()) {
