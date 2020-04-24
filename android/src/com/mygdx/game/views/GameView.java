@@ -21,6 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mygdx.game.Game;
+import com.mygdx.game.controllers.GameController;
+import com.mygdx.game.controllers.PlayerController;
 import com.mygdx.game.models.BoardModel;
 import com.mygdx.game.models.OpponentModel;
 import com.mygdx.game.models.PlayerModel;
@@ -53,6 +55,9 @@ public class GameView extends State {
     private String adminID;
     private Color player_color;
 
+    private PlayerController playerController;
+    private GameController gameController;
+
     public GameView(GameStateManager gsm, BoardModel board) {
         super(gsm);
 
@@ -70,6 +75,8 @@ public class GameView extends State {
         scores = new ArrayList<>();
         opponents = board.getOpponents();
         player = board.getPlayer();
+        this.playerController = new PlayerController(player, board);
+        this.gameController = new GameController(player, board);
         player_color = player.getColor();
         playerScore = new BitmapFont();
         playerScore.setColor(player_color);
@@ -108,11 +115,11 @@ public class GameView extends State {
         for (int i = 0; i < 10; i++) { // 20 is max number of touch points
             if (Gdx.input.isTouched(i)) {
                 if (Gdx.input.getX(i)<= width / 2) {
-                    board.getPlayer().turnRight();
+                    playerController.turnRight();
                 }
 
                 if (Gdx.input.getX(i) > width / 2) {
-                    board.getPlayer().turnLeft();
+                    playerController.turnLeft();
                 }
 
             }
@@ -174,7 +181,8 @@ public class GameView extends State {
             }
         }
         this.handleInput();
-        this.board.update(dt);
+        this.playerController.update(dt);
+        this.gameController.update(dt);
         this.updateLine();
         if (this.board.finished){
             Game.mAL.runOnUiThread(new Runnable() {
@@ -287,7 +295,7 @@ public class GameView extends State {
 
     private void renderPowerUps(SpriteBatch sb){
         try{
-            for (PowerUpModel powerup:this.board.powerups){
+            for (PowerUpModel powerup:this.board.getPowerUps()){
                 sb.draw(this.powerup_textures.get(powerup.name), powerup.position.x + Game.SPACE_SIDE, powerup.position.y - Game.SPACE_TOP, 40, 40);
             }
         } catch (Exception ignored){}
@@ -305,7 +313,7 @@ public class GameView extends State {
         playerHead.begin(ShapeRenderer.ShapeType.Filled);
         Vector3 pos = player.getPosition();
         playerHead.setColor(player_color);
-        playerHead.circle((int)pos.x + Game.SPACE_SIDE, height - (int)pos.y - Game.SPACE_TOP, player.getCurrentHeadSize());
+        playerHead.circle((int)pos.x + Game.SPACE_SIDE, height - (int)pos.y - Game.SPACE_TOP, Game.getHeadSize((int)pos.z));
         playerHead.end();
 
         ArrayList<OpponentModel> players = board.getOpponents();
@@ -314,7 +322,7 @@ public class GameView extends State {
             if (point.x != -100 && point != opponent.getLastDrawnHead()) {
                 playerHead.begin(ShapeRenderer.ShapeType.Filled);
                 playerHead.setColor(opponent.getColor());
-                playerHead.circle((int)point.x + Game.SPACE_SIDE, height - (int)point.y - Game.SPACE_TOP, player.getHeadSize((int) point.z));
+                playerHead.circle((int)point.x + Game.SPACE_SIDE, height - (int)point.y - Game.SPACE_TOP, Game.getHeadSize((int) point.z));
                 playerHead.end();
                 opponent.addLastDrawnHead();
             }

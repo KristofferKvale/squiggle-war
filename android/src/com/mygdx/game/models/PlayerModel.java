@@ -56,7 +56,7 @@ public class PlayerModel {
         this.line = new LineModel(Game.randomPlayerPosition(100), playerID, roomID);
 
         this.position = this.line.getLastPoint();
-        this.setStartAngle();
+        setAngle(Game.startDirection(this.position));
         this.powerups = new ArrayList<>();
 
         // Get a reference to colors
@@ -77,7 +77,7 @@ public class PlayerModel {
         });
     }
 
-    ArrayList<Vector3> getLinePoints() {
+    public ArrayList<Vector3> getLinePoints() {
         return this.line.getPoints();
     }
 
@@ -95,6 +95,18 @@ public class PlayerModel {
 
     public boolean getReadyState() {
         return this.ready;
+    }
+
+    public float getAngle() {
+        return this.angle;
+    }
+
+    public void updateAngle(double turnRate){
+        this.angle += turnRate;
+    }
+
+    public void setAngle(float direction) {
+        this.angle = direction;
     }
 
     public Vector3 getPosition() {
@@ -117,6 +129,10 @@ public class PlayerModel {
         return score;
     }
 
+    public void incScore() {
+        this.score += 1;
+    }
+
     public String getPlayerID() {
         return playerID;
     }
@@ -125,85 +141,17 @@ public class PlayerModel {
         return line_on;
     }
 
-    void incScore() {
-        this.score += 1;
-        Log.d("MSG", "Score incremented" + score);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("score");
-        String key = mDatabase.push().getKey();
-        assert key != null;
-        mDatabase.child(key).setValue(score);
-    }
-
-    boolean isCrashed() {
+    public boolean isCrashed() {
         return crashed;
     }
 
-    void setCrashed(boolean crashed) {
+    public void setCrashed(boolean crashed) {
         this.crashed = crashed;
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("crashed");
-        String key = mDatabase.push().getKey();
-        assert key != null;
-        mDatabase.child(key).setValue(crashed);
-    }
-
-    void nextGame() {
-        this.line.delete();
-        this.position = this.line.getLastPoint();
-        this.setStartAngle();
-        this.setCrashed(false);
     }
 
 
-    // Controls and movement
-    private void setStartAngle() {
-        Vector3 pos = this.getPosition();
-        float direction;
-        if (pos.x <= (float) Game.WIDTH / 2 && pos.y <= (float) Game.HEIGHT / 2) {
-            direction = (float) (Math.random() * 0.5f);
-        } else if (pos.x > (float) Game.WIDTH / 2 && pos.y <= (float) Game.HEIGHT / 2) {
-            direction = (float) (Math.random() * 0.5f) + 0.5f;
-        } else if (pos.x > (float) Game.WIDTH / 2 && pos.y > (float) Game.HEIGHT / 2) {
-            direction = (float) (Math.random() * 0.5f) + 1f;
-        } else {
-            direction = (float) (Math.random() * 0.5f) + 1.5f;
-        }
-        this.angle = (float) (direction * Math.PI);
-    }
-
-    public void turnLeft() {
-        if (this.hasSpeedBoost()) {
-            this.angle += Game.ROTATION_SPEED * Game.ROTATION_SPEED_BOOST;
-        } else {
-            this.angle += Game.ROTATION_SPEED;
-        }
-    }
-
-    public void turnRight() {
-        if (this.hasSpeedBoost()) {
-            this.angle -= Game.ROTATION_SPEED * Game.ROTATION_SPEED_BOOST;
-        } else {
-            this.angle -= Game.ROTATION_SPEED;
-        }
-    }
-
-    void move(float dt) {
-        Vector3 coords = this.getPosition();
-        int speed = Game.SPEED;
-        float x = coords.x;
-        float y = coords.y;
-        if (this.hasSpeedBoost()) {
-            speed *= Game.SPEED_BOOST;
-        }
-
-        x += (speed * Math.cos(this.angle) * dt);
-        y += (speed * Math.sin(this.angle) * dt);
-
-        this.updateTimer(dt);
-
-        setNewPoint(Math.round(x), Math.round(y));
-    }
-
-    private void setNewPoint(int x, int y) {
+    // New Point
+    public void setNewPoint(int x, int y) {
         Vector3 point = new Vector3(x, y, getSize());
 
         if ((int) point.x != (int) this.line.getLastPoint().x || (int) point.y != (int) this.line.getLastPoint().y) {
@@ -214,54 +162,58 @@ public class PlayerModel {
         }
     }
 
+    public void setPosition(Vector3 pos) {
+        this.position = pos;
+    }
+
+    public void deleteLine() {
+        this.line.delete();
+    }
+
 
     // PowerUps
     public ArrayList<PowerUpModel> getPowerups() {
         return this.powerups;
     }
 
-    void addPowerup(PowerUpModel powerup) {
+    public void addPowerup(PowerUpModel powerup) {
         this.powerups.add(powerup);
     }
 
-    private boolean hasSpeedBoost() {
-        int x = 0;
+    public boolean hasSpeedBoost() {
         for (PowerUpModel powerup : this.powerups) {
             if (powerup.name.equals("Speed_boost") && powerup.checkStatus()) {
-                x = 1;
+                return true;
             }
         }
-        return x == 1;
+        return false;
     }
 
-    boolean isGhost() {
-        int x = 0;
+    public boolean isGhost() {
         for (PowerUpModel powerup : this.powerups) {
             if (powerup.name.equals("Ghost") && powerup.checkStatus()) {
-                x = 1;
+                return true;
             }
         }
-        return x == 1;
+        return false;
     }
 
     private boolean isBig() {
-        int x = 0;
         for (PowerUpModel powerup : this.powerups) {
             if (powerup.name.equals("Grow") && powerup.checkStatus()) {
-                x = 1;
+                return true;
             }
         }
-        return x == 1;
+        return false;
     }
 
     private boolean isSmall() {
-        int x = 0;
         for (PowerUpModel powerup : this.powerups) {
             if (powerup.name.equals("Shrink") && powerup.checkStatus()) {
-                x = 1;
+                return true;
             }
         }
-        return x == 1;
+        return false;
     }
 
     private int getSize() {
@@ -290,31 +242,8 @@ public class PlayerModel {
     }
 
 
-    // Head size
-    public int getCurrentHeadSize() {
-        int z = getSize();
-        if (z == Game.SMALL_SIZE) {
-            return Game.SMALL_HEAD_SIZE;
-        } else if (z == Game.BIG_SIZE) {
-            return Game.BIG_HEAD_SIZE;
-        } else {
-            return Game.DEFAULT_HEAD_SIZE;
-        }
-    }
-
-    public int getHeadSize(int z) {
-        if (z == Game.SMALL_SIZE) {
-            return Game.SMALL_HEAD_SIZE;
-        } else if (z == Game.BIG_SIZE) {
-            return Game.BIG_HEAD_SIZE;
-        } else {
-            return Game.DEFAULT_HEAD_SIZE;
-        }
-    }
-
-
     // Gap generation
-    private void updateTimer(float dt) {
+    public void updateTimer(float dt) {
         if (this.isGhost()) {
             this.line_on = false;
             this.line_timer = 0;
@@ -348,29 +277,5 @@ public class PlayerModel {
     private static int randomLineTime() {
         Random rand = new Random();
         return rand.nextInt(Game.MAX_LINE_TIME - Game.MIN_LINE_TIME) + Game.MIN_LINE_TIME;
-    }
-
-
-    // Collision testing
-    private float dist(int x1, int y1, int x2, int y2) {
-        return (float) Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
-    }
-
-    boolean CollisionTestCircle(int x, int y, int r) {
-        Vector3 pos = getPosition();
-        return (dist((int) pos.x, (int) pos.y, x, y) <= r + getCurrentHeadSize());
-    }
-
-    boolean CollisionTestRectangle(int x, int y, int w, int h) {
-        Vector3 pos = getPosition();
-        int testX = (int) pos.x;
-        int testY = (int) pos.y;
-
-        if (pos.x < x) testX = x;        // left edge
-        else if (pos.x > x + w) testX = x + w;     // right edge
-        if (pos.y < y) testY = y;        // top edge
-        else if (pos.y > y + h) testY = y + h;     // bottom edge
-
-        return (dist((int) pos.x, (int) pos.y, testX, testY) <= getCurrentHeadSize());
     }
 }

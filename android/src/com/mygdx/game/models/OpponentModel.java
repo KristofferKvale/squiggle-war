@@ -205,7 +205,7 @@ public class OpponentModel implements Line {
         return score;
     }
 
-    boolean isCrashed() {
+    public boolean isCrashed() {
         return crashed;
     }
 
@@ -229,7 +229,7 @@ public class OpponentModel implements Line {
         return color;
     }
 
-    void nextGame() {
+    public void resetPoints() {
         points = new ArrayList<>();
     }
 

@@ -13,7 +13,7 @@ public class PowerUpModel {
     private Timestamp activated = null;
     private int duration = Game.DEFAULT_POWERUP_DURATION;
 
-    PowerUpModel(String inputName) {
+    public PowerUpModel(String inputName) {
         this.name = inputName;
     }
 
@@ -33,7 +33,7 @@ public class PowerUpModel {
         this.position = position;
     }
 
-    void activate() {
+    public void activate() {
         this.activated = new Timestamp(new Date().getTime());
     }
 

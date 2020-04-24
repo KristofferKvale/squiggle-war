@@ -25,7 +25,7 @@ public class RoomModel {
     private DatabaseReference mDatabase;
     private String roomID;
     private boolean gameStarted;
-    String AdminID;
+    private String AdminID;
     private ArrayList<Color> colors = new ArrayList<>(Arrays.asList(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.MAGENTA, Color.CHARTREUSE));
 
 
@@ -112,8 +112,6 @@ public class RoomModel {
         }
         mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(player.getPlayerID());
         mDatabase.removeValue();
-
-
     }
 
 
@@ -150,6 +148,8 @@ public class RoomModel {
     }
 
     public String getRoomID() { return this.roomID; }
+
+    public String getAdminID() { return this.AdminID; }
 
     private void createGameView(GameStateManager gsm) {
         gameView = new GameView(gsm, getBoard());

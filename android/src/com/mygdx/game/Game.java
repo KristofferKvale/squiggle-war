@@ -93,4 +93,29 @@ public class Game extends ApplicationAdapter {
         int y = (int) (Math.random() * (PLAYABLE_HEIGHT - 2 * distance)) + distance;
         return new Vector2(x, y);
     }
+
+
+    public static float startDirection(Vector3 pos) {
+        float direction;
+        if (pos.x <= (float) Game.WIDTH / 2 && pos.y <= (float) Game.HEIGHT / 2) {
+            direction = (float) (Math.random() * 0.5f);
+        } else if (pos.x > (float) Game.WIDTH / 2 && pos.y <= (float) Game.HEIGHT / 2) {
+            direction = (float) (Math.random() * 0.5f) + 0.5f;
+        } else if (pos.x > (float) Game.WIDTH / 2 && pos.y > (float) Game.HEIGHT / 2) {
+            direction = (float) (Math.random() * 0.5f) + 1f;
+        } else {
+            direction = (float) (Math.random() * 0.5f) + 1.5f;
+        }
+        return (float) (direction * Math.PI);
+    }
+
+    public static int getHeadSize(int z) {
+        if (z == Game.SMALL_SIZE) {
+            return Game.SMALL_HEAD_SIZE;
+        } else if (z == Game.BIG_SIZE) {
+            return Game.BIG_HEAD_SIZE;
+        } else {
+            return Game.DEFAULT_HEAD_SIZE;
+        }
+    }
 }
