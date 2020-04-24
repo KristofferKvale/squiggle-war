@@ -1,16 +1,8 @@
 package com.mygdx.game.controllers;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mygdx.game.Game;
 import com.mygdx.game.models.BoardModel;
 import com.mygdx.game.models.OpponentModel;
@@ -22,30 +14,8 @@ import java.util.ArrayList;
 public class PlayerController extends Controller {
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID());
 
-    public PlayerController(final PlayerModel player, BoardModel board) {
+    public PlayerController(PlayerModel player, BoardModel board) {
         super(player, board);
-        String playerID = mDatabase.child("players").push().getKey();
-        assert playerID != null;
-        this.player.setPlayerID(playerID);
-        mDatabase.child(playerID).child("username").setValue(this.player.getUsername());
-        mDatabase.child(playerID).child("score").setValue(this.player.getScore());
-        mDatabase.child(playerID).child("crashed").setValue(this.player.isCrashed());
-        mDatabase.child(playerID).child("color").setValue(this.player.getColor());
-        mDatabase.child(playerID).child("ready").setValue(this.player.getReadyState());
-
-        // Attach a listener to read the data at our color reference
-        mDatabase.child("players").child(playerID).child("color").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Color c = dataSnapshot.getValue(Color.class);
-                Log.d("INSIDE", "color: " + c);
-                player.setColor(c);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
     }
 
     @Override
