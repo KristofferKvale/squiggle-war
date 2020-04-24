@@ -4,7 +4,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.badlogic.gdx.math.Vector3;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,7 +17,6 @@ import com.mygdx.game.models.PowerUpModel;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class GameController extends Controller{
     private final String playerID = this.player.getPlayerID();
@@ -85,16 +83,7 @@ public class GameController extends Controller{
 
         String adminID = this.board.getRoom().getAdminID();
         if (this.player.getPlayerID().equals(adminID)) {
-            List<PowerUpModel> powerUps = this.board.getPowerUps();
-            if(powerUps.size() > 0) {
-                try {
-                    for (PowerUpModel powerUp : powerUps) {
-                        this.board.removePowerUp(powerUp);
-                        mDatabase.child("powerups").removeValue();
-                    }
-                } catch (Exception ignored){
-                }
-            }
+            mDatabase.child("powerups").removeValue();
             addSpeedBoost();
             addGhost();
             addGrow();

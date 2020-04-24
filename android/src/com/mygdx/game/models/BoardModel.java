@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -212,6 +211,7 @@ public class BoardModel {
     }
 
     public void reset() {
+        powerups = new ArrayList<>();
         postCrash = 0f;
         timeseconds = 0f;
     }
