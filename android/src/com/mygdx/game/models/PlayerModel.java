@@ -63,7 +63,7 @@ public class PlayerModel {
         DatabaseReference colDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(playerID).child("color");
 
         // Attach a listener to read the data at our color reference
-        colDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        colDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Color c = dataSnapshot.getValue(Color.class);
