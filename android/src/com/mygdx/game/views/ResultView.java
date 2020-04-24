@@ -187,7 +187,7 @@ public class ResultView extends State {
             }
         });
 
-        // Rematch button
+        /* Rematch button
         rematch = new TextButton("Rematch", uiskin);
         rematch.sizeBy(btnScale);
         rematch.getLabel().setFontScale(fontScale);
@@ -202,9 +202,10 @@ public class ResultView extends State {
                 Log.d("Clicked", "Rematch button clicked!");
             }
         });
+        */
 
         buttonStage.addActor(backToLobby);
-        buttonStage.addActor(rematch);
+        //buttonStage.addActor(rematch);
 
     }
 
