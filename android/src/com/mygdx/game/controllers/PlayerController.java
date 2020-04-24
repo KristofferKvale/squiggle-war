@@ -20,7 +20,7 @@ public class PlayerController extends Controller {
 
     @Override
     public void update(float dt) {
-        if (!player.isCrashed() && this.board.gameStarted()){
+        if (!player.isCrashed() && this.board.gameStarted() && this.board.getPostCrash() == 0f){
             move(dt);
             Collision();
         }
