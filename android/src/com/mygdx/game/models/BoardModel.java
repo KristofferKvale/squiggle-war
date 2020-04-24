@@ -31,7 +31,7 @@ public class BoardModel {
     private String adminID;
 
 
-    BoardModel(ArrayList<OpponentModel> opponents, final PlayerModel player) {
+    BoardModel(ArrayList<OpponentModel> opponents, PlayerModel player) {
         this.opponents = opponents;
         this.player = player;
 
@@ -66,7 +66,6 @@ public class BoardModel {
         });
 
         DatabaseReference powerupDB = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("powerups");
-        final BoardModel this_board = this;
         powerupDB.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -76,7 +75,7 @@ public class BoardModel {
                 String powerupName = dataSnapshot.getKey();
                 if (Arrays.asList(Game.AVAILABLE_POWERUPS).contains(powerupName)) {
                     PowerUpModel addedPowerup = new PowerUpModel(powerupName, pos);
-                    this_board.powerups.add(addedPowerup);
+                    addPowerUp(addedPowerup);
                 } else {
                     throw new Error("Powerup name not collected properly from firebase");
                 }
@@ -91,7 +90,7 @@ public class BoardModel {
                 String powerupName = dataSnapshot.getKey();
                 if (Arrays.asList(Game.AVAILABLE_POWERUPS).contains(powerupName)) {
                     PowerUpModel addedPowerup = new PowerUpModel(powerupName, pos);
-                    this_board.powerups.add(addedPowerup);
+                    addPowerUp(addedPowerup);
                 } else {
                     throw new Error("Powerup name not collected properly from firebase");
                 }
@@ -105,9 +104,9 @@ public class BoardModel {
                     Vector2 pos = new Vector2();
                     pos.x = x;
                     pos.y = y;
-                    for (PowerUpModel powerup : this_board.powerups) {
+                    for (PowerUpModel powerup : getPowerUps()) {
                         if (powerup.position.equals(pos)) {
-                            this_board.powerups.remove(powerup);
+                            removePowerUp(powerup);
                         }
                     }
                 } catch (Exception ignored) {
