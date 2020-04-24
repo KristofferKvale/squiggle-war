@@ -2,9 +2,14 @@ package com.mygdx.game.controllers;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.badlogic.gdx.math.Vector3;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mygdx.game.Game;
 import com.mygdx.game.models.BoardModel;
 import com.mygdx.game.models.OpponentModel;
@@ -12,10 +17,15 @@ import com.mygdx.game.models.PlayerModel;
 import com.mygdx.game.models.PowerUpModel;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class GameController extends Controller{
-    private DatabaseReference mDatabase;
+    private final String playerID = this.player.getPlayerID();
+    private final String roomID = this.player.getRoomID();
+    private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID);
+    private Float pingtimer = 0f;
+    private Float getAllPingTimer = 0f;
 
     public GameController(PlayerModel player, BoardModel board) {
         super(player, board);
@@ -29,6 +39,7 @@ public class GameController extends Controller{
 
     @Override
     public void update(float dt) {
+        ping(dt);
         int score = this.player.getScore();
         ArrayList<OpponentModel> opponents = this.board.getOpponents();
         for (OpponentModel opp : opponents) {
@@ -79,8 +90,7 @@ public class GameController extends Controller{
                 try {
                     for (PowerUpModel powerUp : powerUps) {
                         this.board.removePowerUp(powerUp);
-                        DatabaseReference powerUpsDB = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("powerups");
-                        powerUpsDB.child(powerUp.name).removeValue();
+                        mDatabase.child("powerups").removeValue();
                     }
                 } catch (Exception ignored){
                 }
@@ -94,9 +104,8 @@ public class GameController extends Controller{
 
 
     private void pushPowerup(PowerUpModel powerup) {
-        DatabaseReference powerUpsDB = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("powerups").child(powerup.name);
         try {
-            powerUpsDB.setValue(powerup.position);
+            mDatabase.child("powerups").child(powerup.name).setValue(powerup.position);
             System.out.println("pushed");
         } catch (Exception e) {
             System.out.println("This never works");
@@ -139,10 +148,9 @@ public class GameController extends Controller{
         this.player.setPosition(this.player.getLastLinePosition());
         this.player.setAngle(Game.startDirection(this.player.getLastLinePosition()));
         this.player.setCrashed(false);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(player.getRoomID()).child("players").child(player.getPlayerID()).child("crashed");
-        String key = mDatabase.push().getKey();
+        String key = mDatabase.child("players").child(playerID).child("crashed").push().getKey();
         assert key != null;
-        mDatabase.child(key).setValue(false);
+        mDatabase.child("players").child(playerID).child("crashed").child(key).setValue(false);
     }
 
     private void resetOpponents(){
@@ -154,10 +162,57 @@ public class GameController extends Controller{
     private void incPlayerScore() {
         this.player.incScore();
         Log.d("MSG", "Score incremented" + this.player.getScore());
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("players").child(this.player.getPlayerID()).child("score");
-        String key = mDatabase.push().getKey();
+        String key = mDatabase.child("players").child(this.player.getPlayerID()).child("score").push().getKey();
         assert key != null;
-        mDatabase.child(key).setValue(this.player.getScore());
+        mDatabase.child("players").child(this.player.getPlayerID()).child("score").child(key).setValue(this.player.getScore());
     }
 
+    private void ping(float dt){
+        pingtimer += dt;
+        if (pingtimer > 1f){
+            Date d = new Date();
+            mDatabase.child("players").child(player.getPlayerID()).child("ping").setValue(d);
+            pingtimer = 0f;
+        }
+
+        getAllPingTimer +=dt;
+        ArrayList<OpponentModel> opponents = this.board.getOpponents();
+        if (getAllPingTimer > 5f) {
+            getAllPingTimer = 0f;
+            if (opponents.size()> 0) {
+                final String adminID = this.board.getAdminID();
+                for (final OpponentModel opponent : opponents) {
+                    try {
+                        mDatabase.child("players").child(opponent.playerID).child("ping").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                try {
+                                    Date d = dataSnapshot.getValue(Date.class);
+                                    Date now = new Date();
+                                    assert d != null;
+                                    long l = now.getTime() - d.getTime();
+                                    if (l > 5000) {
+                                        mDatabase.child("players").child(opponent.playerID).removeValue();
+                                        if (opponent.playerID.equals(adminID)) {
+                                            mDatabase.child("admin").setValue(playerID);
+                                        }
+                                    }
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
 }

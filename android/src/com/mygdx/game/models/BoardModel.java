@@ -10,6 +10,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mygdx.game.Game;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class BoardModel {
     private PlayerModel player;
     private RoomModel room;
     public boolean finished = false;
+    private String adminID;
 
 
     BoardModel(ArrayList<OpponentModel> opponents, final PlayerModel player) {
@@ -121,6 +123,23 @@ public class BoardModel {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+
+        try {
+            DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("admin");
+            mdatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    adminID = dataSnapshot.getValue(String.class);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void gameFinished() {
@@ -153,6 +172,14 @@ public class BoardModel {
 
     public RoomModel getRoom() {
         return this.room;
+    }
+
+    public String getAdminID() {
+        return this.adminID;
+    }
+
+    public void setAdminID(String id) {
+        this.adminID = id;
     }
 
     public List<PowerUpModel> getPowerUps(){

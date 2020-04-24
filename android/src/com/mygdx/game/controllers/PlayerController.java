@@ -12,7 +12,7 @@ import com.mygdx.game.models.PowerUpModel;
 import java.util.ArrayList;
 
 public class PlayerController extends Controller {
-    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID());
 
     public PlayerController(PlayerModel player, BoardModel board) {
         super(player, board);
@@ -76,18 +76,16 @@ public class PlayerController extends Controller {
             if (!this.player.isGhost()) {
                 if (CollisionPlayer(pos) && this.player.getLineStatus()) {
                     this.player.setCrashed(true);
-                    mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(player.getRoomID()).child("players").child(player.getPlayerID()).child("crashed");
-                    String key = mDatabase.push().getKey();
+                    String key =  mDatabase.child("players").child(player.getPlayerID()).child("crashed").push().getKey();
                     assert key != null;
-                    mDatabase.child(key).setValue(true);
+                    mDatabase.child("players").child(player.getPlayerID()).child("crashed").child(key).setValue(true);
                 }
                 try {
                     if (CollisionOpponent(pos) && this.player.getLineStatus()) {
                         this.player.setCrashed(true);
-                        mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(player.getRoomID()).child("players").child(player.getPlayerID()).child("crashed");
-                        String key = mDatabase.push().getKey();
+                        String key =  mDatabase.child("players").child(player.getPlayerID()).child("crashed").push().getKey();
                         assert key != null;
-                        mDatabase.child(key).setValue(true);
+                        mDatabase.child("players").child(player.getPlayerID()).child("crashed").child(key).setValue(true);
                     }
                 } catch (Exception ignored) {
                 }
@@ -134,15 +132,14 @@ public class PlayerController extends Controller {
 
     private void CollisionPowerup(Vector3 playerPos) {
         try {
-            for (PowerUpModel powerup : board.getPowerUps()) {
-                int powerUpX = (int) powerup.position.x;
-                int powerUpY = Game.HEIGHT - (int) powerup.position.y - 40;
+            for (PowerUpModel powerUp : board.getPowerUps()) {
+                int powerUpX = (int) powerUp.position.x;
+                int powerUpY = Game.HEIGHT - (int) powerUp.position.y - 40;
                 if (CollisionTestRectangle(playerPos, powerUpX, powerUpY, 40, 40)) {
-                    powerup.activate();
-                    this.player.addPowerup(powerup);
-                    board.removePowerUp(powerup);
-                    DatabaseReference powerupsDB = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("powerups");
-                    powerupsDB.child(powerup.name).removeValue();
+                    powerUp.activate();
+                    this.player.addPowerup(powerUp);
+                    board.removePowerUp(powerUp);
+                    mDatabase.child("powerups").child(powerUp.name).removeValue();
                 }
             }
         } catch (Exception ignored) {

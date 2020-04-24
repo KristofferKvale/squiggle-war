@@ -50,9 +50,6 @@ public class GameView extends State {
     private String number = "3";
     private Pixmap line;
     private ArrayList<BitmapFont> scores;
-    private Float pingtimer = 0f;
-    private Float getAllPingTimer = 0f;
-    private String adminID;
     private Color player_color;
 
     private PlayerController playerController;
@@ -88,24 +85,6 @@ public class GameView extends State {
             scores.add(oppScore);
         }
         this.updateLine();
-        try {
-            DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("admin");
-            mdatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    adminID = dataSnapshot.getValue(String.class);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
     }
 
 
@@ -128,58 +107,6 @@ public class GameView extends State {
 
     @Override
     public void update(float dt) {
-        pingtimer += dt;
-        if (pingtimer > 1f){
-            DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("players").child(player.getPlayerID()).child("ping");
-            Date d = new Date();
-            mdatabase.setValue(d);
-            pingtimer = 0f;
-        }
-
-        getAllPingTimer +=dt;
-        if (getAllPingTimer > 5f) {
-            getAllPingTimer = 0f;
-            if (opponents.size()> 0) {
-                final String roomID = this.player.getRoomID();
-
-                final String playerID = this.player.getPlayerID();
-                final String adminID = this.adminID;
-                for (final OpponentModel opponent : opponents) {
-                    try {
-
-
-                        DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference().child("rooms").child(this.player.getRoomID()).child("players").child(opponent.playerID).child("ping");
-                        mdatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                try {
-                                    Date d = dataSnapshot.getValue(Date.class);
-                                    Date now = new Date();
-                                    assert d != null;
-                                    long l = now.getTime() - d.getTime();
-                                    if (l > 5000) {
-                                        FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("players").child(opponent.playerID).removeValue();
-                                        if (opponent.playerID.equals(adminID)) {
-                                            FirebaseDatabase.getInstance().getReference().child("rooms").child(roomID).child("admin").setValue(playerID);
-                                        }
-                                    }
-
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
         this.handleInput();
         this.playerController.update(dt);
         this.gameController.update(dt);
