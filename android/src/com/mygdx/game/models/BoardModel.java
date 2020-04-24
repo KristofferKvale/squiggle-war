@@ -1,5 +1,7 @@
 package com.mygdx.game.models;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -99,6 +101,7 @@ public class BoardModel {
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                 try {
+                    List<PowerUpModel> toRemove = new ArrayList<>();
                     long x = (long) dataSnapshot.child("x").getValue();
                     long y = (long) dataSnapshot.child("y").getValue();
                     Vector2 pos = new Vector2();
@@ -106,10 +109,12 @@ public class BoardModel {
                     pos.y = y;
                     for (PowerUpModel powerup : getPowerUps()) {
                         if (powerup.position.equals(pos)) {
-                            removePowerUp(powerup);
+                            toRemove.add(powerup);
                         }
                     }
-                } catch (Exception ignored) {
+                    powerups.removeAll(toRemove);
+                } catch (Exception e) {
+                    Log.e("ERR", "Err: \nSlutt \nå \nta \nPowerUpsene \nmine!!" + e.toString() + "\nå\nta\nPowerUpsene\nmine!!");
                 }
             }
 
@@ -210,7 +215,6 @@ public class BoardModel {
     }
 
     public void reset() {
-        powerups = new ArrayList<>();
         postCrash = 0f;
         timeseconds = 0f;
     }
