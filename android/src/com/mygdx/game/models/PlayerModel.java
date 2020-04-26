@@ -184,6 +184,8 @@ public class PlayerModel {
         for (PowerUpModel powerup : this.powerups) {
             if (powerup.name.equals("Speed_boost") && powerup.checkStatus()) {
                 return true;
+            } else if (powerup.name.equals("Speed_boost") && !powerup.checkStatus()){
+                this.powerups.remove(powerup);
             }
         }
         return false;
@@ -193,6 +195,8 @@ public class PlayerModel {
         for (PowerUpModel powerup : this.powerups) {
             if (powerup.name.equals("Ghost") && powerup.checkStatus()) {
                 return true;
+            } else if (powerup.name.equals("Ghost") && !powerup.checkStatus()){
+                this.powerups.remove(powerup);
             }
         }
         return false;
@@ -202,6 +206,8 @@ public class PlayerModel {
         for (PowerUpModel powerup : this.powerups) {
             if (powerup.name.equals("Grow") && powerup.checkStatus()) {
                 return true;
+            } else if (powerup.name.equals("Grow") && !powerup.checkStatus()){
+                this.powerups.remove(powerup);
             }
         }
         return false;
@@ -211,6 +217,8 @@ public class PlayerModel {
         for (PowerUpModel powerup : this.powerups) {
             if (powerup.name.equals("Shrink") && powerup.checkStatus()) {
                 return true;
+            } else if (powerup.name.equals("Shrink") && !powerup.checkStatus()){
+                this.powerups.remove(powerup);
             }
         }
         return false;
