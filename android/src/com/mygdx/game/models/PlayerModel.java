@@ -13,6 +13,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.mygdx.game.Game;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -24,6 +25,7 @@ public class PlayerModel {
     private float angle;
     private Vector3 position;
     private ArrayList<PowerUpModel> powerups;
+    private List<PowerUpModel> powerUpsToRemove = new ArrayList<>();
     private DatabaseReference mDatabase;
     private int score;
     private boolean crashed = false;
@@ -185,8 +187,12 @@ public class PlayerModel {
             if (powerup.name.equals("Speed_boost") && powerup.checkStatus()) {
                 return true;
             } else if (powerup.name.equals("Speed_boost") && !powerup.checkStatus()){
-                this.powerups.remove(powerup);
+                powerUpsToRemove.add(powerup);
             }
+        }
+        if (powerUpsToRemove.size() > 0){
+            this.powerups.removeAll(powerUpsToRemove);
+            powerUpsToRemove = new ArrayList<>();
         }
         return false;
     }
@@ -196,8 +202,12 @@ public class PlayerModel {
             if (powerup.name.equals("Ghost") && powerup.checkStatus()) {
                 return true;
             } else if (powerup.name.equals("Ghost") && !powerup.checkStatus()){
-                this.powerups.remove(powerup);
+                powerUpsToRemove.add(powerup);
             }
+        }
+        if (powerUpsToRemove.size() > 0){
+            this.powerups.removeAll(powerUpsToRemove);
+            powerUpsToRemove = new ArrayList<>();
         }
         return false;
     }
@@ -207,8 +217,12 @@ public class PlayerModel {
             if (powerup.name.equals("Grow") && powerup.checkStatus()) {
                 return true;
             } else if (powerup.name.equals("Grow") && !powerup.checkStatus()){
-                this.powerups.remove(powerup);
+                powerUpsToRemove.add(powerup);
             }
+        }
+        if (powerUpsToRemove.size() > 0){
+            this.powerups.removeAll(powerUpsToRemove);
+            powerUpsToRemove = new ArrayList<>();
         }
         return false;
     }
@@ -218,8 +232,12 @@ public class PlayerModel {
             if (powerup.name.equals("Shrink") && powerup.checkStatus()) {
                 return true;
             } else if (powerup.name.equals("Shrink") && !powerup.checkStatus()){
-                this.powerups.remove(powerup);
+                powerUpsToRemove.add(powerup);
             }
+        }
+        if (powerUpsToRemove.size() > 0){
+            this.powerups.removeAll(powerUpsToRemove);
+            powerUpsToRemove = new ArrayList<>();
         }
         return false;
     }
