@@ -117,8 +117,8 @@ public class LobbySelectView extends State {
 
         this.buttons.add(this.settings);
 
-        if (roomIDs.size() < 5) {
-            for (int x = 0; x < (5 - roomIDs.size()); x++) {
+        if (roomIDs.size() < 6) {
+            for (int x = 0; x < (6 - roomIDs.size()); x++) {
                 mDatabase = FirebaseDatabase.getInstance().getReference().child("rooms");
                 String key = mDatabase.push().getKey();
                 assert key != null;
