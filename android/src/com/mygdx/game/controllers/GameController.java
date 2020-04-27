@@ -93,7 +93,32 @@ public class GameController extends Controller{
         }
     }
 
+    private void resetPlayer(){
+        this.player.deleteLine();
+        this.player.setPosition(this.player.getLastLinePosition());
+        this.player.setAngle(Game.startDirection(this.player.getLastLinePosition()));
+        this.player.setCrashed(false);
+        String key = mDatabase.child("players").child(playerID).child("crashed").push().getKey();
+        assert key != null;
+        mDatabase.child("players").child(playerID).child("crashed").child(key).setValue(false);
+    }
 
+    private void resetOpponents(){
+        for (OpponentModel opponent : this.board.getOpponents()) {
+            opponent.resetPoints();
+        }
+    }
+
+    private void incPlayerScore() {
+        this.player.incScore();
+        Log.d("MSG", "Score incremented" + this.player.getScore());
+        String key = mDatabase.child("players").child(this.player.getPlayerID()).child("score").push().getKey();
+        assert key != null;
+        mDatabase.child("players").child(this.player.getPlayerID()).child("score").child(key).setValue(this.player.getScore());
+    }
+
+
+    //PowerUp creation
     private void pushPowerup(PowerUpModel powerup) {
         try {
             mDatabase.child("powerups").child(powerup.name).setValue(powerup.position);
@@ -134,30 +159,8 @@ public class GameController extends Controller{
         pushPowerup(new_powerup);
     }
 
-    private void resetPlayer(){
-        this.player.deleteLine();
-        this.player.setPosition(this.player.getLastLinePosition());
-        this.player.setAngle(Game.startDirection(this.player.getLastLinePosition()));
-        this.player.setCrashed(false);
-        String key = mDatabase.child("players").child(playerID).child("crashed").push().getKey();
-        assert key != null;
-        mDatabase.child("players").child(playerID).child("crashed").child(key).setValue(false);
-    }
 
-    private void resetOpponents(){
-        for (OpponentModel opponent : this.board.getOpponents()) {
-            opponent.resetPoints();
-        }
-    }
-
-    private void incPlayerScore() {
-        this.player.incScore();
-        Log.d("MSG", "Score incremented" + this.player.getScore());
-        String key = mDatabase.child("players").child(this.player.getPlayerID()).child("score").push().getKey();
-        assert key != null;
-        mDatabase.child("players").child(this.player.getPlayerID()).child("score").child(key).setValue(this.player.getScore());
-    }
-
+    //Ping system
     private void ping(float dt){
         pingtimer += dt;
         if (pingtimer > 1f){
